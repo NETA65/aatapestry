@@ -1,0 +1,22 @@
+{
+  "_readme": "The weekly 36 Principles meeting (Step, Tradition and Concept of the same number, side by side). Set published: true and fill in the details when the meeting is ready to be listed; until then /meeting/ says 'details coming soon' and is left out of the menu and sitemap. The study pages at /principles/ are always public. cycle.mode: 'by-number' (12-week cycle: one number per week, all three legacies that week) or 'by-principle' (36-week cycle: Step 1, Tradition 1, Concept 1, Step 2, …). cycle.startDate: the date (YYYY-MM-DD) of the meeting that studied number 1 (or Step 1); the site works out the current focus from it and the weekly rebuild keeps it current.",
+  "published": false,
+  "name": "36 Principles Meeting",
+  "tagline": "One number. Three legacies. Every week.",
+  "description": "A weekly online A.A. meeting that reads the Step, the Tradition and the Concept of the same number together, then shares on how they connect — in our recovery, in our groups, and in service.",
+  "weekday": "",
+  "time": "",
+  "durationMinutes": 60,
+  "timezone": "America/Los_Angeles",
+  "timezoneShort": "PT",
+  "zoom": { "meetingId": "", "passcode": "", "joinUrl": "" },
+  "cycle": { "mode": "by-number", "startDate": "", "weeksPerNumber": 1 },
+  "format": [
+    "Open with the Serenity Prayer and the A.A. Preamble.",
+    "Read the Step, the Tradition and the Concept of the week (short forms), one reader each.",
+    "The chair offers two or three minutes on the thread that connects them (see the study page for that number).",
+    "Open sharing, three minutes each, on how that thread shows up in your recovery, your home group and your service.",
+    "Seventh Tradition reminder, announcements, and close with the Responsibility Statement."
+  ],
+  "contactEmail": ""
+}

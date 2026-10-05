@@ -1,0 +1,99 @@
+---
+permalink: /meeting/
+title: 36 Principles Meeting
+description: "A weekly online A.A. meeting that reads the Step, Tradition and Concept of the same number together — this week's focus, format, Zoom details and calendar."
+eleventyComputed:
+  noindex: "{{ 'true' if not meeting.published else '' }}"
+  eleventyExcludeFromCollections: "{{ 'true' if not meeting.published else '' }}"
+---
+{% import "macros/ui.njk" as ui %}
+<section class="section weave-bg">
+  <div class="container-page hero" style="padding-block: clamp(2rem, 5vw, 4rem)">
+    <p class="eyebrow">{{ meeting.tagline }}</p>
+    <h1 class="h-display">{{ meeting.name }}</h1>
+    <p class="lead">{{ meeting.description }}</p>
+    {% if meeting.published and focus.configured %}
+    <div class="hero-badges">
+      <span class="badge">{% icon "calendar", "icon" %}{{ focus.weekdayLabel }}s · {{ focus.timeLabel }} {{ meeting.timezoneShort }}</span>
+      <span class="badge">{% icon "clock", "icon" %}{{ meeting.durationMinutes }} minutes</span>
+      <span class="badge">{% icon "video", "icon" %}{{ t.labels.online }}</span>
+    </div>
+    <div class="hero-actions">
+      {% if meeting.zoom.joinUrl %}<a href="{{ meeting.zoom.joinUrl }}" class="btn btn-primary btn-lg" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>{% endif %}
+      <a href="/36-principles-meeting.ics" class="btn btn-secondary btn-lg" download>{% icon "calendar", "icon" %}<span>{{ t.labels.addToCalendar }}</span></a>
+    </div>
+    {% else %}
+    <p class="panel-muted mt-6 max-w-2xl">{{ copy.meetingTeaser.comingSoon }}</p>
+    {% endif %}
+  </div>
+</section>
+
+{% if meeting.published and focus.cycleConfigured and focus.current and focus.current.item %}
+{% set cur = focus.current %}
+<section class="section-tight">
+  <div class="container-page">
+    <div class="card legacy-card" style="--legacy: var(--c-{{ cur.legacy or 'recovery' }}); --legacy-soft: var(--c-{{ cur.legacy or 'recovery' }}-soft); --legacy-text: var(--c-{{ cur.legacy or 'recovery' }}-text)">
+      <div class="legacy-card-stripe" aria-hidden="true"></div>
+      <p class="eyebrow">This week{% if focus.next %} · {{ focus.next.dateLong }}, {{ focus.next.time }} {{ focus.next.abbr }}{% endif %}</p>
+      <h2 class="h-section">Number {{ cur.n }}: {{ cur.item.thread.title }}</h2>
+      <p class="lead">{{ cur.item.thread.oneLiner }}</p>
+      <div class="three-up mt-6">
+        {% for key in ["step", "tradition", "concept"] %}{% set l = site.legacies[loop.index0] %}
+        {% if not cur.legacy or cur.legacy == l.key %}
+        <div class="legacy-panel" style="--legacy: var(--c-{{ l.key }}); --legacy-soft: var(--c-{{ l.key }}-soft); --legacy-text: var(--c-{{ l.key }}-text)">
+          <p class="eyebrow">{{ l.singular }} {{ cur.n if key != "concept" else (cur.n | roman) }}</p>
+          <p class="word">{{ cur.item[key].principle }}</p>
+          {% if cur.item[key].text %}<blockquote>{{ cur.item[key].text }}</blockquote>{% else %}<p>{{ cur.item[key].gist }}</p><a href="{{ principles.sources[key].url }}" class="tap-link mt-2 text-sm" target="_blank" rel="noopener" style="color: var(--legacy-text)">Read it at aa.org</a>{% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+      <a href="/principles/{{ cur.n }}/" class="btn btn-primary mt-6">{% icon "book-open", "icon" %}<span>Study page for number {{ cur.n }}</span></a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container-page">
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div>
+        <h2 class="h-section">Format</h2>
+        <ol class="steps mt-4">{% for f in meeting.format %}<li><div>{{ f }}</div></li>{% endfor %}</ol>
+        <p class="text-muted text-sm mt-4">Cycle: {% if focus.mode == "by-principle" %}36 weeks — one principle a week (Step 1, Tradition 1, Concept I, Step 2, …).{% else %}12 weeks — one number a week, all three legacies together.{% endif %}</p>
+      </div>
+      <div class="grid gap-6">
+        {% if meeting.published and meeting.zoom.joinUrl %}
+        <div class="card" id="zoom">
+          <p class="eyebrow">{{ t.labels.where }}</p>
+          <h2 class="h-card">{{ t.labels.online }}</h2>
+          <dl class="zoom-dl">
+            <div><dt>{{ t.labels.meetingId }}</dt><dd><span class="mono">{{ meeting.zoom.meetingId }}</span><button type="button" class="copy-btn" data-copy="{{ meeting.zoom.meetingId | digits }}" data-copied="{{ t.labels.copied }}">{% icon "copy", "icon" %}<span>{{ t.labels.copy }}</span></button></dd></div>
+            {% if meeting.zoom.passcode %}<div><dt>{{ t.labels.passcode }}</dt><dd><span class="mono">{{ meeting.zoom.passcode }}</span><button type="button" class="copy-btn" data-copy="{{ meeting.zoom.passcode }}" data-copied="{{ t.labels.copied }}">{% icon "copy", "icon" %}<span>{{ t.labels.copy }}</span></button></dd></div>{% endif %}
+          </dl>
+          <div class="zoom-card-actions"><a href="{{ meeting.zoom.joinUrl }}" class="btn btn-primary" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span></a></div>
+          {% if meeting.contactEmail %}<p class="text-sm text-muted mt-3">Questions: <a href="mailto:{{ meeting.contactEmail }}">{{ meeting.contactEmail }}</a></p>{% endif %}
+        </div>
+        {% endif %}
+        {% if meeting.published and focus.upcoming.length %}
+        <div class="card">
+          <h2 class="h-card">Next meetings</h2>
+          <table class="zones mt-3">
+            <thead><tr><th scope="col">Date</th><th scope="col">Focus</th></tr></thead>
+            <tbody>
+              {% for u in focus.upcoming %}
+              <tr><td>{{ u.dateLong }} · {{ u.time }}</td><td>{% if u.n %}<a href="/principles/{{ u.n }}/">{{ (u.legacy | legacy).singular + " " if u.legacy }}{{ u.n }}{% if u.item %} · {{ u.item.thread.title }}{% endif %}</a>{% else %}—{% endif %}</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+        <div class="card">
+          <h2 class="h-card">Study pages</h2>
+          <p class="text-muted mt-1">Every number has a page with the three texts, the thread, and questions.</p>
+          <div class="number-grid mt-4">{% for item in principles.items %}{{ ui.numberTile(item, site.legacies) }}{% endfor %}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

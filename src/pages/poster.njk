@@ -1,0 +1,88 @@
+---
+layout: layouts/poster.njk
+pagination:
+  data: posterLangs
+  size: 1
+  alias: plang
+  addAllPagesToCollections: true
+posterLangs: ["en", "es"]
+permalink: "{% if plang == 'es' %}/es{% endif %}/poster/"
+translated: true
+eleventyComputed:
+  lang: "{{ plang }}"
+  title: "{{ 'Póster' if plang == 'es' else 'Poster' }}"
+  description: "{{ 'Póster imprimible (carta y A4) del taller El Increíble Tapiz, con códigos QR para Zoom y el sitio web. Descárgalo en PDF o PNG.' if plang == 'es' else 'Printable poster (Letter and A4) for The Incredible Tapestry workshop, with QR codes for Zoom and the website. Download as PDF or PNG.' }}"
+---
+{% set ev = site.event %}
+{% set suffix = "-es" if lang == "es" else "" %}
+<div class="container-page poster-toolbar no-print">
+  <a href="/brand/poster/aatapestry-poster{{ suffix }}-letter.pdf" class="btn btn-primary" download>{% icon "download", "icon" %}<span>PDF · {{ 'Carta' if lang == 'es' else 'Letter' }}</span></a>
+  <a href="/brand/poster/aatapestry-poster{{ suffix }}-a4.pdf" class="btn btn-secondary" download>{% icon "download", "icon" %}<span>PDF · A4</span></a>
+  <a href="/brand/poster/aatapestry-poster{{ suffix }}.png" class="btn btn-secondary" download>{% icon "image", "icon" %}<span>PNG</span></a>
+  <button type="button" class="btn btn-secondary" onclick="window.print()">{% icon "printer", "icon" %}<span>{{ t.labels.print }}</span></button>
+  <a href="{{ page.url | langUrl(otherLang) }}" class="btn btn-ghost" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon" %}<span>{{ t.switchLabel }}</span></a>
+</div>
+
+<div class="poster-wrap">
+  <div class="poster" id="poster">
+    <div class="poster-stripe" aria-hidden="true"></div>
+    <div class="poster-bg" aria-hidden="true"></div>
+    <div class="poster-inner">
+      <header class="poster-top">
+        {% inlineSvg "brand/logo/mark.svg", "" %}
+        <div>
+          <p class="poster-eyebrow">{{ t.landing.eyebrow }}</p>
+          <h1 class="poster-title">{{ t.poster.headline }}</h1>
+          <p class="poster-sub">{{ t.poster.sub }}</p>
+        </div>
+      </header>
+
+      <section class="poster-when">
+        <div class="poster-date-tile" aria-hidden="true"><span class="m">{{ when.date.monthEs | upper if lang == 'es' else when.date.monthShort }}</span><span class="d">{{ when.date.day }}</span><span class="w">{{ when.date.weekdayEs | capitalize if lang == 'es' else when.date.weekday }}</span></div>
+        <div class="poster-when-text">
+          <p class="line1">{{ (when.date.longEs | capitalize) if lang == 'es' else when.date.long }}</p>
+          <p class="line2">{{ (when.time.rangeShortEs + ', ' + ev.timezoneLabelEs) if lang == 'es' else (when.time.rangeShort + ' ' + ev.timezoneLabel) }} ({{ ev.timezoneShort }})</p>
+          <p class="line3">{{ t.poster.whereLine }} · {{ t.poster.freeLine }}</p>
+        </div>
+      </section>
+
+      <section class="poster-mid">
+        <div>
+          <div class="poster-legacies">
+            {% for l in site.legacies %}
+            <div class="poster-legacy" style="--legacy: {{ l.color }}; --legacy-text: {{ l.colorText }}"><i aria-hidden="true"></i><div><b>{{ t.legacies[l.key] }}</b><span>{{ t.legacies[l.shortBody | lower] }}</span></div></div>
+            {% endfor %}
+          </div>
+          <div class="poster-interp">
+            <span>{% icon "hand", "icon" %}{% icon "languages", "icon" %}{{ t.poster.interpretationLine }}</span>
+          </div>
+        </div>
+        <div class="poster-zoom">
+          <div class="qr">{% inlineSvg "brand/qr/qr-zoom.svg", "" %}<b>{{ t.poster.scanZoom }}</b><small>Zoom</small></div>
+          <div class="qr">{% inlineSvg "brand/qr/qr-site.svg", "" %}<b>{{ t.poster.scanSite }}</b><small>{{ site.domain }}</small></div>
+          <div class="ids">
+            <div><span>{{ t.poster.meetingId }}</span><b>{{ ev.zoom.meetingId }}</b></div>
+            <div><span>{{ t.poster.passcode }}</span><b>{{ ev.zoom.passcode }}</b></div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="poster-foot">
+        <div>
+          <p class="poster-url">{{ site.domain }}</p>
+          <p class="poster-free">{{ t.poster.footer | replace(" · " + site.domain, "") }}</p>
+        </div>
+        <p class="poster-fine">{{ t.poster.fine }}</p>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<section class="container-page no-print pb-12">
+  <div class="card max-w-3xl mx-auto">
+    <h2 class="h-card">{{ t.poster.shareHeading }}</h2>
+    <p class="text-muted mt-2">{{ t.poster.shareBody }}</p>
+    <div class="mt-4">{% include "partials/share.njk" %}</div>
+    <p class="text-xs text-muted mt-4">{{ 'Archivos del logotipo y códigos QR en alta resolución:' if lang == 'es' else 'High-resolution logo files and QR codes:' }} <a href="/brand/BRAND.md" class="underline">/brand/</a></p>
+  </div>
+</section>

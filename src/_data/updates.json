@@ -1,0 +1,10 @@
+{
+  "_readme": "Short news items shown on the home page and published as an RSS feed (/feed.xml). Newest first. date: YYYY-MM-DD. body may use simple Markdown.",
+  "items": [
+    {
+      "date": "2026-10-04",
+      "title": "Save the date: Saturday, December 12, 2026",
+      "body": "The Incredible Tapestry workshop is set: a full day online, 8 AM to 4 PM Pacific, with ASL and Spanish interpretation. The program is being planned now; check back for the schedule."
+    }
+  ]
+}

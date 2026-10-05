@@ -1,0 +1,53 @@
+---
+permalink: /accessibility/
+title: Accessibility & interpretation
+description: "ASL and Spanish interpretation, captions and other accommodations for The Incredible Tapestry online A.A. workshop, with step-by-step Zoom instructions."
+---
+{% import "macros/ui.njk" as ui %}
+<section class="section weave-bg">
+  <div class="container-page hero" style="padding-block: clamp(2rem, 5vw, 4rem)">
+    <p class="eyebrow">{{ when.date.long }} · {{ t.labels.online }}</p>
+    <h1 class="h-display">{{ copy.accessibility.heading }}</h1>
+    <p class="lead">{{ copy.accessibility.lead }}</p>
+    <div class="hero-badges">
+      {% for i in site.event.interpretation %}<span class="badge">{% set iconName = "hand" if i.key == "asl" else "languages" %}{% icon iconName, "icon" %}{{ i.label }}</span>{% endfor %}
+      <span class="badge">{% icon "captions", "icon" %}Captions</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page">
+    <div class="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+      <div class="grid gap-8">
+        {% for s in copy.accessibility.sections %}
+        <article class="card" id="{{ s.title | slugify }}">
+          <h2 class="h-card">{% set iconName = ["hand", "languages", "captions", "accessibility"][loop.index0] or "info" %}{% icon iconName, "icon" %} {{ s.title }}</h2>
+          <div class="prose text-muted mt-3">{% for p in s.body %}{{ p | md | safe }}{% endfor %}</div>
+          {% if loop.index0 < 2 %}<p class="text-sm mt-3 panel-muted">{{ site.event.interpretation[loop.index0].note }}</p>{% endif %}
+        </article>
+        {% endfor %}
+        <div class="panel-muted">
+          <p class="font-semibold">{{ copy.accessibility.requests }}</p>
+          {% if site.contact.email %}<a href="mailto:{{ site.contact.email }}?subject={{ ('Accessibility request — ' + site.event.name) | urlencode }}" class="tap-link mt-2">{% icon "mail", "icon" %} {{ site.contact.email }}</a>{% endif %}
+        </div>
+        <article class="card" id="etiquette">
+          <h2 class="h-card">{{ copy.etiquette.heading }}</h2>
+          <ul class="prose text-muted mt-3 list-disc pl-5">{% for e in copy.etiquette.items %}<li>{{ e | mdInline | safe }}</li>{% endfor %}</ul>
+        </article>
+        <article class="card" id="es">
+          <h2 class="h-card" lang="es">Información en español</h2>
+          <div class="prose text-muted mt-3" lang="es">{% for p in i18n.es.landing.interpretation %}{{ p | md | safe }}{% endfor %}</div>
+          <a href="/es/" class="tap-link mt-3" lang="es" hreflang="es">{{ i18n.en.switchLabel }} {% icon "arrow-right", "icon" %}</a>
+        </article>
+      </div>
+      <aside class="grid gap-6 content-start">
+        {% include "partials/zoom-card.njk" %}
+        <div class="card">
+          <h2 class="h-card">{{ copy.anonymity.heading }}</h2>
+          <div class="prose text-muted mt-2">{% for p in copy.anonymity.body %}{{ p | md | safe }}{% endfor %}</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

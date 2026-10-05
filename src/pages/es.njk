@@ -1,0 +1,107 @@
+---
+permalink: /es/
+lang: es
+translated: true
+schema: event
+atcb: true
+eleventyComputed:
+  title: "{{ i18n.es.landing.pageTitle }}"
+  description: "{{ i18n.es.landing.metaDescription }}"
+---
+{% import "macros/ui.njk" as ui %}
+{% set ev = site.event %}
+{% set L = t.landing %}
+<section class="weave-bg">
+  <div class="container-page hero">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">{{ L.eyebrow }}</p>
+        {% set headParts = L.headline.split(":") %}
+        <h1 class="h-display">{{ headParts[0] }}</h1>
+        {% if headParts.length > 1 %}<p class="font-display text-2xl mt-2 italic text-muted" style="text-wrap: balance">{{ headParts.slice(1).join(":") | trim }}</p>{% endif %}
+        <p class="lead">{{ L.sub }}</p>
+        <div class="when-line">
+          <div class="date-tile" aria-hidden="true"><span class="m">{{ when.date.monthEs | upper }}</span><span class="d">{{ when.date.day }}</span><span class="w">{{ when.date.weekdayEs | capitalize }}</span></div>
+          <p class="when-text"><strong>{{ when.date.longEs | capitalize }}</strong><br>{{ when.time.rangeEs }} {{ when.tzAbbr }} ({{ ev.timezoneLabelEs }})
+            <span class="local-time" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" hidden>{{ t.labels.yourLocalTime }}: <span data-local-value></span></span></p>
+        </div>
+        <div class="hero-badges">
+          <span class="badge">{% icon "video", "icon" %}{{ t.labels.online }}</span>
+          {% for i in ev.interpretation %}<span class="badge">{% set iconName = "hand" if i.key == "asl" else "languages" %}{% icon iconName, "icon" %}{{ i.labelEs }}</span>{% endfor %}
+          <span class="badge">{% icon "heart-handshake", "icon" %}{{ t.labels.free }} · {{ t.labels.noRegistration }}</span>
+        </div>
+        <div class="hero-actions">
+          <a href="{{ ev.zoom.joinUrl }}" class="btn btn-primary btn-lg" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+          <add-to-calendar-button name="{{ ev.name }} — {{ L.headline }}" description="{{ L.sub }}[br][br]Zoom: [url]{{ ev.zoom.joinUrl }}|Zoom[/url][br]{{ t.labels.meetingId }}: {{ ev.zoom.meetingId }} · {{ t.labels.passcode }}: {{ ev.zoom.passcode }}[br][br]{{ site.url }}/es/" startDate="{{ ev.date }}" startTime="{{ ev.start }}" endDate="{{ ev.date }}" endTime="{{ ev.end }}" timeZone="{{ ev.timezone }}" location="{{ ev.zoom.joinUrl }}" options="'Apple','Google','iCal','Microsoft365','Outlook.com','Yahoo'" iCalFileName="aatapestry-taller" label="{{ t.labels.addToCalendar }}" buttonStyle="round" lightMode="bodyScheme" listStyle="overlay" language="es" hideBranding="true" hideCheckmark="true" trigger="click" styleLight="--btn-background: var(--card); --btn-text: var(--fg); --btn-border: var(--line); --btn-shadow: none; --btn-shadow-hover: none; --font: inherit;" styleDark="--btn-background: var(--card); --btn-text: var(--fg); --btn-border: var(--line); --btn-shadow: none; --btn-shadow-hover: none; --font: inherit;"></add-to-calendar-button>
+          <a href="/es/poster/" class="btn btn-secondary btn-lg">{% icon "image", "icon" %}<span>{{ t.nav.poster }}</span></a>
+        </div>
+        {% include "partials/countdown.njk" %}
+      </div>
+      <div>{% inlineSvg "brand/logo/mark.svg", "hero-mark" %}</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page">
+    <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+      <div>
+        <div class="prose text-lg">{% for p in L.intro %}{{ p | md | safe }}{% endfor %}</div>
+        <h2 class="h-section mt-10">{{ t.legacies.steps }} · {{ t.legacies.traditions }} · {{ t.legacies.concepts }}</h2>
+        <div class="grid-cards mt-4">{% for l in site.legacies %}{{ ui.legacyCard(l, "es", t) }}{% endfor %}</div>
+        <h2 class="h-section mt-10">{{ L.thirtySixHeading }}</h2>
+        <div class="prose mt-3">{{ L.thirtySix | md | safe }}</div>
+        {% if L.principlesNote %}<p class="panel-muted mt-4 text-sm">{{ L.principlesNote }} <a href="/principles/" class="underline" hreflang="en">Los 36 principios (en inglés)</a></p>{% endif %}
+      </div>
+      <aside class="grid gap-6 content-start lg:sticky lg:top-24">
+        {% include "partials/zoom-card.njk" %}
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="section section-band">
+  <div class="container-page">
+    <h2 class="h-section">{{ L.whatToExpectHeading }}</h2>
+    <div class="grid-cards mt-6">
+      {% for w in L.whatToExpect %}<article class="card"><h3 class="h-card">{{ w.title }}</h3><p class="text-muted mt-2">{{ w.body }}</p></article>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page">
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div>
+        <h2 class="h-section">{{ L.howToJoinHeading }}</h2>
+        <ol class="steps mt-4">{% for s in L.howToJoin %}<li><div>{{ s | mdInline | safe }}</div></li>{% endfor %}</ol>
+      </div>
+      <div>
+        <h2 class="h-section">{{ L.interpretationHeading }}</h2>
+        <div class="prose text-muted mt-4">{% for p in L.interpretation %}{{ p | md | safe }}{% endfor %}</div>
+        <p class="panel-muted mt-4 text-sm">{{ L.accessibilityNote }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-band">
+  <div class="container-page">
+    <div class="grid gap-10 lg:grid-cols-3">
+      <div>
+        <h2 class="h-card">{{ L.etiquetteHeading }}</h2>
+        <ul class="prose text-muted mt-3 list-disc pl-5">{% for e in L.etiquette %}<li>{{ e | mdInline | safe }}</li>{% endfor %}</ul>
+      </div>
+      <div>
+        <h2 class="h-card">{{ 'Anonimato' }}</h2>
+        <div class="prose text-muted mt-3">{{ L.anonymity | md | safe }}</div>
+      </div>
+      <div>
+        <h2 class="h-card">{{ 'Séptima Tradición' }}</h2>
+        <div class="prose text-muted mt-3">{{ L.seventh | md | safe }}</div>
+        <h2 class="h-card mt-6">{{ t.labels.share }}</h2>
+        <div class="mt-3">{% include "partials/share.njk" %}</div>
+      </div>
+    </div>
+  </div>
+</section>

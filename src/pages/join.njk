@@ -1,0 +1,47 @@
+---
+pagination:
+  data: joinLangs
+  size: 1
+  alias: plang
+  addAllPagesToCollections: true
+joinLangs: ["en", "es"]
+permalink: "{% if plang == 'es' %}/es{% endif %}/join/"
+translated: true
+schema: event
+eleventyComputed:
+  lang: "{{ plang }}"
+  title: "{{ 'Unirse por Zoom' if plang == 'es' else 'Join on Zoom' }}"
+  description: "{{ 'Enlace, ID de reunión y código de acceso de Zoom para el taller El Increíble Tapiz, con instrucciones para la interpretación en español y ASL.' if plang == 'es' else 'Zoom link, meeting ID and passcode for The Incredible Tapestry workshop, with instructions for the ASL and Spanish interpretation channels.' }}"
+---
+{% import "macros/ui.njk" as ui %}
+<section class="section weave-bg">
+  <div class="container-page hero" style="padding-block: clamp(2rem, 5vw, 4rem)">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">{{ t.landing.eyebrow }}</p>
+        <h1 class="h-display">{{ title }}</h1>
+        <p class="when-text mt-4"><strong>{{ (when.date.longEs | capitalize) if lang == 'es' else when.date.long }}</strong><br>{{ when.time.rangeEs if lang == 'es' else when.time.range }} {{ when.tzAbbr }}
+          <span class="local-time" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" hidden>{{ t.labels.yourLocalTime }}: <span data-local-value></span></span></p>
+        {% include "partials/countdown.njk" %}
+      </div>
+      <div>{% set zoomHeadingLevel = 2 %}{% include "partials/zoom-card.njk" %}</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-page">
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div>
+        <h2 class="h-section">{{ t.landing.howToJoinHeading }}</h2>
+        <ol class="steps mt-4">{% for s in t.landing.howToJoin %}<li><div>{{ s | mdInline | safe }}</div></li>{% endfor %}</ol>
+      </div>
+      <div>
+        <h2 class="h-section">{{ t.landing.interpretationHeading }}</h2>
+        <div class="prose text-muted mt-4">{% for p in t.landing.interpretation %}{{ p | md | safe }}{% endfor %}</div>
+        <h3 class="h-card mt-8">{{ t.landing.etiquetteHeading }}</h3>
+        <ul class="prose text-muted mt-3 list-disc pl-5">{% for e in t.landing.etiquette %}<li>{{ e | mdInline | safe }}</li>{% endfor %}</ul>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="{{ lang }}" class="h-full">
+<head>
+{% include "partials/head.njk" %}
+</head>
+<body class="min-h-full flex flex-col bg-bg text-fg font-sans antialiased{% if bodyClass %} {{ bodyClass }}{% endif %}">
+<a href="#main" class="skip-link">{{ t.nav.skip }}</a>
+{% include "partials/header.njk" %}
+<main id="main" class="flex-1" tabindex="-1">
+{{ content | safe }}
+</main>
+{% include "partials/footer.njk" %}
+<script src="/assets/js/app.js" defer></script>
+<script src="/assets/vendor/alpine.min.js" defer></script>
+{% if atcb %}<script src="/assets/vendor/atcb.min.js" defer></script>{% endif %}
+</body>
+</html>

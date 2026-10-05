@@ -1,0 +1,55 @@
+{#- Structured data (schema.org JSON-LD), all from site.json / when.js. -#}
+{%- set ev = site.event -%}
+{%- set statusMap = { "scheduled": "https://schema.org/EventScheduled", "cancelled": "https://schema.org/EventCancelled", "postponed": "https://schema.org/EventPostponed", "rescheduled": "https://schema.org/EventRescheduled" } -%}
+{%- set firstDate = (updates.items | last).date if (updates.items and updates.items.length) else build.date -%}
+{%- set org = { "@type": "Organization", "@id": site.url + "/#organization", "name": site.contact.committee, "url": site.url, "logo": { "@type": "ImageObject", "url": ("/brand/logo/mark-1024.png" | absUrl) } } -%}
+{%- if site.contact.email %}{% set org = org | merge({ "email": site.contact.email }) %}{% endif -%}
+{%- set website = { "@type": "WebSite", "@id": site.url + "/#website", "url": site.url, "name": site.name, "description": site.description, "inLanguage": ["en", "es"], "publisher": { "@id": site.url + "/#organization" } } -%}
+{%- set graph = [org, website] -%}
+
+{%- if schema == "event" -%}
+{%- set eventNode = {
+  "@type": "Event",
+  "@id": site.url + "/#event",
+  "name": ev.name,
+  "description": (copy.jsonld.eventSummary if (copy and copy.jsonld and copy.jsonld.eventSummary) else site.description),
+  "startDate": when.startISO,
+  "endDate": when.endISO,
+  "eventStatus": statusMap[ev.status] or statusMap.scheduled,
+  "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+  "location": { "@type": "VirtualLocation", "url": ev.zoom.joinUrl, "name": ev.platform },
+  "image": [ (ogImage | absUrl), ("/brand/social/square.png" | absUrl) ],
+  "url": site.url,
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": site.url, "validFrom": firstDate },
+  "organizer": { "@id": site.url + "/#organization" },
+  "performer": { "@type": "Organization", "name": site.contact.committee },
+  "inLanguage": ["en", "es", "ase"],
+  "audience": { "@type": "Audience", "audienceType": "A.A. members and anyone interested in the Three Legacies" },
+  "keywords": "Alcoholics Anonymous, Twelve Steps, Twelve Traditions, Twelve Concepts, Three Legacies, workshop, Zoom, ASL interpretation, Spanish interpretation"
+} -%}
+{%- set _ = graph.push(eventNode) -%}
+{%- endif -%}
+
+{%- if schema == "event" and page.url == "/" and faq and faq.items -%}
+{%- set questions = [] -%}
+{%- for q in faq.items -%}
+{%- set _ = questions.push({ "@type": "Question", "name": q.q, "acceptedAnswer": { "@type": "Answer", "text": (q.a | mdInline) } }) -%}
+{%- endfor -%}
+{%- set _ = graph.push({ "@type": "FAQPage", "@id": site.url + "/#faq", "mainEntity": questions }) -%}
+{%- endif -%}
+
+{%- if page.url != "/" and page.url != "/es/" -%}
+{%- set crumbs = [{ "@type": "ListItem", "position": 1, "name": t.nav.home, "item": (("/es/" if lang == "es" else "/") | absUrl) }] -%}
+{%- if page.url != "/principles/" and page.url.startsWith("/principles/") -%}
+{%- set _ = crumbs.push({ "@type": "ListItem", "position": 2, "name": t.nav.principles, "item": ("/principles/" | absUrl) }) -%}
+{%- endif -%}
+{%- set _ = crumbs.push({ "@type": "ListItem", "position": crumbs.length + 1, "name": (title or site.name), "item": (page.url | absUrl) }) -%}
+{%- set _ = graph.push({ "@type": "BreadcrumbList", "itemListElement": crumbs }) -%}
+{%- endif -%}
+
+{%- if schema == "article" and item -%}
+{%- set _ = graph.push({ "@type": "Article", "@id": (page.url | absUrl) + "#article", "headline": title, "description": description, "url": (page.url | absUrl), "image": (ogImage | absUrl), "author": { "@id": site.url + "/#organization" }, "publisher": { "@id": site.url + "/#organization" }, "datePublished": firstDate, "dateModified": build.date, "isPartOf": { "@id": site.url + "/#website" }, "about": ["Twelve Steps", "Twelve Traditions", "Twelve Concepts for World Service"], "inLanguage": "en" }) -%}
+{%- endif -%}
+
+<script type="application/ld+json">{{ { "@context": "https://schema.org", "@graph": graph } | dump | safe }}</script>

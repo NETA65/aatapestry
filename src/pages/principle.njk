@@ -1,0 +1,88 @@
+---
+pagination:
+  data: principles.items
+  size: 1
+  alias: item
+  addAllPagesToCollections: true
+permalink: "/principles/{{ item.n }}/"
+eleventyComputed:
+  title: "Number {{ item.n }}: {{ item.thread.title | safe }}"
+  description: "{{ item.thread.oneLiner | safe }} Step, Tradition and Concept {{ item.n }}, side by side."
+schema: article
+---
+{% import "macros/ui.njk" as ui %}
+{% set prev = principles.items[item.n - 2] if item.n > 1 else null %}
+{% set next = principles.items[item.n] if item.n < 12 else null %}
+<article>
+  <section class="section weave-bg">
+    <div class="container-page hero" style="padding-block: clamp(2rem, 5vw, 4rem)">
+      <nav aria-label="Breadcrumb" class="text-sm text-muted mb-4"><a href="/principles/">{{ t.nav.principles }}</a> / Number {{ item.n }}</nav>
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">Step {{ item.n }} · Tradition {{ item.n }} · Concept {{ item.n | roman }}</p>
+          <h1 class="h-display">{{ item.thread.title }}</h1>
+          <p class="lead">{{ item.thread.oneLiner }}</p>
+          <div class="hero-badges">
+            {% for key in ["step", "tradition", "concept"] %}{% set l = site.legacies[loop.index0] %}
+            {{ ui.legacyBadge(l, l.singular + " " + ((item.n | roman) if key == "concept" else item.n) + ": " + item[key].principle) }}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="text-center lg:text-right"><span class="big-number" aria-hidden="true">{{ item.n }}</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="container-page">
+      <div class="three-up">
+        {% for key in ["step", "tradition", "concept"] %}{% set l = site.legacies[loop.index0] %}
+        <div class="legacy-panel" style="--legacy: var(--c-{{ l.key }}); --legacy-soft: var(--c-{{ l.key }}-soft); --legacy-text: var(--c-{{ l.key }}-text)" id="{{ key }}">
+          <p class="eyebrow">{{ l.singular }} {{ item.n if key != "concept" else (item.n | roman) }} · {{ l.name }}</p>
+          <p class="word">{{ item[key].principle }}</p>
+          {% if item[key].text %}
+          <blockquote>{{ item[key].text }}</blockquote>
+          {% else %}
+          <p class="text-lg">{{ item[key].gist }}</p>
+          <a href="{{ principles.sources[key].url }}" class="tap-link mt-3 text-sm" target="_blank" rel="noopener" style="color: var(--legacy-text)">{% icon "book-open", "icon" %}<span>Read {{ l.singular }} {{ item.n | roman if key == 'concept' else item.n }} at aa.org</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+          {% endif %}
+          {% if item[key].keywords and item[key].keywords.length %}<div class="keywords">{% for k in item[key].keywords %}<span>{{ k }}</span>{% endfor %}</div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <p class="text-xs text-muted mt-3">{{ principles.notice }}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-page">
+      <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+        <div>
+          <h2 class="h-section">The thread</h2>
+          <div class="prose text-lg mt-3">{{ item.thread.summary | md | safe }}</div>
+          <h2 class="h-section mt-10">Where it shows up</h2>
+          <div class="prose mt-3">{{ item.thread.weave | md | safe }}</div>
+        </div>
+        <aside>
+          <h2 class="h-card">For sharing or sponsorship</h2>
+          <ol class="questions mt-3">{% for q in item.thread.questions %}<li>{{ q }}</li>{% endfor %}</ol>
+          <div class="card mt-6">
+            <h3 class="h-card">In a 36 Principles meeting</h3>
+            <ol class="prose text-muted text-sm mt-2 list-decimal pl-5">{% for f in meeting.format %}<li>{{ f }}</li>{% endfor %}</ol>
+            <button type="button" class="btn btn-secondary btn-sm mt-4 no-print" onclick="window.print()">{% icon "printer", "icon" %}<span>{{ t.labels.print }} handout</span></button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight section-band">
+    <div class="container-page">
+      <nav class="pager" aria-label="Other numbers">
+        {% if prev %}<a href="/principles/{{ prev.n }}/" class="btn btn-secondary">{% icon "arrow-left", "icon" %}<span>{{ prev.n }} · {{ prev.thread.title }}</span></a>{% else %}<span></span>{% endif %}
+        <a href="/principles/" class="btn btn-ghost">{% icon "layers", "icon" %}<span>All 36</span></a>
+        {% if next %}<a href="/principles/{{ next.n }}/" class="btn btn-secondary"><span>{{ next.n }} · {{ next.thread.title }}</span>{% icon "arrow-right", "icon" %}</a>{% else %}<span></span>{% endif %}
+      </nav>
+    </div>
+  </section>
+</article>

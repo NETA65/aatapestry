@@ -1,0 +1,129 @@
+# =====================================================================
+#  Build & Deploy — builds the site with Eleventy + Tailwind, regenerates
+#  the brand assets (QR codes follow site.json), renders the poster PDFs,
+#  checks the HTML and links, and publishes to GitHub Pages.
+#
+#  Runs:
+#   · on every push to main (settings, content or code changed);
+#   · every Monday morning (so "this week's" 36-Principles focus, the
+#     countdown fallback and "updated" dates stay current without a push);
+#   · every day in December, the workshop month;
+#   · by hand: Actions → "Build & Deploy" → Run workflow;
+#   · from the other workflows (workflow_call) after they commit new Zoom
+#     details — commits made with GITHUB_TOKEN never trigger `push`, so
+#     they call this directly.
+#  Pull requests only build + test (no deploy).
+# =====================================================================
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "LICENSE"
+  pull_request:
+    branches: [main]
+  schedule:
+    # GitHub cron is UTC and often runs late. 13:17 UTC ≈ 5–6 AM Pacific.
+    - cron: "17 13 * * 1"     # weekly, Monday
+    - cron: "17 13 * 12 *"    # daily in December
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  actions: write   # only for the "keep schedules alive" step below
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out (the branch tip, so a commit made earlier in this run is included)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.sha || github.ref }}
+          fetch-depth: 0   # full history, so the sitemap can date each page from its last commit
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Cache Chrome (for the poster PDF)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install
+        run: npm ci
+
+      - name: Build (brand assets → Tailwind → Eleventy)
+        run: npm run build
+        env:
+          ELEVENTY_RUN_MODE: build
+
+      - name: Poster PDF + PNG (the site still deploys if this fails)
+        run: npm run pdf
+        continue-on-error: true
+
+      - name: Validate HTML and internal links
+        run: npm test
+        continue-on-error: true
+
+      - name: Build summary
+        run: |
+          echo "## Build" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Pages: $(find _site -name 'index.html' | wc -l)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Zoom: $(node -p "const s=require('./src/_data/site.json').event.zoom; s.meetingId+' / '+s.passcode+' (updated '+s.lastUpdated+')'")" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Poster files: $(ls brand/poster 2>/dev/null | tr '\n' ' ')" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep the schedules alive (GitHub pauses cron triggers in repos with no commits for 60 days)
+        if: github.event_name == 'schedule'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow enable deploy.yml
+          gh workflow enable sync-zoom.yml
+
+      - name: Configure Pages (enables GitHub Pages with the Actions source on the first run)
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Job-level concurrency is honoured when this workflow is called from update-zoom.yml / sync-zoom.yml too.
+    concurrency:
+      group: pages-deploy-job
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,7 @@
+# Normalise line endings (the workflows and scripts run on Linux in GitHub Actions).
+* text=auto eol=lf
+*.png binary
+*.ico binary
+*.pdf binary
+*.woff2 binary
+*.woff binary

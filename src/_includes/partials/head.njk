@@ -1,0 +1,52 @@
+{%- set isHome = page.url == "/" or page.url == "/es/" -%}
+{%- set pageTitle = title if (isHome and title) else ((title + " · " + site.name) if title else site.title) -%}
+{%- set pageDesc = description or (t.landing.metaDescription if lang == "es" else (site.metaDescription or site.description)) -%}
+{%- set canonical = page.url | absUrl -%}
+{%- set ogImageAbs = ogImage | absUrl -%}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ pageTitle }}</title>
+<meta name="description" content="{{ pageDesc }}">
+<link rel="canonical" href="{{ canonical }}">
+{% if noindex %}<meta name="robots" content="noindex, follow">{% else %}<meta name="robots" content="index, follow, max-image-preview:large">{% endif %}
+{% if translated %}
+<link rel="alternate" hreflang="en" href="{{ page.url | langUrl('en') | absUrl }}">
+<link rel="alternate" hreflang="es" href="{{ page.url | langUrl('es') | absUrl }}">
+<link rel="alternate" hreflang="x-default" href="{{ page.url | langUrl('en') | absUrl }}">
+{% endif %}
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="{{ site.themeColor }}">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#14151B">
+<meta name="color-scheme" content="light dark">
+<meta name="author" content="{{ site.contact.committee }}">
+<meta name="generator" content="Eleventy">
+<meta name="keywords" content="A.A., Alcoholics Anonymous, workshop, Twelve Steps, Twelve Traditions, Twelve Concepts, Three Legacies, 36 principles, online, Zoom, ASL, Spanish, {{ when.date.long }}">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ site.name }}">
+<meta property="og:locale" content="{{ 'es_US' if lang == 'es' else site.locale }}">
+{% if translated %}<meta property="og:locale:alternate" content="{{ site.locale if lang == 'es' else 'es_US' }}">{% endif %}
+<meta property="og:title" content="{{ pageTitle }}">
+<meta property="og:description" content="{{ pageDesc }}">
+<meta property="og:url" content="{{ canonical }}">
+<meta property="og:image" content="{{ ogImageAbs }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ site.title }} — {{ when.date.long }}, {{ when.time.rangeShort }} {{ when.tzShort }}, online on Zoom">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ pageTitle }}">
+<meta name="twitter:description" content="{{ pageDesc }}">
+<meta name="twitter:image" content="{{ ogImageAbs }}">
+{% if site.social.twitter %}<meta name="twitter:site" content="{{ site.social.twitter }}">{% endif %}
+
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/brand/favicon/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/brand/favicon/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="alternate" type="application/atom+xml" title="{{ site.name }} — updates" href="/feed.xml">
+<link rel="alternate" type="text/calendar" title="{{ site.event.name }}" href="/aatapestry-workshop.ics">
+
+<link rel="preload" href="/assets/fonts/fraunces-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/main.css">
+<script>try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}</script>
+{% include "partials/jsonld.njk" %}

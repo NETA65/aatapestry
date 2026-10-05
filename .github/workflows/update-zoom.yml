@@ -1,0 +1,92 @@
+# =====================================================================
+#  Update Zoom info — change the meeting ID, passcode or join link from a
+#  form, without editing any file:
+#     Actions → "Update Zoom info" → Run workflow → fill in the new values.
+#  The workflow writes them into src/_data/site.json, commits, and then
+#  rebuilds + redeploys the site (pages, QR codes, poster, .ics, JSON-LD
+#  all follow). Empty fields keep the current value.
+# =====================================================================
+name: Update Zoom info
+run-name: "Update Zoom info (${{ github.actor }})"
+
+on:
+  workflow_dispatch:
+    inputs:
+      meeting_id:
+        description: "New Zoom meeting ID (digits; spaces are fine). Leave empty to keep the current one."
+        type: string
+        default: ""
+      passcode:
+        description: "New passcode. Leave empty to keep."
+        type: string
+        default: ""
+      join_url:
+        description: "New invite link (https://…zoom.us/j/…?pwd=…). Leave empty to keep."
+        type: string
+        default: ""
+      dial_in:
+        description: "Dial-in numbers, comma-separated (optional, e.g. +1 669 900 6833, +1 346 248 7799). Leave empty to keep."
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-commit
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Write site.json
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      changed: ${{ steps.apply.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Apply the new values
+        id: apply
+        # Form input reaches the script as environment variables, never as shell text.
+        env:
+          MEETING_ID: ${{ inputs.meeting_id }}
+          PASSCODE: ${{ inputs.passcode }}
+          JOIN_URL: ${{ inputs.join_url }}
+          DIAL_IN: ${{ inputs.dial_in }}
+        run: node scripts/update-zoom.mjs
+
+      - name: Commit
+        if: steps.apply.outputs.changed == 'true'
+        env:
+          SUMMARY: ${{ steps.apply.outputs.summary }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/_data/site.json
+          git commit -m "Update Zoom info ($SUMMARY)"
+          git push
+
+      - name: Summary
+        env:
+          SUMMARY: ${{ steps.apply.outputs.summary }}
+        run: |
+          echo "### $SUMMARY" >> "$GITHUB_STEP_SUMMARY"
+          node -p "const z=require('./src/_data/site.json').event.zoom; '- Meeting ID: '+z.meetingId+'\n- Passcode: '+z.passcode+'\n- Link: '+z.joinUrl" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    name: Rebuild & deploy
+    needs: update
+    if: needs.update.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      actions: write
+    uses: ./.github/workflows/deploy.yml

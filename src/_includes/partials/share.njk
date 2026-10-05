@@ -1,0 +1,11 @@
+{#- Share buttons: native share where available, otherwise copy / e-mail / WhatsApp / SMS. Labels from i18n (t.share). -#}
+{%- set shareUrl = (("/es/" if lang == "es") or "/") | absUrl -%}
+{%- set shareTitle = (t.landing.headline if lang == "es" else site.title) -%}
+{%- set shareText = (t.landing.hook if lang == "es" else site.hook) + " " + ((when.date.longEs | capitalize) if lang == "es" else when.date.long) + ", " + (when.time.rangeEs if lang == "es" else when.time.range) + " " + when.tzShort + ". " + t.labels.online + "." -%}
+<div class="share-row" data-share-root data-url="{{ shareUrl }}" data-title="{{ shareTitle }}" data-text="{{ shareText }}">
+  <button type="button" class="btn btn-secondary btn-sm" data-share hidden>{% icon "share-2", "icon" %}<span>{{ t.labels.share }}</span></button>
+  <button type="button" class="btn btn-secondary btn-sm" data-copy="{{ shareUrl }}" data-copied="{{ t.share.copied }}">{% icon "link", "icon" %}<span>{{ t.share.copyLink }}</span></button>
+  <a class="btn btn-secondary btn-sm" href="mailto:?subject={{ shareTitle | urlencode }}&body={{ (shareText + "\n\n" + shareUrl) | urlencode }}">{% icon "mail", "icon" %}<span>{{ t.share.email }}</span></a>
+  <a class="btn btn-secondary btn-sm" href="https://wa.me/?text={{ (shareText + " " + shareUrl) | urlencode }}" target="_blank" rel="noopener">{% icon "message-circle", "icon" %}<span>{{ t.share.whatsapp }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+  <a class="btn btn-secondary btn-sm" href="sms:?&body={{ (shareText + " " + shareUrl) | urlencode }}">{% icon "message-circle", "icon" %}<span>{{ t.share.text }}</span></a>
+</div>
