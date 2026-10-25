@@ -1,0 +1,43 @@
+{#- The day's timeline, used on /, /es/ and /schedule/. Until schedule.json says status "published"
+    AND has sessions, it shows only what is announced: the start (ET, then PT/MT/CT), "presentations,
+    sharing and questions" with "coming soon", and the end. Strings from i18n (t.program, t.labels).
+    Published sessions use titleEs/summaryEs on Spanish pages when present.
+    Optional before the include: tlHeadingLevel (default 3), tlLegacyBadges (true: legacy badge per session). -#}
+{%- import "macros/ui.njk" as ui -%}
+{%- set tEs = lang == "es" -%}
+{%- set th = tlHeadingLevel or 3 -%}
+{%- set tLocale = "es" if tEs else "en" -%}
+<ol class="timeline">
+{% if schedule.status == "published" and schedule.sessions and schedule.sessions.length %}
+  {% for s in schedule.sessions %}
+  {% set lg = s.legacy | legacy %}
+  {% set sTitle = ((s.titleEs or s.title) if tEs else s.title) | tokens %}
+  {% set sSummary = ((s.summaryEs or s.summary) if tEs else s.summary) | tokens %}
+  <li class="{% if s.kind == 'break' %}is-break{% endif %}"{% if lg %} style="--legacy: var(--c-{{ lg.key }})"{% endif %}>
+    <div class="time">{{ s.start | time12(tLocale) }}<small>→ {{ s.end | time12(tLocale) }}&nbsp;{{ when.tzShort }}</small></div>
+    <div>
+      <h{{ th }}>{{ sTitle }}</h{{ th }}>
+      {% if lg and tlLegacyBadges %}<p class="mt-1">{{ ui.legacyBadge(lg, ((t.legacies[lg.key] + " · " + t.legacies[lg.shortBody | lower]) if tEs else (lg.name + " · " + lg.body))) }}</p>{% endif %}
+      {% if sSummary %}<p class="text-muted text-sm mt-1">{{ sSummary }}</p>{% endif %}
+    </div>
+  </li>
+  {% endfor %}
+{% else %}
+  <li style="--legacy: var(--c-recovery)">
+    <div class="time">{{ when.time.startEs if tEs else when.time.start }}<small>{{ when.tzShort }}</small></div>
+    <div><h{{ th }}>{{ t.program.begins | tokens }}</h{{ th }}><p class="text-muted text-sm">{{ when.time.startsAlsoEs if tEs else when.time.startsAlso }}</p></div>
+  </li>
+  <li class="is-pending" style="--legacy: var(--c-unity)">
+    <div class="time">{{ when.time.startEs if tEs else when.time.start }}<small>→ {{ when.time.endEs if tEs else when.time.end }}&nbsp;{{ when.tzShort }}</small></div>
+    <div>
+      <h{{ th }}>{{ t.program.middle | tokens }}</h{{ th }}>
+      <p class="mt-1"><span class="badge badge-tentative">{% icon "info", "icon" %}{{ t.labels.programSoon | tokens }}</span></p>
+      <p class="text-muted text-sm mt-1">{{ t.program.pending | tokens }}</p>
+    </div>
+  </li>
+  <li style="--legacy: var(--c-service)">
+    <div class="time">{{ when.time.endEs if tEs else when.time.end }}<small>{{ when.tzShort }}</small></div>
+    <div><h{{ th }}>{{ t.program.ends | tokens }}</h{{ th }}><p class="text-muted text-sm">{{ when.time.endsAlsoEs if tEs else when.time.endsAlso }}</p></div>
+  </li>
+{% endif %}
+</ol>

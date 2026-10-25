@@ -1,7 +1,7 @@
 {
   "_readme": "The 36 principles: for each number, the Step, Tradition and Concept with the thread that connects them. Drives /principles/, the twelve /principles/N/ pages, the meeting focus and the printable handouts. The 'text' fields are EMPTY on purpose: paste the official short-form wording from your own A.A. literature (Big Book pp. 59–60 and Appendix I; The A.A. Service Manual) if the committee decides to show it; until then the site links each number to aa.org.",
   "notice": "The Twelve Steps, Twelve Traditions and Twelve Concepts for World Service are copyrighted by Alcoholics Anonymous World Services, Inc. Read them in full at aa.org.",
-  "principleWordsNote": "The principle words below are the ones members commonly cite in Step, Tradition and Concept study; they are a study aid passed along in meetings, not A.A. literature, and other lists exist.",
+  "principleWordsNote": "The principle words in the table above are the ones members commonly cite in Step, Tradition and Concept study; they are a study aid passed along in meetings, not A.A. literature, and other lists exist.",
   "sources": {
     "step": { "label": "The Twelve Steps at aa.org", "url": "https://www.aa.org/the-twelve-steps" },
     "tradition": { "label": "The Twelve Traditions at aa.org", "url": "https://www.aa.org/the-twelve-traditions" },

@@ -1,6 +1,10 @@
 {%- set isHome = page.url == "/" or page.url == "/es/" -%}
 {%- set pageTitle = title if (isHome and title) else ((title + " · " + site.name) if title else site.title) -%}
-{%- set pageDesc = description or (t.landing.metaDescription if lang == "es" else (site.metaDescription or site.description)) -%}
+{%- set pageDesc = ((description or (t.landing.metaDescription if lang == "es" else (site.metaDescription or site.description))) | tokens | plain) -%}
+{#- The social card's alt text says what the card prints (scripts/build-brand.mjs → cardText): the date, the
+    time line, the PT/MT/CT line, and "Online on Zoom · Spanish & ASL interpretation · Free". -#}
+{%- set ogWhere = (t.poster.whereLine | tokens) + " · " + (t.poster.interpretationLine | tokens) + " · " + (t.labels.free | tokens) -%}
+{%- set ogAlt = ((site.name + " — " + when.date.longEs + ", " + when.time.leadLongEs + "; " + when.time.startsAlsoEs + " · " + ogWhere) if lang == "es" else (site.name + " — " + when.date.long + ", " + when.time.lead + " (" + when.time.startsAlso + ") · " + ogWhere)) | plain -%}
 {%- set canonical = page.url | absUrl -%}
 {%- set ogImageAbs = ogImage | absUrl -%}
 <meta charset="utf-8">
@@ -19,7 +23,7 @@
 <meta name="color-scheme" content="light dark">
 <meta name="author" content="{{ site.contact.committee }}">
 <meta name="generator" content="Eleventy">
-<meta name="keywords" content="A.A., Alcoholics Anonymous, workshop, Twelve Steps, Twelve Traditions, Twelve Concepts, Three Legacies, 36 principles, online, Zoom, ASL, Spanish, {{ when.date.long }}">
+<meta name="keywords" content="A.A., Alcoholics Anonymous, workshop, Twelve Steps, Twelve Traditions, Twelve Concepts, Three Legacies, 36 principles, online, Zoom, Spanish interpretation, ASL, {{ when.date.long }}">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{{ site.name }}">
@@ -29,9 +33,10 @@
 <meta property="og:description" content="{{ pageDesc }}">
 <meta property="og:url" content="{{ canonical }}">
 <meta property="og:image" content="{{ ogImageAbs }}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="{{ site.title }} — {{ when.date.long }}, {{ when.time.rangeShort }} {{ when.tzShort }}, online on Zoom">
+<meta property="og:image:width" content="{{ ogImageWidth or 1200 }}">
+<meta property="og:image:height" content="{{ ogImageHeight or 630 }}">
+<meta property="og:image:alt" content="{{ ogAlt }}">
+<meta name="twitter:image:alt" content="{{ ogAlt }}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ pageTitle }}">
 <meta name="twitter:description" content="{{ pageDesc }}">

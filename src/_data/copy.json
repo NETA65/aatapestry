@@ -1,18 +1,32 @@
 {
-  "_readme": "Every piece of English prose on the site lives here so nothing is hard-coded in templates. Fields marked (md) in docs/EDITING.md accept simple Markdown (bold, links, lists). Names, dates, times, Zoom details and colors come from site.json; the program comes from schedule.json; the weekly meeting from meeting.json. Keep the voice warm and plain: we are A.A. members talking to A.A. members.",
+  "_readme": "English page prose that the Spanish pages do not share (shared labels, How to join, the contact card, the flyer text and the poster lines are in i18n.json). Write the email, date, times and Zoom numbers ONLY as tokens: {email}, {date}, {time}, {timeLong}, {startsAlso}, {rangesAlso}, {zoomId}, {passcode}; the build fills them in from site.json. The email address is printed at most ONCE per page (the Questions card, the flyer text or the poster line do that), so prose never writes a bare {email}: link to it instead, as [email the planning committee](mailto:{email}). Fields marked (md) in docs/EDITING.md accept simple Markdown (bold, links); every other field is plain text. The program comes from schedule.json; meetingTeaser is shown only when meeting.json → published is true. Keep the voice warm and plain: we are A.A. members talking to A.A. members.",
   "hero": {
-    "eyebrow": "A free online A.A. workshop",
+    "eyebrow": "A 1-day online A.A. workshop",
     "headline": "The Incredible Tapestry",
-    "sub": "A full day of weaving the Twelve Steps, Twelve Traditions and Twelve Concepts together, one number at a time. Free, on Zoom, with ASL and Spanish interpretation; open to every A.A. member, no registration needed.",
+    "sub": "A series of presentations on the Steps, Traditions and Concepts, with plenty of time for sharing and asking questions. Spanish and ASL interpretation will be provided. It’s free, and no pre-registration is required.",
     "ctaPrimary": "Join on Zoom",
     "ctaSecondary": "Add to calendar",
-    "ctaTertiary": "See the program"
+    "ctaFlyer": "View the flyer",
+    "markAlt": "The Incredible Tapestry mark: a circle around a triangle whose three sides are labeled Unity, Service and Recovery, with three overlapping colored circles inside, one for each legacy."
+  },
+  "program": {
+    "heading": "About the day",
+    "lead": "Come join us on {date}, for a 1-day online workshop. There will be a series of presentations that look at how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions.",
+    "history": "The workshop is similar to the Tapestry meetings held previously in Raynham, Massachusetts.",
+    "strandsLine": "Presentations · Sharing · Questions and more",
+    "pageTitle": "Program",
+    "pageDescription": "Times for The Incredible Tapestry, {date}, {time}, on Zoom. The program will be available on this website shortly.",
+    "pageHeading": "The program",
+    "pageLead": "On this page: the day’s times (in your own time zone, too), how to add the workshop to your calendar, and how to join on Zoom.",
+    "allTimes": "All times are Eastern (ET). Where your browser allows, your local time is shown too.",
+    "calendarNote": "If the Zoom details ever change, this site will show the current ones. A calendar entry does not update itself, so if that happens, please delete the old entry and add the workshop to your calendar again.",
+    "programPageCta": "Program page"
   },
   "intro": {
     "heading": "Pull one thread and the whole cloth moves",
     "body": [
-      "Most of us met the Steps first, in a church basement or on a screen, from someone who had been where we were. The Traditions came later, usually when a group business meeting got lively. The Concepts, if we met them at all, arrived with a service job we did not quite ask for. We tend to keep the three in separate drawers. This workshop takes them out and lays them side by side.",
-      "**The Incredible Tapestry** is a free, all-day online gathering for A.A. members and anyone curious about how the Fellowship holds together. We will spend the morning with the Steps and the Traditions, the early afternoon with the Concepts, and the last part of the day in small breakout rooms, each tracing a single number through all three legacies. No registration, no cost, no homework. Bring your coffee and your home group's questions."
+      "Most of us met the Steps first, in a church basement or on a screen, from someone who had been where we were. The Traditions came later, usually when a group business meeting got lively. The Concepts, if we met them at all, arrived with a service job we did not quite ask for. We tend to keep the three in separate drawers. This workshop takes them out and looks at how they weave together.",
+      "No homework is needed, and nobody expects you to know the Concepts by heart. Bring your coffee and your home group’s questions."
     ]
   },
   "legacies": {
@@ -25,126 +39,59 @@
     "lead": "Take any number from one to twelve. The Step, the Tradition and the Concept that carry that number are three expressions of one idea, seen from the chair, from the group and from the Fellowship as a whole.",
     "body": [
       "Look at the number **one**. Step One admits that we were powerless over alcohol and that our lives had become unmanageable. Tradition One says our common welfare comes first, because personal recovery depends on A.A. unity. Concept One places the final responsibility and ultimate authority for world services in the collective conscience of the whole Fellowship. Three sentences written years apart, and the same thread runs through all of them: none of us gets well alone, and the whole only works when each part admits it needs the others. Try it with **two** (a Power greater than ourselves, a loving God as expressed in our group conscience, the Conference as the active voice and effective conscience of the whole Fellowship) and the pattern shows up again.",
-      "The workshop is built around this pattern. The three legacy sessions each take one body of principles on its own terms, then the afternoon breakouts hand every room a single number to trace through its Step, Tradition and Concept. The same pattern shapes the planned weekly [36 Principles meeting](/meeting/): one number a week, all three legacies that week, read aloud together. The [study pages](/principles/) lay out all 36 for anyone who wants to keep weaving after the day is over."
+      "The [study pages](/principles/) lay out all 36 side by side, with the Step, the Tradition and the Concept of each number together. They are a companion to the workshop: something to read before the day, and a way to keep weaving after it is over."
     ],
     "cta": "Explore all 36"
   },
-  "whyAttend": {
-    "heading": "Why spend a Saturday on this",
-    "items": [
-      {
-        "title": "Finally meet the Concepts",
-        "body": "Most of us have heard of them and few of us have read them. We will go through the Twelve Concepts in plain language, without the service jargon, so they make sense to someone whose only service job is making the coffee."
-      },
-      {
-        "title": "See your home group differently",
-        "body": "The Traditions were written out of real trouble in real groups. Hearing how each one answers the Step of the same number tends to make the next business meeting a little kinder."
-      },
-      {
-        "title": "Work the Steps in a wider frame",
-        "body": "Set Step Three beside Tradition Three and Concept Three and the thread is trust: trusting a Higher Power with our will, trusting that a desire to stop drinking is enough, and trusting our trusted servants with the Right of Decision."
-      },
-      {
-        "title": "Be in the room with the whole Fellowship",
-        "body": "ASL and Spanish interpretation run all day, the room is open to any A.A. member anywhere, and the breakouts put you in a small circle with people you would never otherwise meet."
-      }
-    ]
-  },
-  "whatToExpect": {
-    "heading": "What the day feels like",
-    "items": [
-      {
-        "title": "Speakers who have lived it",
-        "body": "Each legacy session opens with a member sharing experience, not a lecture. Expect stories about sponsorship, group conscience and service before any theory."
-      },
-      {
-        "title": "Real situations, not case studies",
-        "body": "The Traditions session works from things that actually happen in groups: the member who wants to record the meeting, the treasury that grew too large, the outside speaker with a good cause."
-      },
-      {
-        "title": "Small rooms in the afternoon",
-        "body": "Mid-afternoon, after the Concepts session, we break into Zoom rooms of eight to ten people. Each room gets one number, traces it through its Step, Tradition and Concept, and reports back to the whole group."
-      },
-      {
-        "title": "Breaks, and a lunch that stays open",
-        "body": "Two short breaks and a thirty-minute lunch. The Zoom room stays open through lunch for anyone who wants to keep talking; the interpreters take a well-earned rest."
-      }
-    ]
-  },
-  "howToJoin": {
-    "heading": "How to join",
-    "steps": [
-      "On the day, use the **Join on Zoom** button on this page, or open Zoom yourself and enter the meeting ID and passcode shown here.",
-      "If Zoom asks, enter a display name using your **first name and last initial** only, the same way you would introduce yourself at a meeting.",
-      "Once you are in, find the **Interpretation** (globe) button if you want Spanish audio, or pin the ASL interpreter's video if you need sign language. Captions are under the **CC** button.",
-      "Settle in. Questions about Zoom go in the chat; the hosts will be watching it all day."
-    ],
-    "tip": "Join a few minutes early if you can; the room will open ahead of 8 AM Pacific so you can sort out audio and interpretation before we begin."
-  },
-  "schedule": {
-    "heading": "The day",
-    "lead": "Eight hours, three legacies, two breaks, one lunch, and an afternoon of weaving it all together.",
-    "tentativeBadge": "Tentative",
-    "finalBadge": "Final program",
-    "comingSoon": "The planning committee is still weaving the full program; session titles and speakers will appear here as soon as they are set.",
-    "allTimes": "All times Pacific. Your local time is shown automatically where your browser allows it."
-  },
   "accessibility": {
     "heading": "Accessibility & interpretation",
-    "lead": "The hand of A.A. should reach everyone who wants it. ASL and Spanish interpretation run for the whole day, captions are available, and we are glad to make other arrangements where we can.",
+    "lead": "The hand of A.A. should reach everyone who wants it. Interpretation will be provided in Spanish and ASL, and this page shows how to use it in Zoom.",
+    "teaser": "Spanish and ASL interpretation will be provided, and the accessibility page shows how to use it in Zoom on a computer or a phone.",
     "sections": [
       {
-        "title": "ASL interpretation",
+        "key": "es",
+        "title": "Spanish interpretation",
         "body": [
-          "American Sign Language interpreters will be on screen for every session, from the opening to the Responsibility Statement, including the breakout rooms wherever an interpreter is available. Interpreters rotate during the day and rest during lunch.",
-          "On a desktop or laptop, Zoom's **sign language interpretation view** lets you choose ASL from the Interpretation (globe) button, which places the interpreter in a dedicated, resizable window. If that option is not showing, hover over the interpreter's video, open the three-dot menu and choose **Pin**; on desktop you can pin more than one video so the speaker and the interpreter stay side by side. The host can also spotlight the interpreter for everyone when a session calls for it."
-        ]
-      },
-      {
-        "title": "Spanish interpretation (Interpretación en español)",
-        "body": [
-          "Spanish interpretation is offered through a separate audio channel for the whole day. Interpreters render speakers into Spanish live, and when a Spanish-speaking member shares, the interpreter renders them into English for the main room, so sharing is welcome in either language.",
+          "Spanish interpretation will be provided on its own audio channel in Zoom.",
           "To listen in Spanish, click the **Interpretation** (globe) button on the Zoom toolbar and choose **Spanish**. On a phone or tablet the same control is under **More** (the three dots), then **Language Interpretation**. Turn on **Mute Original Audio** if you prefer to hear only the Spanish; leave it off to hear the original speaker quietly underneath."
         ]
       },
       {
-        "title": "Captions",
+        "key": "asl",
+        "title": "ASL interpretation",
         "body": [
-          "Zoom's automated captions will be turned on for the whole room. Click the **CC** or **Show Captions** button on the toolbar to see them, or choose **View Full Transcript** to read along and scroll back. The captions are generated by software, not a person, so names, A.A. phrases and crosstalk sometimes come out wrong; please treat them as a help rather than a record, and remember that they do not replace the live interpreters."
+          "American Sign Language (ASL) interpretation will be provided.",
+          "On a desktop or laptop, if Zoom’s **sign language interpretation view** is offered, choose ASL from the **Interpretation** (globe) button and the interpreter appears in a dedicated, resizable window. If that option is not showing, hover over the interpreter’s video, open the three-dot menu and choose **Pin** to keep the interpreter on screen."
         ]
       },
       {
-        "title": "Other needs",
+        "key": "captions",
+        "title": "Captions",
         "body": [
-          "This website is built to work with screen readers and keyboard navigation, and large-print versions of any handouts will be posted here before the day. If telephone dial-in is offered, the numbers will be listed with the Zoom details. For anything else, write to the planning committee and we will do our best to work it out with you."
+          "If captions are turned on for the meeting, click **CC** or **Show Captions** on the Zoom toolbar to see them, or choose **View Full Transcript** to read along and scroll back. Captions are generated by software, not a person, so they may stumble on names and A.A. phrases; think of them as a help rather than a record."
+        ]
+      },
+      {
+        "key": "other",
+        "title": "Anything else",
+        "body": [
+          "This website is built to work with screen readers and keyboard navigation."
         ]
       }
     ],
-    "requests": "If there is something that would make the day easier for you to take part in, please ask; the earlier we hear, the more we can arrange."
-  },
-  "etiquette": {
-    "heading": "Zoom etiquette & online anonymity",
-    "items": [
-      "Please use your **first name and last initial** as your display name, just as you would introduce yourself in a meeting.",
-      "**Cameras are welcome but optional.** Some of us join from a kitchen or a break room; you are no less present with your camera off.",
-      "**Stay muted** unless you are sharing or asking a question. The hosts will mute stray microphones gently.",
-      "**No recording, no screenshots, no photos of the screen.** This workshop is not recorded, and we ask every member to extend the same courtesy.",
-      "Use **Raise Hand** (under Reactions) to share or ask a question; the chair will call on you in order.",
-      "Keep the **chat** for logistics: Zoom trouble, interpretation questions, a dropped link. Sharing belongs on the microphone.",
-      "In the **breakout rooms**, let the host's prompt guide you, give everyone a turn, and come back when the timer calls.",
-      "Share the Zoom link within the Fellowship, in your home group, your district or your area, and please do not post it on public social media."
-    ]
+    "requests": "If you have a question about accessibility, or if anything would make it easier for you to take part, please email:"
   },
   "anonymity": {
     "heading": "A word about anonymity",
     "body": [
-      "Anonymity is the spiritual foundation of all our Traditions, and it does not take the day off because we are online. Who you see and what you hear in this room stays in this room. Please do not record, screenshot or quote members by name, and if you share about the workshop afterwards, speak of what you learned, not of who was there. Members of this committee and the speakers appear by first name and last initial only, here and on the day."
+      "Anonymity is the spiritual foundation of all our Traditions, and it does not take the day off because we are online. Who you see and what you hear in this room stays in this room. Please do not record, screenshot or quote members by name, and if you share about the workshop afterwards, speak of what you learned, not of who was there. On Zoom, please use your first name and last initial as your display name."
     ]
   },
   "seventh": {
     "heading": "Seventh Tradition",
     "body": [
-      "This workshop is free, and there is no basket on this website. The members who are putting it together are covering the small costs themselves, as a Seventh Tradition contribution of their own. If the day moves you to give, please do it the way A.A. has always done it: through your home group, your intergroup or central office, your area, or the General Service Office. We do not accept contributions from outside the Fellowship."
+      "The workshop is free. There will be some expenses for the Spanish and ASL interpretation, and contributions are welcome to help cover them.",
+      "In keeping with our Seventh Tradition, we are self-supporting through our own contributions, so we accept them from A.A. members only. To ask how to contribute, please [email the planning committee](mailto:{email})."
     ]
   },
   "meetingTeaser": {
@@ -153,50 +100,31 @@
     "cta": "About the meeting",
     "comingSoon": "The meeting day, time and Zoom details will be posted here once the founding group has settled them."
   },
-  "poster": {
-    "headline": "The Incredible Tapestry",
-    "sub": "Weaving the Steps, Traditions & Concepts together",
-    "scanZoom": "Scan to join on Zoom",
-    "scanSite": "Scan for details & updates",
-    "freeLine": "Free · Open to all A.A. members · No registration",
-    "footer": "An online A.A. workshop with ASL and Spanish interpretation · aatapestry.org",
-    "shareHeading": "Share the poster",
-    "shareBody": "Download the poster as a PDF or PNG, print it on letter or A4 paper, and pin it to your home group's bulletin board or pass it along to your district or intergroup. Both QR codes work from paper."
-  },
   "logoStory": {
     "heading": "About the mark",
     "body": [
       "The circle and triangle have stood for A.A. since the 1950s: the circle is the whole world of A.A., and the three sides of the triangle are our Three Legacies, named here the way they appear on a medallion: Unity, Service, Recovery.",
-      "Inside the triangle, three circles overlap like a Venn diagram, one for each legacy in its own colour. Where two meet, a Step and a Tradition, or a Tradition and a Concept, share a principle; the small shape where all three meet is the tapestry itself: the Fellowship, held together by all 36 threads."
+      "Inside the triangle, three circles overlap like a Venn diagram, one for each legacy in its own color. Where two meet, a Step and a Tradition, or a Tradition and a Concept, share a principle; the small shape where all three meet is the tapestry itself: the Fellowship, held together by all 36 threads."
     ]
   },
   "updates": {
     "heading": "Updates",
     "feed": "Subscribe (RSS)"
   },
-  "contact": {
-    "heading": "Questions?",
-    "body": "Write to the planning committee and a trusted servant will get back to you, usually within a few days."
+  "faq": {
+    "heading": "Questions & answers",
+    "lead": ""
   },
   "notFound": {
     "heading": "That thread leads nowhere",
     "body": "The page you were looking for has moved or never existed. The whole tapestry is still here, though, starting from the front page.",
     "cta": "Back to the start"
   },
-  "footer": {
-    "blurb": "Made by A.A. members for A.A. members, in the spirit of Tradition Five: one primary purpose.",
-    "editNote": "This site is open source and updates itself from one data file."
-  },
   "share": {
     "heading": "Spread the word",
-    "body": "Tell your home group, your sponsees and your district. The best way an announcement travels in A.A. is still one alcoholic talking to another.",
-    "copyLink": "Copy link",
-    "copied": "Copied",
-    "email": "Email",
-    "whatsapp": "WhatsApp",
-    "text": "Text message"
+    "body": "Tell your home group, your sponsees and your district. The best way an announcement travels in A.A. is still one alcoholic talking to another."
   },
   "jsonld": {
-    "eventSummary": "A free, all-day online A.A. workshop exploring how the Twelve Steps, Twelve Traditions and Twelve Concepts intertwine, one number at a time. On Zoom, 8 AM to 4 PM Pacific, with ASL and Spanish interpretation. Open to all A.A. members; no registration needed."
+    "eventSummary": "A free, 1-day online A.A. workshop on Zoom: a series of presentations on how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions. Spanish and ASL interpretation will be provided, and no pre-registration is required. It is similar to the Tapestry meetings held previously in Raynham, Massachusetts."
   }
 }

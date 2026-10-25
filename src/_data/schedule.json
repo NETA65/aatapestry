@@ -1,26 +1,5 @@
 {
-  "_readme": "The day's program. status: 'tentative' shows a 'program coming soon' notice; 'final' removes it. showSessions: false shows only the framework (start, lunch, end) until the committee is ready to publish session titles; flip it to true to reveal the sessions below. Times are in the event timezone (site.json → event.timezone). Keep sessions in order. legacy: recovery | unity | service | all. kind: opening | talk | session | break | workshop | closing.",
-  "status": "tentative",
-  "showSessions": false,
-  "note": "The full program is being woven together by the planning committee and will be posted here. Expect three legacy-focused sessions, a shared lunch break, and a closing panel that ties all 36 threads together.",
-  "sessions": [
-    { "start": "08:00", "end": "08:20", "title": "Welcome & opening", "legacy": "all", "kind": "opening",
-      "summary": "Serenity Prayer, the A.A. Preamble, and how the day will work (interpretation channels, breaks, questions)." },
-    { "start": "08:20", "end": "09:00", "title": "Keynote: One Fellowship, Three Legacies", "legacy": "all", "kind": "talk",
-      "summary": "Why Bill W. called Recovery, Unity and Service our Three Legacies, and how a single thread runs through the Step, Tradition and Concept of the same number." },
-    { "start": "09:00", "end": "10:15", "title": "Recovery: the Twelve Steps as a way of life", "legacy": "recovery", "kind": "session",
-      "summary": "Speaker and sharing. How the Steps shape the person who shows up for the group and for service." },
-    { "start": "10:15", "end": "10:30", "title": "Break", "legacy": "all", "kind": "break", "summary": "" },
-    { "start": "10:30", "end": "12:00", "title": "Unity: the Twelve Traditions in the room and on the screen", "legacy": "unity", "kind": "session",
-      "summary": "Speaker, situations from real groups, and a look at how each Tradition answers the Step of the same number." },
-    { "start": "12:00", "end": "12:30", "title": "Lunch break", "legacy": "all", "kind": "break",
-      "summary": "Thirty minutes. The Zoom room stays open; interpreters rest too." },
-    { "start": "12:30", "end": "14:00", "title": "Service: the Twelve Concepts, plainly", "legacy": "service", "kind": "session",
-      "summary": "Speaker and Q&A. The Concepts without the jargon: how the Fellowship governs itself and why it matters to a home group." },
-    { "start": "14:00", "end": "14:15", "title": "Break", "legacy": "all", "kind": "break", "summary": "" },
-    { "start": "14:15", "end": "15:30", "title": "Weaving the 36 together", "legacy": "all", "kind": "workshop",
-      "summary": "Small-group breakouts: each room takes one number and traces its thread through Step, Tradition and Concept, then reports back." },
-    { "start": "15:30", "end": "16:00", "title": "Closing panel & the Responsibility Statement", "legacy": "all", "kind": "closing",
-      "summary": "Panel reflections, announcements, and a closing that sends us back to our home groups." }
-  ]
+  "_readme": "The day's program. status: 'pending' while the program is not published (pages show only the start and end times from site.json and a note that the program will be available on this website shortly) or 'published' (pages list the sessions below; this takes effect only when sessions is not empty). Each session: start and end as \"HH:MM\" in Eastern Time (the event timezone, site.json → event.timezone, America/New_York; the day runs 11:00 to 19:00), title and titleEs, summary and summaryEs (plain text; may be \"\"), legacy: recovery | unity | service | all, kind: opening | talk | session | break | closing. Keep sessions in time order, and enter only what the committee has announced.",
+  "status": "pending",
+  "sessions": []
 }

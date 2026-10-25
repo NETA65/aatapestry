@@ -25,7 +25,8 @@ export default class {
       const d = [t, dataDate].filter(Boolean).sort().pop();
       return d || build.time.slice(0, 10);
     };
-    const priority = (u) => (u === "/" ? "1.0" : u === "/es/" || u === "/join/" || u === "/schedule/" || u === "/principles/" ? "0.9" : u.startsWith("/principles/") ? "0.7" : "0.6");
+    const TOP = new Set(["/es/", "/join/", "/schedule/", "/flyer/", "/es/flyer/", "/principles/"]);
+    const priority = (u) => (u === "/" ? "1.0" : TOP.has(u) ? "0.9" : u.startsWith("/principles/") ? "0.7" : "0.6");
     const alt = (p) => {
       if (!p.data.translated) return "";
       const en = p.url.replace(/^\/es(?=\/)/, "") || "/";

@@ -1,5 +1,5 @@
 ---
-permalink: /meeting/
+# permalink: set in meeting.11tydata.js — /meeting/ is only built once meeting.json says published: true.
 title: 36 Principles Meeting
 description: "A weekly online A.A. meeting that reads the Step, Tradition and Concept of the same number together — this week's focus, format, Zoom details and calendar."
 eleventyComputed:
@@ -23,7 +23,7 @@ eleventyComputed:
       <a href="/36-principles-meeting.ics" class="btn btn-secondary btn-lg" download>{% icon "calendar", "icon" %}<span>{{ t.labels.addToCalendar }}</span></a>
     </div>
     {% else %}
-    <p class="panel-muted mt-6 max-w-2xl">{{ copy.meetingTeaser.comingSoon }}</p>
+    <p class="panel-muted mt-6 max-w-2xl">{{ copy.meetingTeaser.comingSoon | tokens }}</p>
     {% endif %}
   </div>
 </section>

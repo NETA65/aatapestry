@@ -1,11 +1,12 @@
 {
-  "_readme": "SINGLE SOURCE OF TRUTH for the workshop. Edit here and every page, the poster, the QR codes, the calendar files, the JSON-LD and the social cards update on the next build. Field notes are in docs/EDITING.md.",
+  "_readme": "SINGLE SOURCE OF TRUTH for the workshop. Edit here and every page, the poster, the QR codes, the calendar files, the JSON-LD and the social cards update on the next build. Prose in copy.json, i18n.json, faq.json, schedule.json and updates.json never repeats the email, date, times or Zoom numbers: it uses tokens such as {email}, {date}, {time}, {startsAlso}, {zoomId} and {passcode}, which the build fills in from here. The exceptions are description and metaDescription, which spell the time out in plain text; update them by hand if the time ever changes. Field notes are in docs/EDITING.md.",
   "name": "The Incredible Tapestry",
   "shortName": "AA Tapestry",
   "title": "The Incredible Tapestry: Weaving the Steps, Traditions & Concepts Together",
   "tagline": "Weaving the Steps, Traditions & Concepts into One Fellowship",
+  "subtitle": "How the Steps, Traditions and Concepts weave this incredible tapestry",
   "hook": "36 threads. Three legacies. One tapestry.",
-  "description": "A free, all-day online A.A. workshop on Saturday, December 12, 2026 (8 AM – 4 PM Pacific) exploring how the Twelve Steps, Twelve Traditions and Twelve Concepts intertwine — one number at a time, all three legacies side by side. On Zoom, with ASL and Spanish interpretation.",
+  "description": "A free, 1-day online A.A. workshop on Saturday, December 12, 2026, 11 AM – 7 PM ET (8 AM PT · 9 AM MT · 10 AM CT): a series of presentations on how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions. On Zoom, with Spanish and ASL interpretation. No pre-registration is required.",
   "url": "https://aatapestry.org",
   "domain": "aatapestry.org",
   "lang": "en",
@@ -14,53 +15,49 @@
   "backgroundColor": "#FBF7F0",
   "event": {
     "name": "The Incredible Tapestry Workshop",
-    "kind": "Online A.A. workshop",
+    "kind": "1-day online A.A. workshop",
     "date": "2026-12-12",
-    "start": "08:00",
-    "end": "16:00",
-    "timezone": "America/Los_Angeles",
-    "timezoneShort": "PT",
-    "timezoneLabel": "Pacific Time",
-    "lunch": {
-      "start": "12:00",
-      "durationMinutes": 30,
-      "tentative": true
-    },
+    "start": "11:00",
+    "end": "19:00",
+    "timezone": "America/New_York",
+    "timezoneShort": "ET",
+    "timezoneLabel": "Eastern Time",
+    "timezoneLabelEs": "hora del Este",
     "format": "online",
     "platform": "Zoom",
     "status": "scheduled",
-    "calendarSequence": 1,
-    "cost": "Free. There are no dues or fees; we are self-supporting through our own contributions (Seventh Tradition).",
-    "audience": "Open to all A.A. members, trusted servants and anyone curious about the three legacies. Newcomers warmly welcome.",
+    "calendarSequence": 3,
+    "cost": "Free. There will be some expenses for the Spanish and ASL interpretation, and contributions are welcome to help cover them.",
+    "audience": "Open to all A.A. members, anyone who thinks they might have a problem with alcohol, and trusted servants at every level. Newcomers warmly welcome.",
     "registration": {
       "required": false,
       "url": "",
-      "note": "No registration needed — just join the Zoom meeting."
+      "note": "No pre-registration is required."
     },
     "interpretation": [
-      {
-        "key": "asl",
-        "label": "ASL interpretation",
-        "labelEs": "Interpretación en ASL (lengua de señas americana)",
-        "note": "American Sign Language interpreters will be on screen all day. Use Zoom's sign language interpretation view or pin the interpreter."
-      },
       {
         "key": "es",
         "label": "Spanish interpretation",
         "labelEs": "Interpretación en español",
-        "note": "Choose the Spanish channel from the Interpretation (globe) button in Zoom."
+        "note": "Choose the Spanish channel from the Interpretation (globe) button in Zoom. On a phone or tablet, it is under More, then Language Interpretation.",
+        "noteEs": "En Zoom, el canal en español se elige con el botón Interpretación (Interpretation, el globo terráqueo). En el teléfono o la tableta, está en Más (More) y luego en Interpretación de idiomas (Language Interpretation)."
+      },
+      {
+        "key": "asl",
+        "label": "ASL interpretation",
+        "labelEs": "Interpretación en ASL (lengua de señas americana)",
+        "note": "Choose ASL from the Interpretation (globe) button to open Zoom's sign language view if it is offered, or pin the interpreter's video.",
+        "noteEs": "Desde el botón Interpretación (Interpretation, el globo terráqueo) se puede elegir ASL para abrir la vista de lengua de señas de Zoom, si está disponible, o bien fijar (Pin) el video del intérprete."
       }
     ],
     "zoom": {
       "_readme": "Also editable from GitHub → Actions → 'Update Zoom info' without touching this file.",
-      "meetingId": "701 778 5951",
-      "passcode": "446920",
-      "joinUrl": "https://us02web.zoom.us/j/7017785951?pwd=VHVEQ0xJRklyQmovY2ZOUytqTzJxQT09",
+      "meetingId": "824 7491 1898",
+      "passcode": "218564",
+      "joinUrl": "https://us02web.zoom.us/j/82474911898?pwd=EwOXRz2NWKHgCirlpAAv1gseGMybGe.1",
       "dialIn": [],
-      "lastUpdated": "2026-10-04"
-    },
-    "recording": "Not recorded. In keeping with our tradition of anonymity, this workshop will not be recorded.",
-    "timezoneLabelEs": "hora del Pacífico"
+      "lastUpdated": "2026-10-25"
+    }
   },
   "legacies": [
     {
@@ -73,6 +70,7 @@
       "colorSoft": "#E3E9F7",
       "source": "Alcoholics Anonymous (the Big Book) and Twelve Steps and Twelve Traditions",
       "blurb": "The Steps are how the individual alcoholic gets well: a spiritual program of action, one day at a time.",
+      "blurbEs": "Los Pasos son la manera en que cada alcohólico se recupera: un programa espiritual de acción, un día a la vez.",
       "colorText": "#2F4FA2"
     },
     {
@@ -85,6 +83,7 @@
       "colorSoft": "#DDF1EA",
       "source": "Twelve Steps and Twelve Traditions and A.A. Comes of Age",
       "blurb": "The Traditions are how the group stays well: the hard-won lessons that keep us together so the hand of A.A. is always there.",
+      "blurbEs": "Las Tradiciones son la manera en que el grupo se mantiene sano: las lecciones, aprendidas con esfuerzo, que nos mantienen unidos para que la mano de A.A. siempre esté ahí.",
       "colorText": "#156B53"
     },
     {
@@ -97,6 +96,7 @@
       "colorSoft": "#FBEFD6",
       "source": "The A.A. Service Manual / Twelve Concepts for World Service",
       "blurb": "The Concepts are how the Fellowship as a whole stays well: the principles that let our service structure carry the message worldwide.",
+      "blurbEs": "Los Conceptos son la manera en que la Comunidad en su conjunto se mantiene sana: los principios que permiten que nuestra estructura de servicio lleve el mensaje a todo el mundo.",
       "colorText": "#8A5A0B"
     }
   ],
@@ -108,10 +108,29 @@
     "fontBody": "Inter"
   },
   "contact": {
-    "_readme": "Leave email empty to hide the contact block. Add a committee name if you like.",
+    "_readme": "email is the questions address printed on the official flyer. Each page PRINTS the address at most once: the Questions card (home, /es/, /join/, /es/join/, /schedule/), the flyer text (/flyer/, /es/flyer/), the printed line on the posters, the requests box on /accessibility/. Everywhere else (facts strip, contributions note, FAQ, updates, footer) it is a link labelled 'Email the planning committee' / 'Escribir al comité organizador' (i18n contact.linkText; in Markdown prose [email the planning committee](mailto:{email})); never write a bare {email} in prose, which would print it a second time. The calendar entry (DESCRIPTION), the Add to calendar text and the JSON-LD carry it too. Leave it empty only to hide all of them. icsOrganizer: true would also write it as the .ics ORGANIZER; it is off because Outlook then treats the entry as a meeting request. formUrl: optional link to a contact form (leave empty).",
     "committee": "The Incredible Tapestry Workshop Planning Committee",
-    "email": "",
-    "formUrl": ""
+    "email": "a44p69delegate@gmail.com",
+    "formUrl": "",
+    "icsOrganizer": false
+  },
+  "flyer": {
+    "_readme": "The committee's official flyer (English; image-only PDF), published from brand/flyer/. To replace it, drop new files there with the same names and update width/height (of the -1000 image), pdfSize/jpgSize (the real file sizes, shown next to the download buttons) and the three zoom* fields. zoomMeetingId, zoomPasscode and zoomJoinUrl are the Zoom details the flyer image prints: when any of them differs from event.zoom, pages warn above the flyer that its Zoom details are out of date.",
+    "base": "/brand/flyer/incredible-tapestry-flyer",
+    "widths": [
+      600,
+      1000,
+      1600
+    ],
+    "width": 1000,
+    "height": 1343,
+    "pdf": "/brand/flyer/incredible-tapestry-flyer.pdf",
+    "pdfSize": "1.4 MB",
+    "jpg": "/brand/flyer/incredible-tapestry-flyer.jpg",
+    "jpgSize": "1.3 MB",
+    "zoomMeetingId": "824 7491 1898",
+    "zoomPasscode": "218564",
+    "zoomJoinUrl": "https://us02web.zoom.us/j/82474911898?pwd=EwOXRz2NWKHgCirlpAAv1gseGMybGe.1"
   },
   "social": {
     "_readme": "Optional. Leave empty to hide.",
@@ -126,5 +145,5 @@
   },
   "disclaimer": "This website is maintained by A.A. members as a service for an A.A. workshop. It is not affiliated with, nor endorsed by, Alcoholics Anonymous World Services, Inc., the General Service Office, or any A.A. area or district, unless stated otherwise.",
   "copyrightNotice": "The Twelve Steps, Twelve Traditions and Twelve Concepts for World Service are copyrighted by Alcoholics Anonymous World Services, Inc. (A.A.W.S.) and are reprinted here by A.A. members for A.A. use, with the credit line requested by A.A.W.S. Permission to reprint does not mean that A.A.W.S. has reviewed or approved the contents of this website, or that A.A.W.S. necessarily agrees with the views expressed herein.",
-  "metaDescription": "Free all-day online A.A. workshop, Sat. Dec 12, 2026, 8 AM–4 PM Pacific on Zoom: Steps, Traditions and Concepts side by side. ASL and Spanish interpretation."
+  "metaDescription": "Free 1-day online A.A. workshop on Zoom, Sat., Dec. 12, 2026, 11 AM–7 PM ET: Steps, Traditions & Concepts. Spanish & ASL interpretation. No pre-registration."
 }

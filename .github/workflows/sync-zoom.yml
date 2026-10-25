@@ -2,18 +2,20 @@
 #  Sync Zoom (optional) — every day, ask Zoom for the current join link and
 #  passcode of the meeting ID in site.json. If anything changed, commit it
 #  and redeploy, so the site, QR codes, poster and calendar file follow
-#  the Zoom meeting automatically.
+#  the Zoom meeting automatically. (The official flyer is a fixed image and
+#  does not; the flyer pages then flag its printed Zoom details as stale.)
 #
 #  Does nothing unless three repository secrets exist (Settings → Secrets
 #  and variables → Actions): ZOOM_ACCOUNT_ID, ZOOM_CLIENT_ID,
 #  ZOOM_CLIENT_SECRET — from a Zoom "Server-to-Server OAuth" app with the
-#  meeting:read:meeting (or meeting:read:admin) scope. See docs/SETUP-GITHUB.md.
+#  meeting:read:meeting (or meeting:read:admin) scope, in the Zoom account
+#  that owns the workshop meeting. See docs/SETUP-GITHUB.md.
 # =====================================================================
 name: Sync Zoom
 
 on:
   schedule:
-    - cron: "37 14 * * *"   # daily, ≈ 6–7 AM Pacific
+    - cron: "37 14 * * *"   # daily, 14:37 UTC = 9:37 AM Eastern in winter (EST)
   workflow_dispatch:
 
 permissions:

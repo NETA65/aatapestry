@@ -1,13 +1,16 @@
 # =====================================================================
 #  Build & Deploy — builds the site with Eleventy + Tailwind, regenerates
-#  the brand assets (QR codes follow site.json), renders the poster PDFs,
-#  checks the HTML and links, and publishes to GitHub Pages.
+#  the brand assets (QR codes follow site.json), renders the printable
+#  poster PDFs (EN + ES), checks the HTML and links, and publishes to
+#  GitHub Pages. The official flyer (brand/flyer/) is published as committed;
+#  nothing here generates it.
 #
 #  Runs:
 #   · on every push to main (settings, content or code changed);
-#   · every Monday morning (so "this week's" 36-Principles focus, the
-#     countdown fallback and "updated" dates stay current without a push);
-#   · every day in December, the workshop month;
+#   · every Monday morning (so the countdown fallback and "updated" dates
+#     stay current without a push, and the 36-Principles focus too if
+#     meeting.json is ever published);
+#   · every day in December, the workshop month (Dec 12, 11 AM – 7 PM ET);
 #   · by hand: Actions → "Build & Deploy" → Run workflow;
 #   · from the other workflows (workflow_call) after they commit new Zoom
 #     details — commits made with GITHUB_TOKEN never trigger `push`, so
@@ -26,7 +29,8 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    # GitHub cron is UTC and often runs late. 13:17 UTC ≈ 5–6 AM Pacific.
+    # GitHub cron is UTC and often runs late. 13:17 UTC = 8:17 AM Eastern in
+    # winter (EST), before the 11 AM ET start on workshop day.
     - cron: "17 13 * * 1"     # weekly, Monday
     - cron: "17 13 * 12 *"    # daily in December
   workflow_dispatch:

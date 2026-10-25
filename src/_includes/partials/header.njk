@@ -1,3 +1,5 @@
+{#- Site header. Desktop: the menu without "Home" (the brand link is home), the language switch and
+    the Join button. Phones: everything in the menu. Labels from i18n (t.nav, t.labels). -#}
 {%- set items = nav[lang] or nav.en -%}
 {%- set homeHref = "/es/" if lang == "es" else "/" -%}
 <header class="site-header" x-data="{ open: false }" @keydown.escape.window="open = false">
@@ -8,9 +10,9 @@
     </a>
 
     <nav class="main-nav" aria-label="{{ 'Principal' if lang == 'es' else 'Primary' }}">
-      {% for item in items %}
+      {% for item in items %}{% if not item.mobileOnly %}
       <a href="{{ item.href }}" class="nav-link{% if page.url == item.href %} is-active{% endif %}"{% if page.url == item.href %} aria-current="page"{% endif %}>{{ t.nav[item.key] }}</a>
-      {% endfor %}
+      {% endif %}{% endfor %}
       <a href="{{ page.url | langUrl(otherLang) }}" class="nav-link nav-lang" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon" %}<span>{{ t.switchLabel }}</span></a>
       <a href="{{ site.event.zoom.joinUrl }}" class="btn btn-primary btn-sm" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
     </nav>

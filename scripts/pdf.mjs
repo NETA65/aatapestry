@@ -13,13 +13,15 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const siteDir = path.join(root, "_site");
 const outDir = path.join(root, "brand", "poster");
 fs.mkdirSync(outDir, { recursive: true });
-if (!fs.existsSync(path.join(siteDir, "poster", "index.html"))) {
-  console.error("_site/poster/index.html not found — run `npm run build` first.");
-  process.exit(1);
+for (const rel of [["poster", "index.html"], ["es", "poster", "index.html"]]) {
+  if (!fs.existsSync(path.join(siteDir, ...rel))) {
+    console.error(`_site/${rel.join("/")} not found — run \`npm run build\` first.`);
+    process.exit(1);
+  }
 }
 
 // A tiny static server for _site (absolute /assets/… URLs need an origin, not file://).
-const TYPES = { html: "text/html; charset=utf-8", css: "text/css", js: "text/javascript", mjs: "text/javascript", svg: "image/svg+xml", png: "image/png", jpg: "image/jpeg", ico: "image/x-icon", woff2: "font/woff2", woff: "font/woff", json: "application/json", webmanifest: "application/manifest+json", xml: "application/xml", ics: "text/calendar", txt: "text/plain", pdf: "application/pdf", md: "text/markdown" };
+const TYPES = { html: "text/html; charset=utf-8", css: "text/css", js: "text/javascript", mjs: "text/javascript", svg: "image/svg+xml", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", avif: "image/avif", gif: "image/gif", ico: "image/x-icon", woff2: "font/woff2", woff: "font/woff", json: "application/json", webmanifest: "application/manifest+json", xml: "application/xml", ics: "text/calendar", txt: "text/plain", pdf: "application/pdf", md: "text/markdown" };
 const server = http.createServer((req, res) => {
   try {
     const p = decodeURIComponent(new URL(req.url, "http://localhost").pathname).replace(/\\/g, "/");
@@ -43,24 +45,36 @@ try {
     const page = await browser.newPage();
     await page.emulateMediaType("print");
     await page.setViewport({ width: 900, height: 1300, deviceScaleFactor: 1 });
-    await page.goto(url, { waitUntil: "networkidle0" });
+    const res = await page.goto(url, { waitUntil: "networkidle0" });
+    if (!res || !res.ok()) throw new Error(`${url} answered ${res ? res.status() : "nothing"} — is _site built?`);
+    // The poster element is the contract with src/pages/poster.njk; stop before writing anything without it.
+    if (!(await page.$("#poster"))) throw new Error(`#poster not found on ${url} — keep id="poster" in src/pages/poster.njk.`);
     await page.evaluate(() => document.fonts.ready);
 
     const letter = path.join(outDir, `aatapestry-poster${suffix}-letter.pdf`);
     await page.pdf({ path: letter, format: "Letter", printBackground: true, preferCSSPageSize: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } });
     files.push(letter);
 
-    await page.evaluate(() => { document.documentElement.dataset.size = "a4"; });
+    // A4: the layout's @page says "letter", and with preferCSSPageSize:false Chrome lays the page out at
+    // letter size and shrinks it onto A4, so the 297 mm poster spilled onto a second page. Declare an A4
+    // @page for this render instead (a later @page rule wins), and let Chrome use it.
+    await page.evaluate(() => {
+      document.documentElement.dataset.size = "a4";
+      const s = document.createElement("style");
+      s.id = "pdf-a4-page"; s.media = "print"; s.textContent = "@page { size: A4; margin: 0; }";
+      document.head.appendChild(s);
+    });
     const a4 = path.join(outDir, `aatapestry-poster${suffix}-a4.pdf`);
-    await page.pdf({ path: a4, format: "A4", printBackground: true, preferCSSPageSize: false, margin: { top: 0, right: 0, bottom: 0, left: 0 } });
+    await page.pdf({ path: a4, format: "A4", printBackground: true, preferCSSPageSize: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } });
     files.push(a4);
 
     // 300-dpi PNG of the Letter poster (8.5 in × 300 = 2550 px wide).
-    await page.evaluate(() => { delete document.documentElement.dataset.size; });
+    await page.evaluate(() => { delete document.documentElement.dataset.size; document.getElementById("pdf-a4-page")?.remove(); });
     await page.emulateMediaType("screen");
     await page.setViewport({ width: 900, height: 1300, deviceScaleFactor: 2550 / 816 });
     await page.evaluate(() => document.fonts.ready);
     const el = await page.$("#poster");
+    if (!el) throw new Error(`#poster not found on ${url} (screen media).`);
     const pngFile = path.join(outDir, `aatapestry-poster${suffix}.png`);
     await el.screenshot({ path: pngFile, type: "png", omitBackground: false });
     files.push(pngFile);

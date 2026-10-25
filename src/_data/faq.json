@@ -1,53 +1,89 @@
 {
-  "_readme": "Frequently asked questions shown on the FAQ page and used for the FAQPage JSON-LD. q is plain text; a accepts simple Markdown (bold, links, lists) and should stay to one to three sentences. Dates, times, the Zoom ID and passcode live in site.json, so these answers point to the page rather than repeating them; the few facts that do appear here (hours, lunch length, languages) must be kept in step with site.json and schedule.json. Order matters: the first questions are the ones newcomers ask most.",
+  "_readme": "Questions and answers shown in the #questions section of the home page (English: q and a; /es/: qEs and aEs) and published as FAQPage JSON-LD on / and /es/. id is a stable kebab-case key; never reuse one. q and qEs are plain text; a and aEs accept simple Markdown (bold, links) and should stay to one to three sentences. Write the date, times, Zoom numbers and the questions email ONLY as tokens ({date}, {time}, {rangesAlso}, {zoomId}, {passcode}, {email}…), which the build fills in from site.json. The page already prints the email address once (the Questions card), so an answer links to it, [email the planning committee](mailto:{email}) / [escribir al comité organizador](mailto:{email}), and never writes a bare {email}. Every item needs all four text fields. Order matters: the first questions are the ones newcomers ask most.",
   "items": [
     {
+      "id": "who-can-attend",
       "q": "Who can attend?",
-      "a": "Anyone who is a member of A.A. or thinks they might have a problem with alcohol, along with trusted servants at every level and anyone curious about the three legacies. Newcomers are warmly welcome; you do not need to have read the Concepts, or even the Traditions, to get something out of the day."
+      "a": "Anyone who is a member of A.A. or thinks they might have a problem with alcohol, along with trusted servants at every level. Newcomers are warmly welcome; you do not need to have read the Concepts, or even the Traditions, to get something out of the day.",
+      "qEs": "¿Quién puede asistir?",
+      "aEs": "Puede asistir cualquier miembro de A.A. y cualquier persona que piense que puede tener un problema con el alcohol, así como los servidores de confianza de todos los niveles. Los recién llegados son muy bienvenidos: no hace falta haber leído los Conceptos, ni siquiera las Tradiciones, para sacarle provecho al día."
     },
     {
-      "q": "What does it cost?",
-      "a": "Nothing. There are no dues or fees for the workshop, and there is no basket on this website; if the day moves you to give, support your home group, your intergroup or the General Service Office in the usual Seventh Tradition way."
+      "id": "cost",
+      "q": "What does it cost, and can I contribute?",
+      "a": "The workshop is free. There will be some expenses for the Spanish and ASL interpretation, so contributions are welcome. To ask how to contribute, please [email the planning committee](mailto:{email}).",
+      "qEs": "¿Cuánto cuesta? ¿Se puede contribuir?",
+      "aEs": "El taller es gratuito. La interpretación en español y en ASL tiene algunos gastos, así que se agradecen las contribuciones. Para saber cómo contribuir, se puede [escribir al comité organizador](mailto:{email})."
     },
     {
+      "id": "registration-zoom",
       "q": "Do I need to register, and where is the Zoom link?",
-      "a": "No registration. The **Join on Zoom** button on the [front page](/) opens the meeting directly, and the meeting ID and passcode are printed beside it for anyone who would rather type them in; the same details are baked into the calendar file and the poster's QR code. Please share them within the Fellowship, in your home group or district, rather than on public social media."
+      "a": "No pre-registration is required. The **Join on Zoom** button in [How to join](/#join) on this page opens the meeting directly, and the meeting ID ({zoomId}) and passcode ({passcode}) are printed with it for anyone who would rather type them in; they are on the [official flyer](/flyer/) too. Please share them within the Fellowship, in your home group or district, rather than on public social media.",
+      "qEs": "¿Hay que inscribirse? ¿Dónde está el enlace de Zoom?",
+      "aEs": "No se requiere inscripción previa. El botón **Unirse por Zoom** de la sección [Cómo unirse](/es/#unirse) abre la reunión directamente, y al lado aparecen el ID de reunión ({zoomId}) y el código de acceso ({passcode}) para quien prefiera escribirlos; también están en el [volante oficial](/es/flyer/). Pedimos compartirlos dentro de la Comunidad, en el grupo base o el distrito, y no en redes sociales públicas."
     },
     {
-      "q": "What are the hours in my time zone, and is there a lunch break?",
-      "a": "The workshop runs 8 AM to 4 PM Pacific Time, with two short breaks and a thirty-minute lunch around noon Pacific. Wherever this site shows a time, your browser should also show your local equivalent, and **Add to calendar** will place the day correctly in your own zone; the Zoom room stays open through lunch for anyone who wants to keep talking."
+      "id": "times",
+      "q": "What time is it in my time zone?",
+      "a": "The workshop runs {time} on {date}. Elsewhere in the U.S., that is {rangesAlso}. If you are in another time zone, the top of this page and the [program page](/schedule/) also show the times in your local time, and **Add to calendar** puts the day in your own time zone.",
+      "qEs": "¿A qué hora es en mi zona horaria?",
+      "aEs": "El taller es el {dateEs}, {timeEs}. En otras zonas horarias de los Estados Unidos, eso equivale a {rangesAlsoEs}. Para quien esté en otra zona horaria, al comienzo de esta página también aparece el horario en la hora local, y el botón **Agregar al calendario** guarda el taller en la zona horaria de cada quien."
     },
     {
-      "q": "Is there ASL or Spanish interpretation?",
-      "a": "Both, for the entire day. ASL interpreters are on screen (pin or spotlight them, or use Zoom's sign language interpretation view), and Spanish audio is on a separate channel you choose from the **Interpretation** (globe) button. The [accessibility page](/accessibility/) walks you through the details on desktop and mobile."
+      "id": "what-happens",
+      "q": "What will the day be like?",
+      "a": "There will be a series of presentations that look at how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions. The program will be available on this website shortly, on the [program page](/schedule/).",
+      "qEs": "¿Cómo será el día?",
+      "aEs": "Habrá una serie de presentaciones sobre cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz, con bastante tiempo para compartir y hacer preguntas. El programa estará disponible próximamente en este sitio web, en la sección [Sobre el taller](/es/#programa)."
     },
     {
-      "q": "Are there captions?",
-      "a": "Yes. Zoom's automated captions will be on for the whole room; click **CC** or **Show Captions** to see them, or open the full transcript to read along. They are generated by software and will stumble over names and A.A. phrases now and then, so think of them as a help rather than a record."
+      "id": "raynham",
+      "q": "Is this like the Tapestry meetings in Raynham?",
+      "a": "Yes. The workshop is similar to the Tapestry meetings held previously in Raynham, Massachusetts.",
+      "qEs": "¿Se parece a las reuniones Tapestry de Raynham?",
+      "aEs": "Sí. El taller es parecido a las reuniones Tapestry que se realizaron anteriormente en Raynham, Massachusetts."
     },
     {
-      "q": "Will the workshop be recorded?",
-      "a": "No. In keeping with our tradition of anonymity, nothing will be recorded, and we ask every member not to take screenshots or photographs of the screen. Use your first name and last initial as your display name, and leave what you hear in the room."
+      "id": "interpretation",
+      "q": "Is there Spanish or ASL interpretation?",
+      "a": "Yes, interpretation will be provided in Spanish and ASL. For Spanish, choose the Spanish channel from the **Interpretation** (globe) button in Zoom; for ASL, use Zoom’s sign language view if it is offered, or pin the interpreter’s video. The [accessibility page](/accessibility/) walks you through it on a computer and on a phone.",
+      "qEs": "¿Habrá interpretación en español y en ASL?",
+      "aEs": "Sí, habrá interpretación en español y en ASL (lengua de señas americana). Para escuchar en español, se elige el canal en español con el botón **Interpretación** (*Interpretation*, el globo terráqueo) de Zoom; para ASL, se puede usar la vista de lengua de señas de Zoom, si está disponible, o fijar el video del intérprete. Las instrucciones, para computadora y para teléfono, están en la sección [Cómo unirse](/es/#unirse)."
     },
     {
+      "id": "recording-courtesy",
+      "q": "Can I record or take screenshots?",
+      "a": "Please don’t. In keeping with our tradition of anonymity, we ask everyone not to record, screenshot or photograph the screen. Use your first name and last initial as your display name, and leave what you hear in the room.",
+      "qEs": "¿Se puede grabar o hacer capturas de pantalla?",
+      "aEs": "Por favor, no. De acuerdo con nuestra tradición de anonimato, pedimos a todos no grabar, no hacer capturas de pantalla ni tomar fotos de la pantalla. Como nombre en pantalla se usa el nombre de pila y la inicial del apellido, y lo que se oye en la sala, en la sala se queda."
+    },
+    {
+      "id": "concepts",
       "q": "What are the Concepts, and why should a home-group member care?",
-      "a": "The Twelve Concepts for World Service are Bill W.'s description of how the Fellowship runs its world services: how the groups direct the Conference, how trusted servants are given real authority and held responsible, how minorities are heard, and how we avoid becoming a government. They matter to a home group because every Concept starts there; the group is where the authority comes from, and the Right of Participation and the Right of Appeal protect the quiet member in the back of your meeting as much as anyone in New York."
+      "a": "The Twelve Concepts for World Service are Bill W.’s description of how the Fellowship runs its world services: how the groups direct the Conference, how trusted servants are given real authority and held responsible, how minorities are heard, and how we avoid becoming a government. They matter to a home group because every Concept starts there; the group is where the authority comes from, and the Right of Participation and the Right of Appeal protect the quiet member in the back of your meeting as much as anyone in New York.",
+      "qEs": "¿Qué son los Conceptos y por qué deberían importarle a un miembro del grupo base?",
+      "aEs": "Los Doce Conceptos para el Servicio Mundial son la descripción que hizo Bill W. de cómo funciona la Comunidad en sus servicios mundiales: cómo los grupos dirigen la Conferencia, cómo a los servidores de confianza se les da verdadera autoridad y se les pide cuentas, cómo se escucha a las minorías y cómo evitamos convertirnos en un gobierno. Le importan al grupo base porque todo Concepto empieza ahí: la autoridad viene del grupo, y el Derecho de Participación y el Derecho de Apelación protegen al miembro callado del fondo de la sala tanto como a cualquiera en Nueva York."
     },
     {
+      "id": "thirty-six",
       "q": "What does “36 Principles” mean?",
-      "a": "Twelve Steps plus Twelve Traditions plus Twelve Concepts make thirty-six principles, and the three that share a number share a thread. Step One, Tradition One and Concept One are all about admitting that no part can get well on its own; the [principles pages](/principles/) lay out all twelve threads with the texts side by side."
+      "a": "Twelve Steps plus Twelve Traditions plus Twelve Concepts make thirty-six principles, and the three that share a number share a thread. Step One, Tradition One and Concept One are all about admitting that no part can get well on its own; the [principles pages](/principles/) lay out all twelve threads with the texts side by side.",
+      "qEs": "¿Qué significa “36 principios”?",
+      "aEs": "Doce Pasos, más Doce Tradiciones, más Doce Conceptos suman treinta y seis principios, y los tres que llevan el mismo número comparten un mismo hilo. El Primer Paso, la Primera Tradición y el Primer Concepto hablan de admitir que ninguna parte se recupera sola; las [páginas de los principios](/principles/) (en inglés) presentan los doce hilos con los textos lado a lado."
     },
     {
-      "q": "How will I know when the program is final?",
-      "a": "The program on this site carries a **Tentative** badge until the committee settles the sessions, then switches to **Final program**. Subscribe to the [RSS feed](/feed.xml) or add the event to your calendar; the calendar file is regenerated whenever the program changes, and the feed carries every update."
+      "id": "flyer",
+      "q": "Can my group announce this or share the flyer?",
+      "a": "Please do. Announce it at your meetings, send the link to your district and intergroup, and print the [official flyer](/flyer/) for your home group’s bulletin board or pass it along; there is also a printer-friendly [poster](/poster/) with a light background. This is an event put on by A.A. members for A.A. members, not an A.A.W.S. or General Service Office event, so announce it the way you would any other workshop in your area.",
+      "qEs": "¿Mi grupo puede anunciar el taller o compartir el volante?",
+      "aEs": "Sí, por favor. Se puede anunciar en las reuniones, enviar el enlace al distrito y a la oficina intergrupal, e imprimir el [volante oficial](/es/flyer/) (en inglés) para la cartelera del grupo base o pasarlo a otros; también hay un [póster en español](/es/poster/) con fondo claro, fácil de imprimir. Es un evento organizado por miembros de A.A. para miembros de A.A., no un evento de A.A.W.S. ni de la Oficina de Servicios Generales, así que puede anunciarse como cualquier otro taller del área."
     },
     {
-      "q": "Can my group announce this or use the poster?",
-      "a": "Please do. Announce it at your meetings, send the link to your district and intergroup, and download the poster as a PDF or PNG to print for your home group's bulletin board. This is an event put on by A.A. members for A.A. members, not an A.A.W.S. or General Service Office event, so announce it the way you would any other workshop in your area."
-    },
-    {
-      "q": "How can I help, or get in touch?",
-      "a": "We can always use hosts, breakout-room facilitators, greeters and members willing to read, and we would love to hear from bilingual members and anyone with Zoom experience. Use the contact details on this site to reach the planning committee; a trusted servant will get back to you."
+      "id": "contact",
+      "q": "Who do I contact with a question?",
+      "a": "Please [email the planning committee](mailto:{email}). The address is in the **Questions?** box on this page.",
+      "qEs": "¿A quién puedo escribir si tengo una pregunta?",
+      "aEs": "Se puede [escribir al comité organizador](mailto:{email}). La dirección está en el recuadro **¿Preguntas?** de esta página."
     }
   ]
 }

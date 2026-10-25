@@ -1,0 +1,36 @@
+{#- "Add to calendar" button (add-to-calendar-button, self-hosted; the page needs `atcb: true` in its
+    front matter). One description for every page, from i18n (t.atcb) + when.js + site.json, so the
+    entries people save never disagree with the site. English or Spanish by `lang`. Plain text: the
+    no-break spaces and word joiners that keep times together on the page are dropped (| plain).
+    Optional before the include: atcbLabel (button text; default t.labels.addToCalendar).
+    Apple / iCal: on English pages the button hands out the site's own /aatapestry-workshop.ics (icsFile),
+    the same file as the footer link, with its fixed UID and site.event.calendarSequence, so re-importing
+    it updates the entry instead of adding a second one. Spanish pages generate a Spanish file with the
+    button's own uid (letters, digits and dashes only, as the button requires) and the same sequence.
+    Google and Outlook.com links always add a new entry, so the site tells people to delete the old
+    entry before adding the workshop again.                                                           -#}
+{%- set ev = site.event -%}
+{%- set aEs = lang == "es" -%}
+{%- set aName = ((t.atcb.name | tokens) or ev.name) | plain -%}
+{%- set aWhen = (when.date.longEs + ", " + when.time.leadLongEs + "[br]" + when.time.startsAlsoEs) if aEs else (when.date.long + ", " + when.time.leadLong + "[br]" + when.time.startsAlso) -%}
+{%- set aLines = [] -%}
+{%- if t.atcb.summary %}{% set _ = aLines.push((t.atcb.summary | tokens) + "[br]") %}{% endif -%}
+{%- set _ = aLines.push((t.labels.when | tokens) + ": " + aWhen) -%}
+{%- set _ = aLines.push("Zoom: [url]" + ev.zoom.joinUrl + "|" + (t.labels.joinZoom | tokens) + "[/url]") -%}
+{%- set _ = aLines.push((t.labels.meetingId | tokens) + ": " + ev.zoom.meetingId + " · " + (t.labels.passcode | tokens) + ": " + ev.zoom.passcode) -%}
+{#- (The summary already says Spanish and ASL interpretation will be provided.) -#}
+{%- if site.contact.email %}{% set _ = aLines.push((t.contact.footerLabel | tokens) + " " + site.contact.email) %}{% endif -%}
+{%- set _ = aLines.push("[br]" + site.url + ("/es/" if aEs else "/")) -%}
+<add-to-calendar-button
+  name="{{ aName }}"
+  description="{{ aLines | join('[br]') | plain }}"
+  startDate="{{ ev.date }}" startTime="{{ ev.start }}" endDate="{{ ev.date }}" endTime="{{ ev.end }}" timeZone="{{ ev.timezone }}"
+  location="{{ ev.zoom.joinUrl }}"
+  uid="workshop-{{ ev.date }}-{{ site.domain | replace('.', '-') }}" sequence="{{ ev.calendarSequence or 0 }}"
+  {% if not aEs %}icsFile="{{ site.url }}/aatapestry-workshop.ics"{% endif %}
+  options="'Apple','Google','iCal','Microsoft365','Outlook.com','Yahoo'"
+  iCalFileName="{{ 'aatapestry-taller' if aEs else 'aatapestry-workshop' }}"
+  label="{{ atcbLabel or (t.labels.addToCalendar | tokens) }}"
+  buttonStyle="round" lightMode="bodyScheme" listStyle="overlay" language="{{ 'es' if aEs else 'en' }}" hideBranding="true" hideCheckmark="true" trigger="click"
+  styleLight="--btn-background: var(--card); --btn-text: var(--fg); --btn-border: var(--line); --btn-shadow: none; --btn-shadow-hover: none; --font: inherit;" styleDark="--btn-background: var(--card); --btn-text: var(--fg); --btn-border: var(--line); --btn-shadow: none; --btn-shadow-hover: none; --font: inherit;"
+></add-to-calendar-button>

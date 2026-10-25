@@ -1,0 +1,22 @@
+{#- The date and time, the flyer's way: Eastern first ("11:00 AM – 7:00 PM ET"), then
+    "8:00 AM PT · 9:00 AM MT · 10:00 AM CT", then the visitor's local time (filled in by app.js).
+    English or Spanish by `lang`. Set before the include:
+      whenTile  – true: wrap in .when-line with the calendar date tile (hero use)
+      whenClass – extra classes for the <p class="when-text">                                     -#}
+{%- set wEs = lang == "es" -%}
+{%- set wDate = (when.date.longEs | capitalize) if wEs else when.date.long -%}
+{%- set wLead = when.time.leadEs if wEs else when.time.lead -%}
+{%- set wAlso = when.time.startsAlsoEs if wEs else when.time.startsAlso -%}
+{% if whenTile %}
+<div class="when-line">
+  <div class="date-tile" aria-hidden="true"><span class="m">{{ (when.date.monthEs | upper) if wEs else when.date.monthShort }}</span><span class="d">{{ when.date.day }}</span><span class="w">{{ (when.date.weekdayEs | capitalize) if wEs else when.date.weekday }}</span></div>
+{% endif %}
+  <p class="when-text{% if whenClass %} {{ whenClass }}{% endif %}">
+    <strong>{{ wDate }}</strong>
+    <span class="when-lead">{{ wLead }}</span>
+    <span class="when-also">{{ wAlso }}</span>
+    <span class="local-time" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" hidden>{{ t.labels.yourLocalTime | tokens }}: <span data-local-value></span></span>
+  </p>
+{% if whenTile %}
+</div>
+{% endif %}

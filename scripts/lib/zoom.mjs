@@ -13,7 +13,7 @@ export function saveSite(site) {
   fs.writeFileSync(siteFile, JSON.stringify(site, null, 2) + "\n");
 }
 
-// "7017785951" → "701 778 5951"; 11 digits → "### #### ####".
+// "1234567890" → "123 456 7890"; 11 digits → "### #### ####" (e.g. "123 4567 8901").
 export function formatMeetingId(raw) {
   const d = String(raw || "").replace(/\D/g, "");
   if (d.length === 10) return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`;

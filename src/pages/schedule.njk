@@ -1,21 +1,27 @@
 ---
 permalink: /schedule/
-title: Program & schedule
-description: "The day's program for The Incredible Tapestry workshop: Saturday, December 12, 2026, 8 AM to 4 PM Pacific on Zoom, with a 30-minute lunch break. Times in every US time zone."
 atcb: true
+eleventyComputed:
+  title: "{{ copy.program.pageTitle | tokens }}"
+  description: "{{ copy.program.pageDescription | tokens }}"
 ---
+{#- The program page (English only; nav "Program"). Until schedule.json has status "published" and
+    sessions, it shows only the announced frame: start, "presentations, sharing and questions — coming
+    soon", end. Times lead with Eastern (ET); the zone table gives every US zone, Puerto Rico,
+    Mexico City and UTC. -#}
 {% import "macros/ui.njk" as ui %}
+{% set programPublished = schedule.status == "published" and schedule.sessions and schedule.sessions.length %}
 <section class="section">
   <div class="container-page">
-    <p class="eyebrow">{{ when.date.long }} · {{ when.time.range }} {{ when.tzAbbr }}</p>
-    <h1 class="h-display">{{ copy.schedule.heading }}</h1>
-    <p class="lead">{{ copy.schedule.lead }}</p>
+    <p class="eyebrow">{{ when.date.long }} · <span class="normal-case">{{ when.time.lead }}</span></p>
+    <h1 class="h-display">{{ copy.program.pageHeading | tokens }}</h1>
+    {% if copy.program.pageLead %}<p class="lead">{{ copy.program.pageLead | tokens }}</p>{% endif %}
     <div class="mt-5 flex flex-wrap gap-2 items-center">
-      {% if schedule.status == "tentative" %}<span class="badge badge-tentative">{% icon "info", "icon" %}{{ copy.schedule.tentativeBadge }}</span>{% else %}<span class="badge">{% icon "check", "icon" %}{{ copy.schedule.finalBadge }}</span>{% endif %}
-      <span class="badge">{% icon "clock", "icon" %}{{ when.durationHours }} hours · {{ when.lunch.minutes }}-minute lunch</span>
-      <span class="badge">{% icon "video", "icon" %}{{ t.labels.online }}</span>
+      {% if not programPublished %}<span class="badge badge-tentative">{% icon "info", "icon" %}{{ t.labels.programSoon | tokens }}</span>{% endif %}
+      <span class="badge">{% icon "clock", "icon" %}{{ when.time.lead }}</span>
+      <span class="badge">{% icon "video", "icon" %}{{ t.labels.online | tokens }}</span>
+      <span class="badge">{% icon "languages", "icon" %}{{ t.labels.interpretationBadge | tokens }}</span>
     </div>
-    {% if schedule.status == "tentative" %}<p class="panel-muted mt-6 max-w-3xl">{{ schedule.note }}</p>{% endif %}
   </div>
 </section>
 
@@ -23,53 +29,36 @@ atcb: true
   <div class="container-page">
     <div class="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start">
       <div>
-        <h2 class="h-section mb-4">{{ "The day" if lang != "es" else "El día" }}</h2>
-        <ol class="timeline">
-          {% if schedule.showSessions %}
-            {% for s in schedule.sessions %}
-            {% set lg = s.legacy | legacy %}
-            <li class="{% if s.kind == 'break' %}is-break{% endif %}"{% if lg %} style="--legacy: var(--c-{{ lg.key }})"{% endif %}>
-              <div class="time">{{ s.start | time12 }}<small>→ {{ s.end | time12 }}</small></div>
-              <div>
-                <h3>{{ s.title }}</h3>
-                {% if lg %}<p class="mt-1">{{ ui.legacyBadge(lg, lg.name + " · " + lg.body) }}</p>{% endif %}
-                {% if s.summary %}<p class="text-muted text-sm mt-1">{{ s.summary }}</p>{% endif %}
-              </div>
-            </li>
-            {% endfor %}
-          {% else %}
-            <li style="--legacy: var(--c-recovery)"><div class="time">{{ when.time.doorsOpen }}<small>{{ when.tzAbbr }}</small></div><div><h3>Zoom room opens</h3><p class="text-muted text-sm">Come early to test your audio and pick an interpretation channel.</p></div></li>
-            <li style="--legacy: var(--c-recovery)"><div class="time">{{ when.time.start }}<small>{{ when.tzAbbr }}</small></div><div><h3>{{ (schedule.sessions | first).title }}</h3><p class="text-muted text-sm">{{ (schedule.sessions | first).summary }}</p></div></li>
-            <li style="--legacy: var(--c-unity)"><div class="time">{{ when.time.start }}<small>→ {{ when.lunch.start }}</small></div><div><h3>Morning sessions</h3><p class="text-muted text-sm">{{ copy.schedule.comingSoon }}</p></div></li>
-            <li class="is-break"><div class="time">{{ when.lunch.start }}<small>→ {{ when.lunch.end }}</small></div><div><h3>Lunch break · {{ when.lunch.minutes }} minutes{% if when.lunch.tentative %} <span class="badge badge-tentative">{{ t.labels.tentative }}</span>{% endif %}</h3></div></li>
-            <li style="--legacy: var(--c-service)"><div class="time">{{ when.lunch.end }}<small>→ {{ when.time.end }}</small></div><div><h3>Afternoon sessions</h3><p class="text-muted text-sm">{{ copy.schedule.comingSoon }}</p></div></li>
-            <li style="--legacy: var(--c-service)"><div class="time">{{ when.time.end }}<small>{{ when.tzAbbr }}</small></div><div><h3>Close</h3></div></li>
-          {% endif %}
-        </ol>
-        <p class="text-sm text-muted mt-4">{{ copy.schedule.allTimes }}</p>
+        <h2 class="h-section">{{ copy.program.heading | tokens }}</h2>
+        {% if copy.program.lead %}<div class="prose text-lg mt-3">{{ copy.program.lead | tokens | md | safe }}</div>{% endif %}
+        {% if copy.program.history %}<div class="prose text-muted mt-3">{{ copy.program.history | tokens | md | safe }}</div>{% endif %}
+        <p class="strands mt-5">{% for l in site.legacies %}{{ ui.legacyBadge(l, l.shortBody) }}{% endfor %}</p>
+        <div class="mt-6">{% set tlHeadingLevel = 3 %}{% set tlLegacyBadges = true %}{% include "partials/program-timeline.njk" %}</div>
+        <p class="text-sm text-muted mt-4">{{ copy.program.allTimes | tokens }}</p>
       </div>
 
       <aside class="grid gap-6">
         <div class="card">
-          <h2 class="h-card">{{ "Your time zone" if lang != "es" else "Tu zona horaria" }}</h2>
-          <p class="text-muted text-sm mt-1">{{ when.time.range }} {{ when.tzAbbr }} is…</p>
+          <h2 class="h-card">{{ t.zones.heading | tokens }}</h2>
+          <p class="text-muted text-sm mt-1">{{ t.zones.intro | tokens }}</p>
           <table class="zones mt-3">
-            <thead><tr><th scope="col">Zone</th><th scope="col">Time</th></tr></thead>
+            <thead><tr><th scope="col">{{ t.zones.zone | tokens }}</th><th scope="col">{{ t.zones.time | tokens }}</th></tr></thead>
             <tbody>
               {% for z in when.zones %}
-              <tr data-zone="{{ z.id }}" class="{% if z.isEvent %}is-event{% endif %}"><td>{{ z.label }} ({{ z.abbr }})</td><td>{{ z.range }}{% if z.nextDay %} <small class="text-muted">(ends next day)</small>{% endif %}</td></tr>
+              <tr data-zone="{{ z.id }}" class="{% if z.isEvent %}is-event{% endif %}"><td>{{ z.label }}{% if z.abbr != z.label %} ({{ z.abbr }}){% endif %}</td><td>{{ z.range }}{% if z.nextDay %} <small class="text-muted">{{ t.zones.endsNextDay | tokens }}</small>{% endif %}</td></tr>
               {% endfor %}
             </tbody>
           </table>
-          <p class="local-time mt-3" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" data-with-date="1" hidden>{{ t.labels.yourLocalTime }}: <strong data-local-value></strong></p>
+          <p class="local-time mt-3" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" data-with-date="1" hidden>{{ t.labels.yourLocalTime | tokens }}: <strong data-local-value></strong></p>
         </div>
         <div class="card">
-          <h2 class="h-card">{{ t.labels.addToCalendar }}</h2>
-          <p class="text-muted text-sm mt-1 mb-3">The calendar entry carries the Zoom link, ID and passcode, and updates if they change.</p>
-          <add-to-calendar-button name="{{ site.event.name }}" description="{{ site.description }}[br][br]Zoom: [url]{{ site.event.zoom.joinUrl }}|Join on Zoom[/url][br]Meeting ID: {{ site.event.zoom.meetingId }} · Passcode: {{ site.event.zoom.passcode }}[br][br]{{ site.url }}" startDate="{{ site.event.date }}" startTime="{{ site.event.start }}" endDate="{{ site.event.date }}" endTime="{{ site.event.end }}" timeZone="{{ site.event.timezone }}" location="{{ site.event.zoom.joinUrl }}" options="'Apple','Google','iCal','Microsoft365','Outlook.com','Yahoo'" iCalFileName="aatapestry-workshop" label="{{ t.labels.addToCalendar }}" buttonStyle="round" lightMode="bodyScheme" listStyle="overlay" language="{{ lang }}" hideBranding="true" hideCheckmark="true" trigger="click" styleLight="--btn-background: var(--card); --btn-text: var(--fg); --btn-border: var(--line); --btn-shadow: none; --btn-shadow-hover: none; --font: inherit;" styleDark="--btn-background: var(--card); --btn-text: var(--fg); --btn-border: var(--line); --btn-shadow: none; --btn-shadow-hover: none; --font: inherit;"></add-to-calendar-button>
-          <a href="/aatapestry-workshop.ics" class="btn btn-secondary btn-sm mt-3" download>{% icon "download", "icon" %}<span>{{ t.labels.downloadIcs }}</span></a>
+          <h2 class="h-card">{{ t.labels.addToCalendar | tokens }}</h2>
+          {% if copy.program.calendarNote %}<p class="text-muted text-sm mt-1 mb-3">{{ copy.program.calendarNote | tokens }}</p>{% endif %}
+          {% set atcbLabel = "" %}{% include "partials/atcb.njk" %}
+          <a href="/aatapestry-workshop.ics" class="btn btn-secondary btn-sm mt-3" download>{% icon "download", "icon" %}<span>{{ t.labels.downloadIcs | tokens }}</span></a>
         </div>
-        {% include "partials/zoom-card.njk" %}
+        {% set zoomHeadingLevel = 2 %}{% include "partials/zoom-card.njk" %}
+        {% set qHeadingLevel = 2 %}{% set qSubject = t.contact.subjectProgram %}{% set qId = "questions" %}{% include "partials/questions-card.njk" %}
       </aside>
     </div>
   </div>

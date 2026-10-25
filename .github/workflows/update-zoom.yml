@@ -4,7 +4,9 @@
 #     Actions → "Update Zoom info" → Run workflow → fill in the new values.
 #  The workflow writes them into src/_data/site.json, commits, and then
 #  rebuilds + redeploys the site (pages, QR codes, poster, .ics, JSON-LD
-#  all follow). Empty fields keep the current value.
+#  all follow). Empty fields keep the current value. The official flyer in
+#  brand/flyer/ is a fixed image and keeps its printed details: replace it
+#  by hand (docs/EDITING.md); until then the flyer pages flag them as stale.
 # =====================================================================
 name: Update Zoom info
 run-name: "Update Zoom info (${{ github.actor }})"

@@ -1,7 +1,17 @@
-{#- Share buttons: native share where available, otherwise copy / e-mail / WhatsApp / SMS. Labels from i18n (t.share). -#}
-{%- set shareUrl = (("/es/" if lang == "es") or "/") | absUrl -%}
-{%- set shareTitle = (t.landing.headline if lang == "es" else site.title) -%}
-{%- set shareText = (t.landing.hook if lang == "es" else site.hook) + " " + ((when.date.longEs | capitalize) if lang == "es" else when.date.long) + ", " + (when.time.rangeEs if lang == "es" else when.time.range) + " " + when.tzShort + ". " + t.labels.online + "." -%}
+{#- Share buttons: native share where available, otherwise copy / e-mail / WhatsApp / SMS. Labels from i18n (t.share).
+    The text is built from site.name, the eyebrow, when.js (ET first, then PT/MT/CT) and the labels, so it
+    always matches the site. Plain text (| plain): no no-break spaces or word joiners in the messages people send.
+    Optional before the include: sharePath (default the home page of the page's language, e.g. "/flyer/"). -#}
+{%- set sEs = lang == "es" -%}
+{%- set shareUrl = (sharePath or ("/es/" if sEs else "/")) | absUrl -%}
+{%- set shareTitle = ((site.name + " — " + (t.landing.gloss | tokens)) if (sEs and t.landing.gloss) else ((t.landing.headline | tokens) if sEs else site.title)) | plain -%}
+{#- The message names the event and says what it is, so it stands on its own without a link preview:
+    "The Incredible Tapestry — A 1-day online A.A. workshop: Saturday, December 12, 2026, 11:00 AM – 7:00 PM ET
+    (8:00 AM PT · …). Online on Zoom · Spanish & ASL interpretation · Free · No pre-registration." -#}
+{%- set shareParts = [t.labels.online | tokens] -%}
+{%- if t.labels.interpretationBadge %}{% set _ = shareParts.push(t.labels.interpretationBadge | tokens) %}{% endif -%}
+{%- if t.labels.freeNoRegistration %}{% set _ = shareParts.push(t.labels.freeNoRegistration | tokens) %}{% endif -%}
+{%- set shareText = (site.name + " — " + (t.landing.eyebrow | tokens) + ": " + (when.date.longEs if sEs else when.date.long) + ", " + (when.time.leadEs if sEs else when.time.lead) + " (" + (when.time.startsAlsoEs if sEs else when.time.startsAlso) + "). " + (shareParts | join(" · ")) + ".") | plain -%}
 <div class="share-row" data-share-root data-url="{{ shareUrl }}" data-title="{{ shareTitle }}" data-text="{{ shareText }}">
   <button type="button" class="btn btn-secondary btn-sm" data-share hidden>{% icon "share-2", "icon" %}<span>{{ t.labels.share }}</span></button>
   <button type="button" class="btn btn-secondary btn-sm" data-copy="{{ shareUrl }}" data-copied="{{ t.share.copied }}">{% icon "link", "icon" %}<span>{{ t.share.copyLink }}</span></button>

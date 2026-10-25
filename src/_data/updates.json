@@ -1,10 +1,15 @@
 {
-  "_readme": "Short news items shown on the home page and published as an RSS feed (/feed.xml). Newest first. date: YYYY-MM-DD. body may use simple Markdown.",
+  "_readme": "Short news items shown on the home page and published as a feed (/feed.xml). Newest first (the JSON-LD reads the last item's date). date: YYYY-MM-DD. Never change an existing item's date or title: together they are its feed id. title is plain text; body may use simple Markdown. Write the date, times, Zoom numbers and the email ONLY as tokens ({date}, {time}, {startsAlso}, {zoomId}, {passcode}, {email}…), which the build fills in from site.json. Link the email as [email the planning committee](mailto:{email}) rather than writing a bare {email}: the home page already prints the address once, in the Questions card.",
   "items": [
+    {
+      "date": "2026-10-25",
+      "title": "The official flyer is out, and the Zoom details are set",
+      "body": "The official flyer is here: [see it, print it or pass it along](/flyer/). The Zoom details are set and are in the [How to join](/#join) section; no pre-registration is required. The workshop runs {time} ({startsAlso}). It is free, and contributions to help cover the Spanish and ASL interpretation are welcome. For questions, please [email the planning committee](mailto:{email}).\n\n**Please note:** the Zoom link shown on this site before October 25 has changed. If you saved it, please use the new one. If you added the workshop to your calendar from this site before October 25, please delete that calendar entry and add the workshop to your calendar again."
+    },
     {
       "date": "2026-10-04",
       "title": "Save the date: Saturday, December 12, 2026",
-      "body": "The Incredible Tapestry workshop is set: a full day online, 8 AM to 4 PM Pacific, with ASL and Spanish interpretation. The program is being planned now; check back for the schedule."
+      "body": "The Incredible Tapestry workshop is set: a full day online, {time} ({startsAlso}), with Spanish and ASL interpretation. The program is being planned now; check back for the schedule."
     }
   ]
 }

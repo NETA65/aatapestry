@@ -8,17 +8,35 @@
   const tz = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return ""; } })();
 
   /* ---------- Local time: "Your local time: 11:00 AM – 7:00 PM EST" ---------- */
+  // Spanish uses es-US so times are 12-hour (like the page) and zones read "EST", not "GMT-5"; its
+  // "a.m." is rewritten to the page's "a. m." below.
+  const loc = lang === "es" ? "es-US" : lang;
+  // Offset in minutes east of UTC written in an ISO string ("…-05:00" → -300), or null.
+  const isoOffset = (iso) => { const m = /([+-])(\d{2}):?(\d{2})$/.exec(iso || ""); return m ? (m[1] === "-" ? -1 : 1) * (Number(m[2]) * 60 + Number(m[3])) : null; };
   $$("[data-local-time]").forEach((el) => {
     const start = new Date(el.dataset.start), end = new Date(el.dataset.end);
     if (Number.isNaN(start.getTime()) || !tz || tz === el.dataset.tz) return;
-    const timeFmt = new Intl.DateTimeFormat(lang, { hour: "numeric", minute: "2-digit" });
-    const zoneFmt = new Intl.DateTimeFormat(lang, { timeZoneName: "short" });
-    const dateFmt = new Intl.DateTimeFormat(lang, { weekday: "long", month: "long", day: "numeric" });
+    // Same clock as the event (e.g. Toronto or Detroit for an Eastern event): nothing to add.
+    const evOffset = isoOffset(el.dataset.start);
+    if (evOffset !== null && -start.getTimezoneOffset() === evOffset && -end.getTimezoneOffset() === evOffset) return;
+    const timeFmt = new Intl.DateTimeFormat(loc, { hour: "numeric", minute: "2-digit", hour12: true });
+    const zoneFmt = new Intl.DateTimeFormat(loc, { timeZoneName: "short" });
+    const dateFmt = new Intl.DateTimeFormat(loc, { weekday: "long", month: "long", day: "numeric" });
     const zone = (zoneFmt.formatToParts(start).find((p) => p.type === "timeZoneName") || {}).value || tz;
+    // The page's own style: no-break spaces inside a time, and Spanish "a. m." / "p. m." (es-US gives "a.m.").
+    const NB = "\u00A0";
+    const fmt = (d) => {
+      const s = timeFmt.format(d).replace(/[\s\u202F]+/g, NB);
+      return lang === "es" ? s.replace(/\s?([ap])\.\s?m\./gi, (m, ap) => `${NB}${ap.toLowerCase()}.${NB}m.`) : s;
+    };
     const sameDay = start.toDateString() === end.toDateString();
-    let text = `${timeFmt.format(start)} – ${timeFmt.format(end)} ${zone}`;
-    if (!sameDay) text = `${dateFmt.format(start)}, ${timeFmt.format(start)} – ${dateFmt.format(end)}, ${timeFmt.format(end)} ${zone}`;
-    else if (el.dataset.withDate) text = `${dateFmt.format(start)}, ${text}`;
+    // The visitor's own calendar day of the start ("2026-12-13" in Tokyo) vs the event's ("2026-12-12").
+    const localDay = start.toLocaleDateString("en-CA");
+    const eventDay = String(el.dataset.start).slice(0, 10);
+    let text = `${fmt(start)}${NB}–\u2060${NB}${fmt(end)}${NB}${zone}`; // U+2060: no break after the dash
+    if (!sameDay) text = `${dateFmt.format(start)}, ${fmt(start)} – ${dateFmt.format(end)}, ${fmt(end)}${NB}${zone}`;
+    // Show the date whenever the local day is not the day printed on the page (e.g. Sunday in Asia).
+    else if (el.dataset.withDate || localDay !== eventDay) text = `${dateFmt.format(start)}, ${text}`;
     const target = el.querySelector("[data-local-value]") || el;
     target.textContent = text;
     el.hidden = false;
@@ -64,13 +82,28 @@
       if (nums.hours) nums.hours.textContent = pad(h);
       if (nums.minutes) nums.minutes.textContent = pad(m);
       if (nums.seconds) nums.seconds.textContent = pad(s);
-      if (label && d === 0 && labels.today) label.textContent = labels.today;
+      // "Today is the day" only on the visitor's own calendar day of the workshop (not just "< 24 h").
+      if (label && labels.today && now.toDateString() === start.toDateString()) label.textContent = labels.today;
     };
     tick();
     timer = setInterval(tick, 1000);
   });
 
   /* ---------- Copy buttons ---------- */
+  // One polite live region tells screen-reader users the copy worked (the visible "Copied" is not announced).
+  let status = null;
+  const announce = (msg) => {
+    if (!status) {
+      status = document.createElement("span");
+      status.className = "sr-only";
+      status.setAttribute("role", "status");
+      status.setAttribute("aria-live", "polite");
+      document.body.appendChild(status);
+    }
+    status.textContent = "";
+    setTimeout(() => { status.textContent = msg; }, 50);
+    setTimeout(() => { if (status.textContent === msg) status.textContent = ""; }, 3000);
+  };
   $$("[data-copy]").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const text = btn.dataset.copy;
@@ -87,6 +120,7 @@
       const original = span ? span.textContent : btn.textContent;
       if (span) span.textContent = btn.dataset.copied || "Copied!"; else btn.textContent = btn.dataset.copied || "Copied!";
       btn.classList.add("is-done");
+      announce(btn.dataset.copied || "Copied");
       setTimeout(() => { if (span) span.textContent = original; else btn.textContent = original; btn.classList.remove("is-done"); }, 1800);
     });
   });
@@ -101,7 +135,7 @@
     });
   });
 
-  /* ---------- Poster: ?size=a4 renders the A4 variant (used by scripts/pdf.mjs) ---------- */
+  /* ---------- Poster: ?size=a4 renders the A4 variant for manual printing (scripts/pdf.mjs sets data-size="a4" itself) ---------- */
   try {
     const size = new URLSearchParams(location.search).get("size");
     if (size === "a4") document.documentElement.dataset.size = "a4";

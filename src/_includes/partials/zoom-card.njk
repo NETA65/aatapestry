@@ -1,4 +1,6 @@
-{#- The Zoom details, used on the home page, /join/ and the Spanish pages. All values from site.json. -#}
+{#- The Zoom details, used on the home page, /join/, /schedule/, /accessibility/ and the Spanish pages.
+    All values from site.json / when.js; labels from i18n. Interpretation is listed Spanish first (the
+    flyer's order), looked up by key. Optional before the include: zoomHeadingLevel (default 3). -#}
 {%- set ev = site.event -%}
 <div class="zoom-card card" id="zoom">
   <div class="zoom-card-head">
@@ -22,19 +24,19 @@
     </div>
     {% if ev.zoom.dialIn and ev.zoom.dialIn.length %}
     <div>
-      <dt>{{ 'Teléfono' if lang == 'es' else 'Dial in' }}</dt>
+      <dt>{{ t.labels.dialIn }}</dt>
       <dd>{% for n in ev.zoom.dialIn %}<a href="{{ n | tel }}" class="mono">{{ n }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</dd>
     </div>
     {% endif %}
   </dl>
   <div class="zoom-card-actions">
     <a href="{{ ev.zoom.joinUrl }}" class="btn btn-primary" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
-    <button type="button" class="btn btn-secondary" data-copy="{{ ev.zoom.joinUrl }}" data-copied="{{ t.labels.copied }}">{% icon "link", "icon" %}<span>{{ t.labels.copy }} {{ 'enlace' if lang == 'es' else 'link' }}</span></button>
+    <button type="button" class="btn btn-secondary" data-copy="{{ ev.zoom.joinUrl }}" data-copied="{{ t.labels.copied }}">{% icon "link", "icon" %}<span>{{ t.labels.copyLink }}</span></button>
   </div>
   <ul class="zoom-notes">
-    <li>{% icon "clock", "icon" %}<span>{{ (when.date.longEs | capitalize) if lang == 'es' else when.date.long }} · {{ when.time.rangeEs if lang == 'es' else when.time.range }} {{ when.tzAbbr }}</span></li>
-    {% for i in ev.interpretation %}<li>{% set iconName = "hand" if i.key == "asl" else "languages" %}{% icon iconName, "icon" %}<span>{{ i.labelEs if lang == 'es' else i.label }}</span></li>{% endfor %}
-    <li>{% icon "info", "icon" %}<span>{{ ev.registration.note if lang != 'es' else t.labels.noRegistration }}</span></li>
+    <li>{% icon "clock", "icon" %}<span>{{ (when.date.longEs | capitalize) if lang == 'es' else when.date.long }}&nbsp;· {{ when.time.leadEs if lang == 'es' else when.time.lead }}<br>{{ when.time.startsAlsoEs if lang == 'es' else when.time.startsAlso }}</span></li>
+    {% for key in ["es", "asl"] %}{% set i = ev.interpretation | byKey(key) %}{% if i %}<li>{% set iconName = "hand" if key == "asl" else "languages" %}{% icon iconName, "icon" %}<span>{{ i.labelEs if lang == 'es' else i.label }}</span></li>{% endif %}{% endfor %}
+    <li>{% icon "info", "icon" %}<span>{{ (t.labels.freeNoRegistration | tokens) or ev.registration.note }}</span></li>
   </ul>
-  <p class="text-xs text-muted mt-3">{{ t.labels.lastUpdated }} <time datetime="{{ ev.zoom.lastUpdated }}">{{ ev.zoom.lastUpdated | date("DDD", lang) }}</time>.</p>
+  <p class="text-xs text-muted mt-3">{{ t.labels.lastUpdated }}: <time datetime="{{ ev.zoom.lastUpdated }}">{{ ev.zoom.lastUpdated | date("DDD", lang) }}</time>.</p>
 </div>

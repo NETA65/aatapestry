@@ -127,8 +127,9 @@
   a { color: inherit; text-underline-offset: 0.15em; }
   :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 0.25rem; }
   [x-cloak] { display: none !important; }
-  .icon { width: 1.15em; height: 1.15em; flex: none; stroke-width: 2; vertical-align: -0.2em; }
-  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+  /* inline-block: Tailwind's preflight makes every svg a block, which put "{% icon %} text" icons on a line of their own. */
+  .icon { display: inline-block; width: 1.15em; height: 1.15em; flex: none; stroke-width: 2; vertical-align: -0.2em; }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; white-space: nowrap; }
   button { font: inherit; color: inherit; }
   ::selection { background: var(--c-service-soft); }
 }
@@ -145,6 +146,9 @@
 .skip-link:focus { top: 1rem; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .measure { max-width: 68ch; }
+/* In-page targets land below the sticky header. */
+section[id], .anchor, h2[id], h3[id], .card[id], details[id], #faq { scroll-margin-top: 5.5rem; }
+.anchor { display: block; height: 0; }
 .grid-cards { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
 
 /* ---------- Type ---------- */
@@ -179,6 +183,9 @@
 @media (pointer: coarse) { .btn-sm { min-height: 2.75rem; } }
 .copy-btn { display: inline-flex; align-items: center; gap: 0.3rem; margin-left: 0.5rem; padding: 0.15rem 0.5rem; border-radius: 0.5rem; font-size: 0.78rem; font-weight: 600; color: var(--muted); border: 1px solid var(--line); background: var(--card); cursor: pointer; vertical-align: middle; }
 .copy-btn:hover { color: var(--fg); border-color: var(--fg); }
+@media (pointer: coarse) { .copy-btn { min-height: 2.75rem; padding: 0.4rem 0.75rem; } }
+/* Long labels (Spanish, file downloads) wrap instead of pushing the page sideways on phones. */
+@media (max-width: 480px) { .btn { white-space: normal; text-align: center; } }
 .copy-btn.is-done, .btn.is-done { color: var(--c-unity); border-color: var(--c-unity); }
 .tap-link { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 600; color: var(--c-recovery); text-decoration: none; }
 .tap-link:hover { text-decoration: underline; }
@@ -193,6 +200,10 @@
 .chip { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 2.25rem; padding: 0.3rem 0.9rem; border-radius: 999px; border: 1.5px solid var(--line); background: var(--card); font-size: 0.875rem; font-weight: 600; cursor: pointer; }
 .chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
 .chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.lang-pill { min-height: 2.5rem; padding: 0.4rem 0.95rem; font-size: 0.875rem; text-decoration: none; color: var(--c-recovery-text); background: var(--card); }
+.lang-pill:hover { border-color: var(--fg); }
+@media (pointer: coarse) { .lang-pill { min-height: 2.75rem; } }
+.strands { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
 /* ---------- Cards ---------- */
 .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-card); padding: 1.25rem; box-shadow: var(--shadow-card); }
@@ -229,20 +240,43 @@
 .hero-grid { display: grid; gap: 2rem; align-items: center; }
 @media (min-width: 1024px) { .hero-grid { grid-template-columns: 1.2fr 0.8fr; gap: 3rem; } }
 .hero-mark { width: min(100%, 22rem); margin-inline: auto; filter: drop-shadow(0 20px 40px rgb(31 34 51 / 0.15)); }
+/* Home and /es/ only (not bare .hero-grid: /join/ puts the Zoom card second). Tablets: a small mark on top.
+   Phones: no hero mark at all (the header already shows it), so the date, the time and the Join button
+   are on the first screen. */
+@media (max-width: 1023px) {
+  .hero-grid--mark .hero-mark-col { order: -1; }
+  .hero-grid--mark .hero-mark { width: 8rem; }
+}
+@media (max-width: 639px) { .hero-grid--mark .hero-mark-col { display: none; } }
+/* Dark mode: the marks are drawn in ink (#1F2233) for paper. The colour mark gets its paper disc back
+   (a medallion), and the one-colour mark is drawn in the text colour. The logo files stay as they are. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hero-mark, :root:not([data-theme="light"]) .site-header .brand-mark, :root:not([data-theme="light"]) .mark-disc { background: #fbf7f0; border-radius: 50%; }
+  :root:not([data-theme="light"]) .mark-mono [stroke="#1F2233"] { stroke: var(--fg); }
+  :root:not([data-theme="light"]) .mark-mono [fill="#1F2233"] { fill: var(--fg); }
+}
+:root[data-theme="dark"] .hero-mark, :root[data-theme="dark"] .site-header .brand-mark, :root[data-theme="dark"] .mark-disc { background: #fbf7f0; border-radius: 50%; }
+:root[data-theme="dark"] .mark-mono [stroke="#1F2233"] { stroke: var(--fg); }
+:root[data-theme="dark"] .mark-mono [fill="#1F2233"] { fill: var(--fg); }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+.hero-lead { margin-top: 1.75rem; } /* the paragraph after the buttons (the date, time and Join come first) */
 .hero-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
 .date-tile { display: inline-grid; grid-template-rows: auto 1fr; text-align: center; min-width: 5.5rem; border-radius: 1rem; overflow: hidden; border: 1px solid var(--line); background: var(--card); box-shadow: var(--shadow-card); }
 .date-tile .m { background: var(--c-recovery); color: var(--on-accent); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; padding: 0.3rem; }
 .date-tile .d { font-family: var(--font-display); font-size: 2.4rem; font-weight: 600; line-height: 1; padding: 0.5rem 0.75rem 0.25rem; }
 .date-tile .w { font-size: 0.75rem; color: var(--muted); padding-bottom: 0.5rem; }
 .when-line { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.25rem; margin-top: 1.5rem; }
+/* Small phones: the date line says it all; the tile would only push the text onto a row of its own. */
+@media (max-width: 479px) { .when-line .date-tile { display: none; } }
 .when-text { font-size: 1.1rem; }
-.when-text strong { font-weight: 700; }
+.when-text strong { font-weight: 700; display: block; }
+.when-lead { display: block; font-variant-numeric: tabular-nums; }
+.when-also { display: block; font-size: 0.95rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .local-time { display: block; font-size: 0.9rem; color: var(--muted); margin-top: 0.15rem; }
 
 /* ---------- Facts strip ---------- */
 .facts { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: 0; }
-.fact { display: grid; grid-template-columns: 2.5rem 1fr; grid-template-rows: auto auto; column-gap: 0.75rem; align-items: start; }
+.fact { display: grid; grid-template-columns: 2.5rem 1fr; grid-template-rows: auto auto; column-gap: 0.75rem; align-items: start; align-content: start; }
 .fact-icon { grid-row: 1 / 3; display: inline-flex; width: 2.5rem; height: 2.5rem; align-items: center; justify-content: center; border-radius: 0.75rem; background: var(--c-recovery-soft); color: var(--c-recovery); }
 .fact-label, .fact-value { grid-column: 2; margin: 0; }
 .fact:nth-child(3n+2) .fact-icon { background: var(--c-unity-soft); color: var(--c-unity); }
@@ -250,23 +284,31 @@
 .fact-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .fact-value { font-weight: 600; }
 .fact-sub { display: block; font-weight: 400; font-size: 0.875rem; color: var(--muted); }
+.facts--grid6 { grid-template-columns: 1fr; }
+@media (min-width: 640px) { .facts--grid6 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .facts--grid6 { grid-template-columns: repeat(3, 1fr); } }
+.fact-value a { overflow-wrap: anywhere; }
 
 /* ---------- Countdown ---------- */
 .countdown { margin-top: 1.5rem; }
 .countdown-label { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
-.countdown-tiles { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.countdown .tile { display: grid; place-items: center; min-width: 4.5rem; padding: 0.5rem 0.6rem; border-radius: 0.9rem; background: var(--card); border: 1px solid var(--line); }
+/* Always one row of four tiles: they shrink on narrow phones (360 px) instead of leaving one tile alone below. */
+.countdown-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 4.75rem)); gap: 0.5rem; }
+.countdown .tile { display: grid; place-items: center; min-width: 0; padding: 0.5rem 0.35rem; border-radius: 0.9rem; background: var(--card); border: 1px solid var(--line); }
 .countdown .num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
 .countdown .unit { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 0.2rem; }
+@media (max-width: 399px) { .countdown .unit { font-size: 0.65rem; letter-spacing: 0.03em; } }
 .countdown-state { font-weight: 600; margin-top: 0.5rem; }
 .countdown-state.is-live { color: var(--c-live); }
 
 /* ---------- Zoom card ---------- */
 .zoom-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
-.zoom-dl { display: grid; gap: 0.75rem; margin-top: 1rem; }
-@media (min-width: 480px) { .zoom-dl { grid-template-columns: 1fr 1fr; } }
+/* Two columns only when the CARD is wide enough for "824 7491 1898 [Copy]" on one line (not by viewport:
+   the card is narrow in a desktop sidebar). */
+.zoom-dl { display: grid; gap: 0.75rem; margin-top: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
 .zoom-dl dt { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.zoom-dl dd { font-size: 1.15rem; font-weight: 600; display: flex; align-items: center; flex-wrap: wrap; }
+.zoom-dl dd { font-size: 1.15rem; font-weight: 600; display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+.zoom-dl dd .copy-btn { margin-left: 0; }
 .zoom-card-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.25rem; }
 .zoom-notes { list-style: none; padding: 0; margin: 1.25rem 0 0; display: grid; gap: 0.4rem; font-size: 0.9rem; color: var(--muted); }
 .zoom-notes li { display: flex; gap: 0.5rem; align-items: flex-start; }
@@ -327,7 +369,9 @@
 @media (max-width: 480px) { .timeline li { grid-template-columns: 1fr; gap: 0.25rem; } }
 .timeline .time { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .timeline .time small { display: block; font-weight: 400; color: var(--muted); font-size: 0.8rem; }
-.timeline li.is-break { background: var(--bg-2); border-style: dashed; border-left-style: solid; }
+/* Phones: one column, so "11:00 AM ET" / "11:00 AM → 7:00 PM ET" stay on one line instead of a lone "ET" line. */
+@media (max-width: 480px) { .timeline .time small { display: inline; margin-left: 0.35em; } }
+.timeline li.is-break, .timeline li.is-pending { background: var(--bg-2); border-style: dashed; border-left-style: solid; }
 .timeline h3 { font-size: 1.1rem; font-family: var(--font-sans); font-weight: 600; }
 .zones { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 .zones th, .zones td { text-align: left; padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--line); }
@@ -354,6 +398,7 @@
 .footer-links { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
 .footer-links a { display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; font-weight: 500; }
 .footer-links a:hover { text-decoration: underline; }
+.footer-links a, .footer-addr { overflow-wrap: anywhere; }
 .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
 .footer-bottom a { text-decoration: underline; }
 
@@ -363,6 +408,36 @@
 .qr-box { text-align: center; }
 .qr-box svg, .qr-box img { width: 100%; max-width: 12rem; height: auto; margin-inline: auto; background: #fff; padding: 0.5rem; border-radius: 0.75rem; border: 1px solid var(--line); }
 .qr-box p { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; }
+
+/* ---------- Official flyer ---------- */
+.flyer-thumb { display: block; max-width: 20rem; margin-inline: auto; border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--shadow-card); border: 1px solid var(--line); transition: transform 0.15s; }
+.flyer-thumb:hover { transform: translateY(-2px); }
+@media (min-width: 1024px) { .flyer-thumb { max-width: 24rem; } }
+.flyer-full { max-width: 30rem; margin: 0 auto; }
+.flyer-full picture { display: block; border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--shadow-card); border: 1px solid var(--line); }
+.flyer-img { display: block; width: 100%; height: auto; }
+.flyer-text .when-text { font-size: 1.1rem; }
+/* Printable posters under the flyer downloads: small buttons (full-size tap targets) that may wrap their
+   text in a narrow sidebar; on Spanish pages a label names the group. */
+.flyer-poster-links .btn { white-space: normal; text-align: left; }
+.flyer-poster-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 600; }
+/* Home flyer band: phones read heading → image → downloads; desktop keeps the image on the left,
+   with the heading and the downloads centred beside it. */
+.flyer-band .section-head { margin-bottom: 0; }
+@media (min-width: 1024px) {
+  .flyer-band { grid-template-columns: minmax(0, 24rem) 1fr; grid-template-rows: 1fr auto auto 1fr; row-gap: 0; }
+  .flyer-band-img { grid-column: 1; grid-row: 1 / 5; align-self: center; }
+  .flyer-band-head { grid-column: 2; grid-row: 2; padding-bottom: 1.5rem; }
+  .flyer-band-body { grid-column: 2; grid-row: 3; }
+}
+
+/* ---------- Questions / interpretation cards ---------- */
+.questions-card a, .email-link { overflow-wrap: anywhere; }
+.questions-card .tap-link { font-size: 1.1rem; }
+.questions-email { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.questions-email .copy-btn { margin-left: 0; }
+.interp-cards { display: grid; gap: 1rem; }
+@media (min-width: 640px) { .interp-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* ---------- Updates ---------- */
 .updates { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
@@ -386,14 +461,16 @@
 .poster-eyebrow { font-size: 2.1cqw; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #5b5f73; }
 .poster-title { font-family: var(--font-display); font-weight: 600; font-size: 6.6cqw; line-height: 1.02; letter-spacing: -0.015em; margin-top: 1cqw; text-wrap: balance; }
 .poster-sub { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 2.9cqw; color: #3f4358; margin-top: 1.4cqw; line-height: 1.25; }
-.poster-when { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 3.6cqw; align-items: center; padding: 2.2cqw 0; border-top: 0.25cqw solid #e6e0d4; border-bottom: 0.25cqw solid #e6e0d4; }
+.poster-when { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 3.6cqw; align-items: center; padding: 1.9cqw 0; border-top: 0.25cqw solid #e6e0d4; border-bottom: 0.25cqw solid #e6e0d4; }
 .poster-date-tile { display: grid; text-align: center; min-width: 16cqw; border-radius: 2cqw; overflow: hidden; border: 0.25cqw solid #e6e0d4; background: #fff; }
 .poster-date-tile .m { background: #2f4fa2; color: #fff; font-size: 2cqw; font-weight: 700; letter-spacing: 0.2em; padding: 0.8cqw; }
 .poster-date-tile .d { font-family: var(--font-display); font-size: 8cqw; font-weight: 600; line-height: 1; padding: 1.2cqw 1.5cqw 0.4cqw; }
 .poster-date-tile .w { font-size: 2cqw; color: #5b5f73; padding-bottom: 1.2cqw; font-weight: 600; }
 .poster-when-text .line1 { font-family: var(--font-display); font-size: 4.2cqw; font-weight: 600; line-height: 1.15; text-wrap: balance; }
 .poster-when-text .line2 { font-size: 3.1cqw; font-weight: 600; margin-top: 0.8cqw; color: #2f4fa2; }
-.poster-when-text .line3 { font-size: 2.6cqw; margin-top: 0.8cqw; color: #3f4358; }
+.poster-when-text .line2b { font-size: 2.3cqw; font-weight: 600; color: #3f4358; margin-top: 0.4cqw; }
+.poster-when-text .line3 { font-size: 2.6cqw; line-height: 1.35; margin-top: 0.8cqw; color: #3f4358; text-wrap: balance; }
+.poster-when-text .line3 > span { white-space: nowrap; } /* break only between the "·" parts, never inside one */
 .poster-mid { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 3.6cqw; align-items: center; }
 .poster-legacies { display: grid; gap: 1.6cqw; align-content: start; }
 .poster-legacy { display: grid; grid-template-columns: 1.4cqw 1fr; gap: 2cqw; align-items: stretch; }
@@ -401,20 +478,22 @@
 .poster-legacy b { display: block; font-size: 2.4cqw; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--legacy-text, var(--legacy)); }
 .poster-legacy span { display: block; font-family: var(--font-display); font-size: 3.1cqw; font-weight: 500; line-height: 1.2; }
 .poster-interp { margin-top: 2.4cqw; display: flex; flex-wrap: wrap; gap: 1.2cqw; }
-.poster-interp span { display: inline-flex; align-items: center; gap: 0.8cqw; font-size: 2.2cqw; font-weight: 700; padding: 0.9cqw 2cqw; border-radius: 99cqw; background: #fff; border: 0.25cqw solid #e6e0d4; }
+.poster-interp span { display: inline-flex; align-items: center; gap: 0.8cqw; font-size: 2.2cqw; font-weight: 700; line-height: 1.3; text-wrap: balance; padding: 0.9cqw 2cqw; border-radius: 99cqw; background: #fff; border: 0.25cqw solid #e6e0d4; }
 .poster-interp .icon { width: 2.6cqw; height: 2.6cqw; }
-.poster-zoom { background: #fff; border: 0.25cqw solid #e6e0d4; border-radius: 2.5cqw; padding: 2.4cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 2cqw; }
+.poster-zoom { background: #fff; border: 0.25cqw solid #e6e0d4; border-radius: 2.5cqw; padding: 2.1cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 1.6cqw 2cqw; }
 .poster-zoom .qr { text-align: center; }
-.poster-zoom .qr svg { width: 86%; height: auto; margin-inline: auto; display: block; }
-.poster-zoom .qr b { display: block; font-size: 2cqw; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1cqw; }
-.poster-zoom .qr small { display: block; font-size: 1.9cqw; color: #5b5f73; }
-.poster-zoom .ids { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.5cqw 2cqw; border-top: 0.25cqw solid #e6e0d4; padding: 1.8cqw 1cqw 0; font-size: 2.3cqw; white-space: nowrap; }
+.poster-zoom .qr svg { width: 80%; height: auto; margin-inline: auto; display: block; }
+.poster-zoom .qr b { display: block; font-size: 2cqw; font-weight: 700; letter-spacing: 0.08em; line-height: 1.25; text-transform: uppercase; margin-top: 1cqw; }
+.poster-zoom .qr small { display: block; font-size: 1.9cqw; line-height: 1.4; margin-top: 0.3cqw; color: #5b5f73; }
+.poster-zoom .ids { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: flex-end; gap: 2cqw; border-top: 0.25cqw solid #e6e0d4; padding: 1.5cqw 1cqw 0; font-size: 2.3cqw; white-space: nowrap; }
 .poster-zoom .ids b { font-family: var(--font-mono); font-size: 2.7cqw; letter-spacing: 0.05em; display: block; }
-.poster-zoom .ids span { display: block; font-size: 1.7cqw; letter-spacing: 0.08em; text-transform: uppercase; color: #5b5f73; }
+.poster-zoom .ids span { display: block; font-size: 1.7cqw; line-height: 1.3; letter-spacing: 0.08em; text-transform: uppercase; color: #5b5f73; white-space: normal; margin-bottom: 0.3cqw; }
+/* One row for ID + passcode in every language: the ID never wraps, a long label ("Código de acceso") wraps instead. */
 .poster-foot { position: relative; display: flex; justify-content: space-between; align-items: flex-end; gap: 3cqw; padding-top: 1cqw; }
 .poster-foot > div { max-width: 50cqw; }
 .poster-url { font-family: var(--font-display); font-size: 4.6cqw; font-weight: 600; color: #2f4fa2; letter-spacing: -0.01em; }
 .poster-free { font-size: 2.1cqw; font-weight: 600; color: #1b8a6b; margin-top: 0.3cqw; line-height: 1.3; }
+.poster-ask { font-size: 2.1cqw; margin-top: 0.6cqw; color: #1f2233; overflow-wrap: anywhere; }
 .poster-fine { font-size: 1.7cqw; color: #5b5f73; max-width: 38cqw; text-align: right; line-height: 1.35; }
 :root[data-size="a4"] .poster { width: 210mm; aspect-ratio: 210 / 297; }
 

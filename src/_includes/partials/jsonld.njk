@@ -1,50 +1,56 @@
-{#- Structured data (schema.org JSON-LD), all from site.json / when.js. -#}
+{#- Structured data (schema.org JSON-LD), all from site.json / when.js; prose through | tokens.
+    Event description: copy.jsonld.eventSummary (EN) or t.landing.metaDescription (ES). FAQPage on "/" (q/a)
+    and "/es/" (qEs/aEs). Text through | plain (no no-break spaces or word joiners in search-engine data). -#}
 {%- set ev = site.event -%}
 {%- set statusMap = { "scheduled": "https://schema.org/EventScheduled", "cancelled": "https://schema.org/EventCancelled", "postponed": "https://schema.org/EventPostponed", "rescheduled": "https://schema.org/EventRescheduled" } -%}
 {%- set firstDate = (updates.items | last).date if (updates.items and updates.items.length) else build.date -%}
 {%- set org = { "@type": "Organization", "@id": site.url + "/#organization", "name": site.contact.committee, "url": site.url, "logo": { "@type": "ImageObject", "url": ("/brand/logo/mark-1024.png" | absUrl) } } -%}
 {%- if site.contact.email %}{% set org = org | merge({ "email": site.contact.email }) %}{% endif -%}
-{%- set website = { "@type": "WebSite", "@id": site.url + "/#website", "url": site.url, "name": site.name, "description": site.description, "inLanguage": ["en", "es"], "publisher": { "@id": site.url + "/#organization" } } -%}
+{%- set website = { "@type": "WebSite", "@id": site.url + "/#website", "url": site.url, "name": site.name, "description": (site.description | tokens | plain), "inLanguage": ["en", "es"], "publisher": { "@id": site.url + "/#organization" } } -%}
 {%- set graph = [org, website] -%}
 
 {%- if schema == "event" -%}
+{%- set eventImages = [ (ogImage | absUrl), ("/brand/social/square.png" | absUrl) ] -%}
+{%- if site.flyer and site.flyer.base %}{% set _ = eventImages.push((site.flyer.base + "-1600.jpg") | absUrl) %}{% endif -%}
 {%- set eventNode = {
   "@type": "Event",
   "@id": site.url + "/#event",
   "name": ev.name,
-  "description": (copy.jsonld.eventSummary if (copy and copy.jsonld and copy.jsonld.eventSummary) else site.description),
+  "description": ((t.landing.metaDescription if (lang == "es" and t.landing.metaDescription) else (copy.jsonld.eventSummary if (copy and copy.jsonld and copy.jsonld.eventSummary) else site.description)) | tokens | plain),
   "startDate": when.startISO,
   "endDate": when.endISO,
   "eventStatus": statusMap[ev.status] or statusMap.scheduled,
   "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
   "location": { "@type": "VirtualLocation", "url": ev.zoom.joinUrl, "name": ev.platform },
-  "image": [ (ogImage | absUrl), ("/brand/social/square.png" | absUrl) ],
-  "url": site.url,
+  "image": eventImages,
+  "url": (site.url + "/es/") if lang == "es" else site.url,
   "isAccessibleForFree": true,
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": site.url, "validFrom": firstDate },
   "organizer": { "@id": site.url + "/#organization" },
-  "performer": { "@type": "Organization", "name": site.contact.committee },
   "inLanguage": ["en", "es", "ase"],
-  "audience": { "@type": "Audience", "audienceType": "A.A. members and anyone interested in the Three Legacies" },
+  "audience": { "@type": "Audience", "audienceType": (ev.audience or "A.A. members") },
   "keywords": "Alcoholics Anonymous, Twelve Steps, Twelve Traditions, Twelve Concepts, Three Legacies, workshop, Zoom, ASL interpretation, Spanish interpretation"
 } -%}
 {%- set _ = graph.push(eventNode) -%}
 {%- endif -%}
 
-{%- if schema == "event" and page.url == "/" and faq and faq.items -%}
+{%- if schema == "event" and (page.url == "/" or page.url == "/es/") and faq and faq.items -%}
+{%- set fEs = page.url == "/es/" -%}
 {%- set questions = [] -%}
 {%- for q in faq.items -%}
-{%- set _ = questions.push({ "@type": "Question", "name": q.q, "acceptedAnswer": { "@type": "Answer", "text": (q.a | mdInline) } }) -%}
+{%- set qName = (q.qEs if fEs else q.q) | tokens | plain -%}
+{%- set qText = (q.aEs if fEs else q.a) | tokens -%}
+{%- if qName and qText %}{% set _ = questions.push({ "@type": "Question", "name": qName, "acceptedAnswer": { "@type": "Answer", "text": (qText | mdInline | plain) } }) %}{% endif -%}
 {%- endfor -%}
-{%- set _ = graph.push({ "@type": "FAQPage", "@id": site.url + "/#faq", "mainEntity": questions }) -%}
+{%- if questions.length %}{% set _ = graph.push({ "@type": "FAQPage", "@id": (page.url | absUrl) + "#faq", "inLanguage": ("es" if fEs else "en"), "mainEntity": questions }) %}{% endif -%}
 {%- endif -%}
 
-{%- if page.url != "/" and page.url != "/es/" -%}
+{%- if page.url and page.url != "/" and page.url != "/es/" -%}
 {%- set crumbs = [{ "@type": "ListItem", "position": 1, "name": t.nav.home, "item": (("/es/" if lang == "es" else "/") | absUrl) }] -%}
 {%- if page.url != "/principles/" and page.url.startsWith("/principles/") -%}
 {%- set _ = crumbs.push({ "@type": "ListItem", "position": 2, "name": t.nav.principles, "item": ("/principles/" | absUrl) }) -%}
 {%- endif -%}
-{%- set _ = crumbs.push({ "@type": "ListItem", "position": crumbs.length + 1, "name": (title or site.name), "item": (page.url | absUrl) }) -%}
+{%- set _ = crumbs.push({ "@type": "ListItem", "position": crumbs.length + 1, "name": ((title | tokens) or site.name), "item": (page.url | absUrl) }) -%}
 {%- set _ = graph.push({ "@type": "BreadcrumbList", "itemListElement": crumbs }) -%}
 {%- endif -%}
 

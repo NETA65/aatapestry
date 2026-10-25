@@ -49,9 +49,14 @@ At your DNS provider (where you bought the domain), add:
 | AAAA | `@` | `2606:50c0:8003::153` |
 | CNAME | `www` | `<your-user>.github.io` |
 
+**Do not skip the `www` record.** The flyer prints *www.aatapestry.org*, but the site lives on the
+bare domain (`src/CNAME` says `aatapestry.org`); GitHub Pages redirects `www.aatapestry.org` there only
+if the `www` CNAME exists. Without it, everyone who types the address from the flyer gets an error.
+
 Then **Settings → Pages → Custom domain**: type `aatapestry.org`, *Save*. The repository ships
 `src/CNAME` with the domain, so the setting survives every deploy. Wait for the DNS check (minutes to
-an hour), then tick **Enforce HTTPS**. `www.aatapestry.org` redirects to the bare domain automatically.
+an hour), then tick **Enforce HTTPS**. Once the `www` record resolves, `www.aatapestry.org` redirects
+to the bare domain automatically (open it once in a browser to check).
 
 Recommended: in your *profile* **Settings → Pages → Verified domains**, verify `aatapestry.org` so
 nobody else can claim it on GitHub.
@@ -62,12 +67,16 @@ Actions tab → **Build & Deploy** should be green. It also runs every Monday mo
 December. Two more workflows are available from the *Run workflow* button:
 
 - **Update Zoom info** — a form for a new meeting ID / passcode / link. It commits the change and
-  redeploys. Nothing to install.
+  redeploys. Nothing to install. The official flyer is a fixed image and keeps its printed details;
+  the flyer pages then show a note that they are out of date (see [EDITING.md](EDITING.md)).
 - **Sync Zoom** — only useful if you want the site to *follow* the Zoom meeting automatically:
   1. <https://marketplace.zoom.us/> → Develop → Build App → **Server-to-Server OAuth**.
   2. Add scope `meeting:read:meeting` (or `meeting:read:admin`), activate the app.
   3. Repository → Settings → Secrets and variables → Actions → *New repository secret* three times:
      `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID`, `ZOOM_CLIENT_SECRET`.
+  The app must belong to the Zoom account that owns the workshop meeting (`site.json →
+  event.zoom.meetingId`), or the daily run fails; without access to that account, leave the
+  secrets unset.
   Without the secrets the workflow simply reports "skipped".
 
 **Scheduled runs and quiet repositories.** GitHub pauses `schedule` triggers in a repository that has
@@ -84,6 +93,9 @@ for two months. If GitHub emails that a scheduled workflow was disabled, open Ac
 - Test the structured data at <https://search.google.com/test/rich-results> with the home page URL
   (it should show *Event* and *FAQ*).
 - Test the link preview at <https://www.opengraph.xyz/> or by pasting the URL into a chat app.
+  After changing the date, time or Zoom details, force a refresh with the Facebook Sharing Debugger
+  (<https://developers.facebook.com/tools/debug/> → *Scrape Again*) and LinkedIn Post Inspector;
+  WhatsApp and iMessage refresh on their own after a while.
 
 ## 7. Day-to-day
 
@@ -96,9 +108,15 @@ See [EDITING.md](EDITING.md). Every change is a commit; every commit is a deploy
 - **Styles missing on aatapestry.org** → Settings → Pages → Source must be **GitHub Actions**, not
   "Deploy from a branch".
 - **Custom domain check fails** → DNS has not propagated yet, or the `www` CNAME points to the wrong
-  user. `dig aatapestry.org +short` should list the four A records.
+  user. `dig aatapestry.org +short` should list the four A records, and
+  `dig www.aatapestry.org +short` should show `<your-user>.github.io`.
+- **www.aatapestry.org (the address on the flyer) does not open** → the `www` CNAME record is missing
+  (step 4). Add it; GitHub then redirects it to aatapestry.org.
 - **First run failed at "Configure Pages"** → Pages was not enabled yet. Do step 2, then *Re-run all jobs*.
 - **Build fails on `npm ci`** → `package-lock.json` must be committed (it is) and Node 20+ is used
   (`.nvmrc` → 22).
-- **Poster PDF step is red** → the site still deploys (it is allowed to fail); the previous PDFs stay.
-  Run `npm run pdf` locally and commit `brand/poster/` to refresh them.
+- **Poster PDF step is red** → the site still deploys (it is allowed to fail), with the previously
+  committed poster files. Check that they show the current date, time and Zoom details; if not, run
+  `npm run build && npm run pdf` locally and commit `brand/poster/`.
+- **Flyer images or downloads missing on the live site** → `brand/flyer/` was not committed.
+  `git add brand/flyer` and push.

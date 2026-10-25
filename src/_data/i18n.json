@@ -1,45 +1,57 @@
 {
+  "_readme": "Interface strings for English (en) and Spanish (es). Both languages must have exactly the same keys (the build stops if they differ; arrays and strings count as leaves). Use \"\" where a language needs nothing: most of en.landing is empty because the English home page reads copy.json, and only en.landing.eyebrow (used on /join/, /poster/ and the English social card), headline, subline, hook, pageTitle and zoomNotice (the changed-Zoom-link note under the How to join heading on / and /join/) are filled in. Write the email, date, times and Zoom numbers ONLY as tokens ({email}, {date}/{dateEs}, {time}/{timeEs}, {timeShort}/{timeShortEs}, {startsAlso}/{startsAlsoEs}, {rangesAlso}/{rangesAlsoEs}, {start}/{startEs} (start time + ET), {zoomId}, {passcode}, {pdfSize}, {jpgSize}, {domain}; Spanish strings use the Es forms), which the build fills in from site.json. contact.subject is the one exception: it names the day in the mailto subject line. The email address is printed at most ONCE per page (the questions card, the flyer text or the poster line); everywhere else prose links to it, [email the planning committee](mailto:{email}) / [escribir al comité organizador](mailto:{email}), and never writes a bare {email}. Simple Markdown (bold, links) works in join.steps, join.interpretation, join.etiquette, landing.zoomNotice, landing.programLead, landing.programHistory, landing.intro, landing.thirtySix, landing.seventh and landing.accessibilityNote; every other field is plain text. Spanish register: impersonal or 'nosotros', never tú. poster.footer must keep ending in ' · aatapestry.org' exactly (the poster template splits on it).",
   "en": {
     "langName": "English",
     "switchLabel": "En español",
+    "langPill": "Información en español",
     "nav": {
       "home": "Home",
       "schedule": "Program",
       "principles": "36 Principles",
       "meeting": "Weekly meeting",
       "accessibility": "Accessibility",
-      "poster": "Poster",
-      "join": "Join on Zoom",
+      "poster": "Printable poster",
+      "join": "How to join",
+      "flyer": "Flyer",
+      "questions": "Questions",
       "skip": "Skip to content"
     },
     "labels": {
+      "when": "When",
       "date": "Date",
-      "time": "Time",
       "where": "Where",
       "cost": "Cost",
       "interpretation": "Interpretation",
+      "program": "Program",
+      "questions": "Questions",
       "meetingId": "Meeting ID",
       "passcode": "Passcode",
       "joinZoom": "Join on Zoom",
       "copy": "Copy",
       "copied": "Copied",
+      "copyLink": "Copy link",
       "addToCalendar": "Add to calendar",
       "downloadIcs": "Download calendar file (.ics)",
-      "downloadPoster": "Download the poster (PDF)",
-      "downloadPng": "Download the poster (PNG)",
       "print": "Print",
       "yourLocalTime": "Your local time",
-      "allTimesPT": "All times Pacific Time (PT)",
       "online": "Online on Zoom",
       "free": "Free",
-      "noRegistration": "No registration needed",
-      "openToAll": "Open to all A.A. members",
-      "tentative": "Tentative",
+      "noRegistration": "No pre-registration",
+      "freeNoRegistration": "Free · No pre-registration",
+      "contributionsWelcome": "Contributions welcome to help cover interpretation",
+      "programSoon": "Coming soon",
+      "programWillBePosted": "Will be available on this website shortly",
+      "seeProgram": "See the program",
+      "interpretationValue": "Spanish · ASL",
+      "interpretationSub": "Choose it in Zoom; see How to join",
+      "interpretationBadge": "Spanish & ASL interpretation",
+      "atAGlance": "At a glance",
       "updated": "Updated",
       "lastUpdated": "Last updated",
       "backHome": "Back to the front page",
       "readMore": "Read more",
-      "share": "Share"
+      "share": "Share",
+      "dialIn": "Dial in"
     },
     "countdown": {
       "startsIn": "The workshop starts in",
@@ -62,85 +74,155 @@
       "tradition": "Tradition",
       "concept": "Concept"
     },
-    "landing": {
-      "eyebrow": "A free online A.A. workshop",
-      "headline": "The Incredible Tapestry: Weaving the Steps, Traditions & Concepts Together",
-      "sub": "A full day of weaving the Twelve Steps, Twelve Traditions and Twelve Concepts together, one number at a time. Saturday, December 12, 2026, 8 AM to 4 PM Pacific, on Zoom, with ASL and Spanish interpretation. Open to every A.A. member; no registration needed.",
-      "intro": [
-        "Most of us met the Steps first, in a church basement or on a screen, from someone who had been where we were. The Traditions came later, usually when a group business meeting got lively. The Concepts, if we met them at all, arrived with a service job we did not quite ask for. We tend to keep the three in separate drawers. This workshop takes them out and lays them side by side.",
-        "The Incredible Tapestry is a free, all-day online gathering for A.A. members and anyone curious about how the Fellowship holds together. We will spend the morning with the Steps and the Traditions, the early afternoon with the Concepts, and the last part of the day in small breakout rooms, each tracing a single number through all three legacies. No registration, no cost, no homework. Bring your coffee and your home group's questions."
+    "zones": {
+      "heading": "Your time zone",
+      "intro": "{time} is…",
+      "zone": "Zone",
+      "time": "Time",
+      "endsNextDay": "(ends next day)",
+      "allTimes": "All times are Eastern Time (ET)."
+    },
+    "program": {
+      "begins": "Workshop begins",
+      "middle": "Presentations, sharing and questions",
+      "pending": "The program will be available on this website shortly.",
+      "ends": "Workshop ends"
+    },
+    "join": {
+      "heading": "How to join",
+      "steps": [
+        "On the day, use the **Join on Zoom** button on this page, or open Zoom yourself and enter meeting ID **{zoomId}** and passcode **{passcode}**. No pre-registration is required.",
+        "If Zoom asks, enter a display name using your **first name and last initial** only, the same way you would introduce yourself at a meeting.",
+        "Once you are in, use the **Interpretation** (globe) button to choose **Spanish** audio or **ASL**; for ASL you can also pin the interpreter’s video. If captions are turned on, the **CC** button shows them.",
+        "Settle in. There will be plenty of time for sharing and asking questions."
       ],
-      "whatToExpectHeading": "What the day feels like",
-      "whatToExpect": [
-        {
-          "title": "Speakers who have lived it",
-          "body": "Each legacy session opens with a member sharing experience, not a lecture. Expect stories about sponsorship, group conscience and service before any theory."
-        },
-        {
-          "title": "Real situations, not case studies",
-          "body": "The Traditions session works from things that actually happen in groups: the member who wants to record the meeting, the treasury that grew too large, the outside speaker with a good cause."
-        },
-        {
-          "title": "Small rooms in the afternoon",
-          "body": "Mid-afternoon, after the Concepts session, we break into Zoom rooms of eight to ten people. Each room gets one number, traces it through its Step, Tradition and Concept, and reports back to the whole group."
-        },
-        {
-          "title": "Breaks, and a lunch that stays open",
-          "body": "Two short breaks and a thirty-minute lunch. The Zoom room stays open through lunch for anyone who wants to keep talking; the interpreters take a well-earned rest."
-        }
-      ],
-      "howToJoinHeading": "How to join",
-      "howToJoin": [
-        "On the day, use the Join on Zoom button on this page, or open Zoom yourself and enter the meeting ID and passcode shown here. The room will open ahead of 8 AM Pacific so you can sort out audio before we begin.",
-        "If Zoom asks for a display name, use your first name and last initial only, the same way you would introduce yourself at a meeting.",
-        "Once you are in, find the Interpretation (globe) button if you want Spanish audio, or pin the ASL interpreter's video if you need sign language. Captions are under the CC button.",
-        "Settle in. Questions about Zoom go in the chat; the hosts will be watching it all day."
-      ],
-      "interpretationHeading": "ASL and Spanish interpretation",
-      "interpretation": [
-        "Spanish interpretation runs on a separate audio channel for the whole day. Click the Interpretation (globe) button on the Zoom toolbar and choose Spanish; on a phone or tablet the same control is under More (the three dots), then Language Interpretation. Turn on Mute Original Audio to hear only the Spanish, or leave it off to hear the original speaker quietly underneath. When a Spanish-speaking member shares, the interpreter renders it into English for the main room, so sharing is welcome in either language.",
-        "American Sign Language interpreters will be on screen for every session, from the opening to the Responsibility Statement, including the breakout rooms wherever an interpreter is available. On a desktop or laptop, choose ASL from the Interpretation (globe) button to use Zoom's sign language interpretation view, or hover over the interpreter's video, open the three-dot menu and choose Pin so the speaker and the interpreter stay side by side. Interpreters rotate during the day and rest during lunch."
-      ],
-      "accessibilityNote": "Zoom's automated captions will be on for the whole room (the CC button); they are generated by software, so they stumble over names and A.A. phrases now and then. This website is built to work with screen readers and keyboard navigation. If something would make the day easier for you to take part in, please ask the planning committee; the earlier we hear, the more we can arrange.",
+      "tip": "The workshop runs {time} ({startsAlso}). If you can, join a few minutes before the start to sort out your audio and interpretation.",
+      "interpretationHeading": "Spanish and ASL interpretation",
+      "interpretation": {
+        "es": [
+          "Spanish interpretation will be provided on its own audio channel.",
+          "Click the **Interpretation** (globe) button on the Zoom toolbar and choose **Spanish**. On a phone or tablet, the same control is under **More** (the three dots), then **Language Interpretation**. Turn on **Mute Original Audio** to hear only the Spanish, or leave it off to hear the original speaker quietly underneath."
+        ],
+        "asl": [
+          "American Sign Language (ASL) interpretation will be provided.",
+          "On a computer, if Zoom’s **sign language view** is offered, choose **ASL** from the **Interpretation** (globe) button and the interpreter appears in a separate window. If that option is not showing, hover over the interpreter’s video, open the three-dot menu and choose **Pin** to keep the interpreter on screen."
+        ]
+      },
       "etiquetteHeading": "Zoom etiquette & online anonymity",
       "etiquette": [
-        "Use your first name and last initial as your display name, just as you would introduce yourself in a meeting.",
-        "Cameras are welcome but optional. Some of us join from a kitchen or a break room; you are no less present with your camera off.",
-        "Stay muted unless you are sharing or asking a question. The hosts will mute stray microphones gently.",
-        "No recording, no screenshots, no photos of the screen. This workshop is not recorded, and we ask every member to extend the same courtesy.",
-        "Use Raise Hand (under Reactions) to share or ask a question; the chair will call on you in order.",
+        "Please use your **first name and last initial** as your display name, just as you would introduce yourself in a meeting.",
+        "**Cameras are welcome but optional.** Some of us join from a kitchen or a break room; you are no less present with your camera off.",
+        "**Stay muted** unless you are sharing or asking a question; it keeps background noise away from everyone, the interpreters included.",
+        "**No recording, no screenshots, no photos of the screen, please.** Protecting each other’s anonymity is everyone’s job.",
+        "Use **Raise Hand** (under Reactions) when you would like to share or ask a question.",
         "Share the Zoom link within the Fellowship, in your home group, your district or your area, and please do not post it on public social media."
       ],
-      "anonymity": "Anonymity is the spiritual foundation of all our Traditions, and it does not take the day off because we are online. Who you see and what you hear in this room stays in this room. Please do not record, screenshot or quote members by name, and if you share about the workshop afterwards, speak of what you learned, not of who was there. Members of this committee and the speakers appear by first name and last initial only, here and on the day.",
-      "seventh": "This workshop is free, and there is no basket on this website. The members who are putting it together are covering the small costs themselves, as a Seventh Tradition contribution of their own. If the day moves you to give, please do it the way A.A. has always done it: through your home group, your intergroup or central office, your area, or the General Service Office. We do not accept contributions from outside the Fellowship.",
-      "thirtySixHeading": "36 threads, one tapestry",
-      "thirtySix": "Twelve Steps plus Twelve Traditions plus Twelve Concepts make thirty-six principles, and the three that share a number share a thread. Step One admits that we are powerless over alcohol; Tradition One puts our common welfare first, because personal recovery depends on A.A. unity; Concept One places the final responsibility and ultimate authority for world services in the collective conscience of the whole Fellowship. Three sentences written years apart, and the same thread runs through all of them: none of us gets well alone, and the whole only works when each part admits it needs the others. Seen from the chair, from the group and from the Fellowship as a whole, it is one idea, and both the workshop and the planned weekly meeting are built around that pattern.",
-      "principlesNote": "",
-      "metaDescription": "A free online A.A. workshop, Saturday, December 12, 2026, 8 AM–4 PM Pacific: weaving the Steps, Traditions and Concepts together. Zoom, ASL and Spanish.",
+      "accessibilityLink": "More about interpretation, captions and accessibility"
+    },
+    "contact": {
+      "heading": "Questions?",
+      "body": "For questions, please email:",
+      "subject": "Question: The Incredible Tapestry workshop (Dec 12)",
+      "subjectContribution": "Contributions for interpretation: The Incredible Tapestry",
+      "subjectProgram": "Question about the program: The Incredible Tapestry",
+      "subjectAccessibility": "Accessibility question: The Incredible Tapestry",
+      "footerLabel": "Questions:",
+      "copyAddress": "Copy email address",
+      "linkText": "Email the planning committee"
+    },
+    "flyer": {
+      "heading": "The official flyer",
+      "lead": "Download it, print it for your home group’s bulletin board, or pass it along to your district and intergroup.",
+      "pageTitle": "The official flyer",
+      "pageDescription": "Official flyer for The Incredible Tapestry, a free 1-day online A.A. workshop, {date}, {timeShort}. Download it as a PDF or image.",
+      "alt": "Official flyer for The Incredible Tapestry, a 1-day online workshop on {date}, {time}. All of its information is on this page.",
+      "linkAlt": "The official flyer: open it full size, with its full text and downloads",
+      "englishOnly": "",
+      "downloadPdf": "Download PDF",
+      "downloadJpg": "Print-quality image (JPG)",
+      "viewFull": "View full size",
+      "viewPage": "See the flyer and downloads",
+      "fileNote": "PDF: 1 page, letter size, {pdfSize} · JPG: 300 dpi, {jpgSize}",
+      "printerFriendly": "Printer-friendly poster (light background)",
+      "spanishPoster": "Póster en español",
+      "staleZoom": "The Zoom details printed on this flyer are out of date. Please use the ones on this page.",
+      "figcaption": "The official flyer from the workshop’s planning committee. Its full text is below.",
+      "textHeading": "Text of the flyer",
+      "text": {
+        "overline": "A 1-day online workshop",
+        "title": "The Incredible Tapestry",
+        "subline": "How the Steps, Traditions and Concepts weave this incredible tapestry",
+        "body": "Come join us for a 1-day, online Incredible Tapestry workshop similar to the Tapestry meetings held previously in Raynham, Mass. Starting at {start}, there will be a series of presentations which look at how the Steps, Traditions and Concepts weave this incredible tapestry with plenty of time for sharing and asking questions.",
+        "strands": "Steps · Traditions · Concepts",
+        "burst": "Presentations · Sharing · Questions and more!",
+        "linkLabel": "Link",
+        "costLine": "The meeting is free, but there will be some expenses for interpretation, which will be provided in Spanish and ASL, and contributions will be welcomed. No pre-registration is required.",
+        "programLine": "The program will be available on this website shortly.",
+        "websiteLine": "Visit our website: {domain}",
+        "questionsLine": "For questions, please email:"
+      },
+      "posterLabel": "Printable poster (light background)",
+      "posterView": "View the poster",
+      "posterLetter": "PDF letter",
+      "posterA4": "PDF A4"
+    },
+    "landing": {
+      "eyebrow": "A 1-day online A.A. workshop",
+      "headline": "The Incredible Tapestry",
+      "gloss": "",
+      "subline": "How the Steps, Traditions and Concepts weave this incredible tapestry",
+      "sub": "",
+      "zoomNotice": "**Please note:** the Zoom link shown on this site before October 25 has changed. If you saved it, please use the new one on this page. If you added the workshop to your calendar from this site before October 25, please delete that calendar entry and add the workshop to your calendar again.",
+      "metaDescription": "",
+      "pageTitle": "The Incredible Tapestry: Weaving the Steps, Traditions & Concepts Together",
       "hook": "36 threads. Three legacies. One tapestry.",
-      "pageTitle": "The Incredible Tapestry: Weaving the Steps, Traditions & Concepts Together"
+      "legaciesLead": "",
+      "programHeading": "",
+      "programLead": "",
+      "programHistory": "",
+      "strandsLine": "",
+      "intro": [],
+      "thirtySixHeading": "",
+      "thirtySix": "",
+      "principlesNote": "",
+      "principlesLink": "",
+      "anonymityHeading": "",
+      "anonymity": "",
+      "seventhHeading": "",
+      "seventh": "",
+      "accessibilityHeading": "",
+      "accessibilityNote": "",
+      "faqHeading": "",
+      "faqLead": "",
+      "shareHeading": ""
     },
     "poster": {
       "headline": "The Incredible Tapestry",
-      "sub": "Weaving the Steps, Traditions & Concepts together",
-      "dateLine": "Saturday, December 12, 2026",
-      "timeLine": "8 AM – 4 PM Pacific Time (PT)",
+      "sub": "How the Steps, Traditions and Concepts weave this incredible tapestry",
       "whereLine": "Online on Zoom",
-      "interpretationLine": "ASL & Spanish interpretation",
+      "interpretationLine": "Spanish & ASL interpretation",
       "scanZoom": "Scan to join on Zoom",
-      "scanSite": "Scan for details & updates",
-      "freeLine": "Free · Open to all A.A. members · No registration",
-      "footer": "An online A.A. workshop with ASL and Spanish interpretation · aatapestry.org",
+      "scanSite": "Scan for the program & updates",
+      "freeLine": "Free · Contributions welcome · No pre-registration",
+      "footer": "Presentations · Sharing · Questions and more · aatapestry.org",
       "meetingId": "Meeting ID",
       "passcode": "Passcode",
       "fine": "Hosted by A.A. members. Not affiliated with or endorsed by A.A. World Services, Inc.",
+      "questionsLine": "Questions:",
+      "pageTitle": "Printable poster",
+      "pageDescription": "Printer-friendly poster (letter or A4, light background) for The Incredible Tapestry, with QR codes for Zoom and the website. Download it as a PDF or PNG.",
+      "flyerLink": "Official flyer",
       "shareHeading": "Share the poster",
-      "shareBody": "Download the poster as a PDF or PNG, print it on letter or A4 paper, and pin it to your home group's bulletin board or pass it along to your district or intergroup. Both QR codes work from paper."
+      "shareBody": "Download the poster as a PDF or PNG, print it on letter or A4 paper, and pin it to your home group’s bulletin board or pass it along to your district or intergroup. Its light background is easy on a home printer, and both QR codes work from paper. The official flyer can be downloaded too."
+    },
+    "atcb": {
+      "name": "The Incredible Tapestry Workshop",
+      "summary": "A free, 1-day online A.A. workshop: a series of presentations on how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions. Spanish and ASL interpretation will be provided. No pre-registration is required."
     },
     "footer": {
       "disclaimer": "This website is maintained by A.A. members as a service for an A.A. workshop. It is not affiliated with, nor endorsed by, Alcoholics Anonymous World Services, Inc., the General Service Office, or any A.A. area or district, unless stated otherwise.",
       "copyright": "The Twelve Steps, Twelve Traditions and Twelve Concepts for World Service are copyrighted by Alcoholics Anonymous World Services, Inc. (A.A.W.S.) and are reprinted here by A.A. members for A.A. use, with the credit line requested by A.A.W.S. Permission to reprint does not mean that A.A.W.S. has reviewed or approved the contents of this website, or that A.A.W.S. necessarily agrees with the views expressed herein.",
-      "builtWith": "Made by A.A. members for A.A. members, in the spirit of Tradition Five. This site is open source, built with Eleventy and hosted on GitHub Pages; it updates itself from one data file.",
+      "builtWith": "This site is open source, built with Eleventy and hosted on GitHub Pages; it updates itself from one data file.",
       "blurb": "Made by A.A. members for A.A. members, in the spirit of Tradition Five: one primary purpose.",
       "copyrightShort": "The Twelve Steps, Twelve Traditions and Twelve Concepts for World Service are copyrighted by Alcoholics Anonymous World Services, Inc. This site links to the official texts at aa.org and reproduces none of them."
     },
@@ -162,44 +244,55 @@
   "es": {
     "langName": "Español",
     "switchLabel": "In English",
+    "langPill": "In English",
     "nav": {
       "home": "Inicio",
       "schedule": "Programa",
       "principles": "36 principios",
       "meeting": "Reunión semanal",
       "accessibility": "Accesibilidad",
-      "poster": "Póster",
-      "join": "Unirse por Zoom",
+      "poster": "Póster en español",
+      "join": "Cómo unirse",
+      "flyer": "Volante",
+      "questions": "Preguntas",
       "skip": "Saltar al contenido"
     },
     "labels": {
+      "when": "Cuándo",
       "date": "Fecha",
-      "time": "Hora",
       "where": "Dónde",
       "cost": "Costo",
       "interpretation": "Interpretación",
+      "program": "Programa",
+      "questions": "Preguntas",
       "meetingId": "ID de reunión",
       "passcode": "Código de acceso",
       "joinZoom": "Unirse por Zoom",
       "copy": "Copiar",
       "copied": "Copiado",
+      "copyLink": "Copiar enlace",
       "addToCalendar": "Agregar al calendario",
-      "downloadIcs": "Descargar archivo de calendario (.ics)",
-      "downloadPoster": "Descargar el póster (PDF)",
-      "downloadPng": "Descargar el póster (PNG)",
+      "downloadIcs": "Descargar calendario (.ics, en inglés)",
       "print": "Imprimir",
       "yourLocalTime": "Hora local",
-      "allTimesPT": "Todos los horarios están en hora del Pacífico (PT)",
       "online": "En línea por Zoom",
       "free": "Gratuito",
       "noRegistration": "Sin inscripción previa",
-      "openToAll": "Abierto a todos los miembros de A.A.",
-      "tentative": "Provisional",
-      "updated": "Actualizado",
+      "freeNoRegistration": "Gratuito · Sin inscripción previa",
+      "contributionsWelcome": "Se agradecen las contribuciones para cubrir la interpretación",
+      "programSoon": "Próximamente",
+      "programWillBePosted": "Se publicará en breve en este sitio web",
+      "seeProgram": "Ver el programa",
+      "interpretationValue": "Español · ASL",
+      "interpretationSub": "Se elige en Zoom; ver Cómo unirse",
+      "interpretationBadge": "Interpretación en español y en ASL",
+      "atAGlance": "De un vistazo",
+      "updated": "Actualizado el",
       "lastUpdated": "Última actualización",
       "backHome": "Volver a la página principal",
       "readMore": "Leer más",
-      "share": "Compartir"
+      "share": "Compartir",
+      "dialIn": "Por teléfono"
     },
     "countdown": {
       "startsIn": "El taller comienza en",
@@ -222,86 +315,159 @@
       "tradition": "Tradición",
       "concept": "Concepto"
     },
-    "landing": {
-      "eyebrow": "Un taller de A.A. gratuito y en línea",
-      "headline": "El Increíble Tapiz: Entretejiendo los Pasos, las Tradiciones y los Conceptos",
-      "sub": "Un día entero para entretejer los Doce Pasos, las Doce Tradiciones y los Doce Conceptos, un número a la vez. Sábado 12 de diciembre de 2026, de 8 a. m. a 4 p. m., hora del Pacífico, por Zoom, con interpretación en ASL y en español. Abierto a todos los miembros de A.A.; no hace falta inscribirse.",
-      "intro": [
-        "Casi todos conocimos primero los Pasos, en el sótano de una iglesia o en una pantalla, de boca de alguien que había estado donde estábamos nosotros. Las Tradiciones llegaron después, casi siempre cuando una reunión de trabajo del grupo se puso animada. Y los Conceptos, si es que llegamos a conocerlos, vinieron con un puesto de servicio que no pedimos del todo. Solemos guardar los tres en cajones separados. Este taller los saca y los pone uno al lado del otro.",
-        "El Increíble Tapiz es un encuentro gratuito, en línea y de todo el día para miembros de A.A. y para cualquiera que tenga curiosidad por saber cómo se sostiene la Comunidad. Pasaremos la mañana con los Pasos y las Tradiciones, el comienzo de la tarde con los Conceptos, y el último tramo del día en salas pequeñas, cada una siguiendo un solo número a través de los Tres Legados. Sin inscripción, sin costo, sin tarea. Basta con traer el café y las preguntas del grupo base."
+    "zones": {
+      "heading": "Su zona horaria",
+      "intro": "{timeEs} equivale a…",
+      "zone": "Zona",
+      "time": "Horario",
+      "endsNextDay": "(termina al día siguiente)",
+      "allTimes": "Todos los horarios están en hora del Este (ET)."
+    },
+    "program": {
+      "begins": "Comienza el taller",
+      "middle": "Presentaciones, tiempo para compartir y preguntas",
+      "pending": "El programa se publicará en breve en este sitio web.",
+      "ends": "Termina el taller"
+    },
+    "join": {
+      "heading": "Cómo unirse",
+      "steps": [
+        "El día del taller, basta con usar el botón **Unirse por Zoom** de esta página, o bien abrir Zoom e ingresar el ID de reunión **{zoomId}** y el código de acceso **{passcode}**. No se requiere inscripción previa.",
+        "Si Zoom pide un nombre en pantalla, lo acostumbrado es usar solo el **nombre de pila y la inicial del apellido**, tal como nos presentamos en una reunión.",
+        "Ya dentro de la reunión, el botón **Interpretación** (*Interpretation*, el globo terráqueo) permite elegir el canal en **español** o el de **ASL**; para ASL también se puede fijar (*Pin*) el video del intérprete. Si los subtítulos están activados, aparecen con el botón **CC**.",
+        "Después, solo queda acomodarse. Habrá bastante tiempo para compartir y hacer preguntas."
       ],
-      "whatToExpectHeading": "Cómo se vive el día",
-      "whatToExpect": [
-        {
-          "title": "Oradores que lo han vivido",
-          "body": "La sesión de cada legado abre con un miembro que comparte su experiencia, no con una clase. Antes de cualquier teoría habrá historias de padrinazgo, de conciencia de grupo y de servicio."
-        },
-        {
-          "title": "Situaciones reales, no estudios de caso",
-          "body": "La sesión de las Tradiciones parte de cosas que de verdad pasan en los grupos: el miembro que quiere grabar la reunión, los fondos del grupo que crecieron demasiado, el orador ajeno a A.A. con una buena causa."
-        },
-        {
-          "title": "Salas pequeñas por la tarde",
-          "body": "Después del almuerzo nos repartimos en salas de Zoom de ocho a diez personas. A cada sala le toca un número; lo sigue a través de su Paso, su Tradición y su Concepto, y luego lo comparte con todo el grupo."
-        },
-        {
-          "title": "Descansos y un almuerzo con la sala abierta",
-          "body": "Dos descansos cortos y un almuerzo de treinta minutos. La sala de Zoom queda abierta durante el almuerzo para quien quiera seguir conversando; los intérpretes se toman un merecido descanso."
-        }
-      ],
-      "howToJoinHeading": "Cómo participar",
-      "howToJoin": [
-        "El día del taller, basta con hacer clic en el botón Unirse por Zoom de esta página, o bien abrir Zoom e ingresar el ID de reunión y el código de acceso que se muestran aquí. La sala abre a las 7:45 a. m., hora del Pacífico, para dar tiempo a probar el audio antes de empezar.",
-        "Si Zoom pide un nombre en pantalla, lo acostumbrado es usar solo el nombre de pila y la inicial del apellido, tal como nos presentamos en una reunión.",
-        "Ya dentro de la reunión, el botón Interpretación (el globo terráqueo) permite elegir el audio en español; quienes necesiten lengua de señas pueden fijar el video del intérprete de ASL. Los subtítulos están bajo el botón CC.",
-        "Después, solo queda acomodarse. Las preguntas sobre Zoom van al chat, que los anfitriones estarán atendiendo todo el día."
-      ],
+      "tip": "El horario del taller es {timeEs} ({startsAlsoEs}). Conviene entrar unos minutos antes del comienzo para probar el audio y elegir el canal de interpretación.",
       "interpretationHeading": "Interpretación en español y en ASL",
-      "interpretation": [
-        "La interpretación en español se ofrece por un canal de audio aparte durante todo el día. En la barra de herramientas de Zoom, el botón Interpretación (el globo terráqueo) permite elegir Español; en el teléfono o la tableta, el mismo control está en Más (los tres puntos) y luego en Interpretación de idiomas. Con la opción Silenciar audio original se escucha únicamente la voz en español; si se deja apagada, el orador original se oye bajito por debajo. Cuando un miembro comparte en español, el intérprete lo traduce al inglés para la sala principal, así que se puede compartir en cualquiera de los dos idiomas.",
-        "Los intérpretes de lengua de señas americana (ASL) estarán en pantalla desde la apertura hasta la Declaración de Responsabilidad, incluidas las salas para grupos pequeños donde haya un intérprete disponible. En una computadora, desde el botón Interpretación (el globo) se puede elegir ASL para usar la vista de interpretación en lengua de señas de Zoom, o bien pasar el cursor sobre el video del intérprete, abrir el menú de los tres puntos y elegir Fijar, para que el orador y el intérprete queden uno al lado del otro. Los intérpretes se van rotando durante el día y descansan a la hora del almuerzo."
-      ],
-      "accessibilityNote": "Los subtítulos automáticos de Zoom estarán activados para toda la sala (botón CC); los genera un programa, no una persona, así que a veces tropiezan con los nombres y las frases de A.A. Este sitio web está hecho para funcionar con lectores de pantalla y navegación por teclado. Si hay algo que facilitaría la participación, pedimos que se lo haga saber al comité organizador; cuanto antes lo sepamos, más podremos preparar.",
+      "interpretation": {
+        "es": [
+          "Habrá interpretación en español por un canal de audio aparte.",
+          "En la barra de herramientas de Zoom, el botón **Interpretación** (*Interpretation*, el globo terráqueo) permite elegir **Español** (*Spanish*). En el teléfono o la tableta, el mismo control está en **Más** (*More*, los tres puntos) y luego en **Interpretación de idiomas** (*Language Interpretation*). Con la opción **Silenciar audio original** (*Mute Original Audio*) se escucha únicamente la voz en español; si se deja apagada, la voz original se sigue oyendo de fondo, más baja."
+        ],
+        "asl": [
+          "Habrá interpretación en ASL (lengua de señas americana).",
+          "En una computadora, si Zoom ofrece la **vista de lengua de señas** (*sign language view*), basta con elegir **ASL** desde el botón **Interpretación** (*Interpretation*, el globo terráqueo) y el intérprete aparece en una ventana aparte. Si esa opción no aparece, se pasa el cursor sobre el video del intérprete, se abre el menú de los tres puntos y se elige **Fijar** (*Pin*), para tenerlo siempre a la vista."
+        ]
+      },
       "etiquetteHeading": "Normas de cortesía en Zoom y anonimato en línea",
       "etiquette": [
-        "Usamos el nombre de pila y la inicial del apellido como nombre en pantalla, tal como nos presentamos en una reunión.",
-        "La cámara es bienvenida, pero opcional. Algunos nos conectamos desde la cocina o en un descanso del trabajo; con la cámara apagada se está igual de presente.",
-        "Micrófono en silencio, salvo al compartir o al hacer una pregunta. Los anfitriones silenciarán con cariño los micrófonos que se queden abiertos.",
-        "Nada de grabaciones, capturas de pantalla ni fotos de la pantalla. Este taller no se graba, y pedimos a cada miembro la misma cortesía.",
-        "Para compartir o preguntar se usa Levantar la mano (en Reacciones); el coordinador irá dando la palabra por orden.",
+        "Usamos el **nombre de pila y la inicial del apellido** como nombre en pantalla, tal como nos presentamos en una reunión.",
+        "**La cámara es bienvenida, pero opcional.** Algunos nos conectamos desde la cocina o en un descanso del trabajo; con la cámara apagada se está igual de presente.",
+        "**Micrófono en silencio**, salvo al compartir o al hacer una pregunta; así nadie, ni siquiera los intérpretes, tiene que lidiar con ruido de fondo.",
+        "**Pedimos no grabar, no hacer capturas de pantalla ni tomar fotos de la pantalla.** Cuidar el anonimato de los demás es tarea de todos.",
+        "Para compartir o hacer una pregunta se usa **Levantar la mano** (*Raise Hand*), en **Reacciones** (*Reactions*).",
         "El enlace de Zoom se comparte dentro de la Comunidad, en el grupo base, el distrito o el área, y pedimos no publicarlo en redes sociales públicas."
       ],
-      "anonymity": "El anonimato es la base espiritual de todas nuestras Tradiciones, y no se toma el día libre porque estemos en línea. Quién está en esta sala y lo que aquí se oye, en esta sala se queda. Pedimos no grabar, no hacer capturas de pantalla ni citar a los miembros por su nombre, y, al hablar del taller después, contar lo que se aprendió y no quién estuvo. Los miembros de este comité y los oradores aparecen solo con el nombre de pila y la inicial del apellido, aquí y el día del taller.",
-      "seventh": "Este taller es gratuito y en este sitio web no hay canasta. Los miembros que lo organizan cubren los pequeños gastos de su propio bolsillo, como su aporte de Séptima Tradición. Si el día despierta el deseo de contribuir, la invitación es a hacerlo como siempre lo ha hecho A.A.: a través del grupo base, la oficina intergrupal o central, el área o la Oficina de Servicios Generales. No aceptamos contribuciones de fuera de la Comunidad.",
-      "thirtySixHeading": "36 hilos, un solo tapiz",
-      "thirtySix": "Doce Pasos, más Doce Tradiciones, más Doce Conceptos: treinta y seis principios, y los tres que llevan el mismo número comparten un mismo hilo. El Primer Paso admite que somos impotentes ante el alcohol; la Primera Tradición pone nuestro bienestar común en primer lugar, porque la recuperación personal depende de la unidad de A.A.; el Primer Concepto deposita la responsabilidad final y la autoridad fundamental de los servicios mundiales en la conciencia colectiva de toda la Comunidad. Tres frases escritas con años de diferencia, y un mismo hilo las atraviesa: nadie se recupera solo, y el conjunto solo funciona cuando cada parte admite que necesita a las demás. Vista desde la silla, desde el grupo y desde la Comunidad entera, es una sola idea, y tanto el taller como la reunión semanal que se está planeando se construyen alrededor de ese patrón.",
-      "principlesNote": "Por ahora, las páginas de estudio detalladas de los 36 principios están disponibles únicamente en inglés.",
-      "metaDescription": "Taller de A.A. gratuito en línea, sábado 12 de diciembre de 2026, 8 a. m. – 4 p. m. (Pacífico): Pasos, Tradiciones y Conceptos entretejidos. Zoom, ASL y español.",
+      "accessibilityLink": "Página de accesibilidad (en inglés)"
+    },
+    "contact": {
+      "heading": "¿Preguntas?",
+      "body": "Para preguntas, se puede escribir a:",
+      "subject": "Pregunta sobre el taller The Incredible Tapestry (12 de diciembre)",
+      "subjectContribution": "Contribuciones para la interpretación: The Incredible Tapestry",
+      "subjectProgram": "Pregunta sobre el programa: The Incredible Tapestry",
+      "subjectAccessibility": "Pregunta sobre accesibilidad: The Incredible Tapestry",
+      "footerLabel": "Preguntas:",
+      "copyAddress": "Copiar la dirección de correo",
+      "linkText": "Escribir al comité organizador"
+    },
+    "flyer": {
+      "heading": "El volante oficial",
+      "lead": "Se puede descargar, imprimir para la cartelera del grupo base o compartir con el distrito y la oficina intergrupal.",
+      "pageTitle": "El volante oficial",
+      "pageDescription": "Volante oficial (en inglés) del taller The Incredible Tapestry, {dateEs}, {timeShortEs}, con su texto completo en español.",
+      "alt": "Volante oficial (en inglés) de The Incredible Tapestry, un taller en línea de un día, el {dateEs}, {timeEs}. Toda su información está en esta página, en español.",
+      "linkAlt": "El volante oficial (en inglés): abrirlo en tamaño completo, con su texto en español y las descargas",
+      "englishOnly": "El volante oficial está en inglés. Toda su información aparece en español en este sitio, y también hay un póster imprimible en español.",
+      "downloadPdf": "Descargar PDF",
+      "downloadJpg": "Imagen para imprimir (JPG)",
+      "viewFull": "Ver en tamaño completo",
+      "viewPage": "Ver el volante y las descargas",
+      "fileNote": "PDF: 1 página, tamaño carta, {pdfSize} · JPG: 300 dpi, {jpgSize}",
+      "printerFriendly": "Póster imprimible (fondo claro)",
+      "spanishPoster": "Póster en español",
+      "staleZoom": "Los datos de Zoom impresos en este volante ya no están vigentes; los correctos son los que aparecen en esta página.",
+      "figcaption": "El volante oficial del comité organizador del taller (en inglés). Su texto completo, en español, está más abajo.",
+      "textHeading": "Texto del volante",
+      "text": {
+        "overline": "Un taller en línea de un día",
+        "title": "The Incredible Tapestry",
+        "subline": "Cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz",
+        "body": "Los invitamos a acompañarnos en The Incredible Tapestry, un taller en línea de un día parecido a las reuniones Tapestry que se realizaron anteriormente en Raynham, Massachusetts. A partir de las {startEs}, habrá una serie de presentaciones sobre cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz, con bastante tiempo para compartir y hacer preguntas.",
+        "strands": "Pasos · Tradiciones · Conceptos",
+        "burst": "Presentaciones · Compartir · ¡Preguntas y más!",
+        "linkLabel": "Enlace",
+        "costLine": "El taller es gratuito, pero la interpretación, que se ofrecerá en español y en ASL, tendrá algunos gastos, y se agradecerán las contribuciones. No se requiere inscripción previa.",
+        "programLine": "El programa estará disponible próximamente en este sitio web.",
+        "websiteLine": "Más información en nuestro sitio web: {domain}",
+        "questionsLine": "Para preguntas, se puede escribir a:"
+      },
+      "posterLabel": "Póster en español (imprimible, fondo claro)",
+      "posterView": "Ver el póster",
+      "posterLetter": "PDF carta",
+      "posterA4": "PDF A4"
+    },
+    "landing": {
+      "eyebrow": "Un taller de A.A. en línea de un día",
+      "headline": "The Incredible Tapestry",
+      "gloss": "El Increíble Tapiz",
+      "subline": "Cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz",
+      "sub": "Una serie de presentaciones sobre los Pasos, las Tradiciones y los Conceptos, con bastante tiempo para compartir y hacer preguntas. Habrá interpretación en español y en ASL. El taller es gratuito y no se requiere inscripción previa.",
+      "zoomNotice": "**Aviso:** el enlace de Zoom que aparecía en este sitio antes del 25 de octubre cambió. Si se guardó ese enlace, conviene usar el nuevo, que aparece en esta página. Si se agregó el taller al calendario desde este sitio antes de esa fecha, conviene borrar esa entrada del calendario y volver a agregar el taller.",
+      "metaDescription": "Taller de A.A. en línea, gratuito y sin inscripción previa: {dateEs}, {timeShortEs}. Con interpretación en español y en ASL.",
+      "pageTitle": "The Incredible Tapestry (El Increíble Tapiz): taller de A.A. en línea",
       "hook": "36 hilos. Tres Legados. Un solo tapiz.",
-      "pageTitle": "El Increíble Tapiz: Pasos, Tradiciones y Conceptos — taller de A.A. en línea"
+      "legaciesLead": "En la Convención de St. Louis, en 1955, Bill W. entregó A.A. a sus miembros en forma de tres legados: Recuperación, Unidad y Servicio. Nunca se pensaron para estudiarse por separado.",
+      "programHeading": "Sobre el taller",
+      "programLead": "Los invitamos a acompañarnos el {dateEs} en un taller en línea de un día. Habrá una serie de presentaciones sobre cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz, con bastante tiempo para compartir y hacer preguntas.",
+      "programHistory": "El taller es parecido a las reuniones Tapestry que se realizaron anteriormente en Raynham, Massachusetts.",
+      "strandsLine": "Presentaciones · Compartir · Preguntas y más",
+      "intro": [
+        "Casi todos conocimos primero los Pasos, en el sótano de una iglesia o en una pantalla, de boca de alguien que había estado donde estábamos nosotros. Las Tradiciones llegaron después, casi siempre cuando una reunión de trabajo del grupo se puso animada. Y los Conceptos, si es que llegamos a conocerlos, vinieron con un puesto de servicio que no pedimos del todo. Solemos guardar los tres en cajones separados. Este taller los saca de ahí para ver cómo se entretejen.",
+        "No hace falta preparar nada, y nadie espera que uno se sepa los Conceptos de memoria. Basta con traer el café y las preguntas del grupo base."
+      ],
+      "thirtySixHeading": "36 hilos, un solo tapiz",
+      "thirtySix": "Basta con tomar cualquier número del uno al doce: el Paso, la Tradición y el Concepto que lo llevan son tres expresiones de una misma idea, vista desde cada uno de nosotros, desde el grupo y desde la Comunidad entera.\n\nPor ejemplo, el **uno**. El Primer Paso admite que éramos impotentes ante el alcohol y que nuestras vidas se habían vuelto ingobernables. La Primera Tradición dice que nuestro bienestar común debe tener la preferencia, porque la recuperación personal depende de la unidad de A.A. El Primer Concepto deposita la responsabilidad final y la autoridad fundamental de los servicios mundiales en la conciencia colectiva de toda la Comunidad. Tres frases escritas con años de diferencia, y un mismo hilo las atraviesa: nadie se recupera solo, y el conjunto solo funciona cuando cada parte admite que necesita a las demás. Si se hace lo mismo con el **dos** (un Poder superior a nosotros mismos, un Dios amoroso tal como se exprese en la conciencia de nuestro grupo, la Conferencia como la voz activa y la conciencia efectiva de toda la Comunidad), el patrón vuelve a aparecer.",
+      "principlesNote": "Las páginas de estudio presentan los 36 principios con el Paso, la Tradición y el Concepto de cada número lado a lado: algo para leer antes del taller y una manera de seguir tejiendo después. Por ahora están disponibles solo en inglés.",
+      "principlesLink": "Los 36 principios (en inglés)",
+      "anonymityHeading": "Unas palabras sobre el anonimato",
+      "anonymity": "El anonimato es la base espiritual de todas nuestras Tradiciones, y no se toma el día libre porque estemos en línea. Quién está en esta sala y lo que aquí se oye, en esta sala se queda. Pedimos no grabar, no hacer capturas de pantalla ni citar a los miembros por su nombre, y, al hablar del taller después, contar lo que se aprendió y no quién estuvo. En Zoom, pedimos usar como nombre en pantalla solo el nombre de pila y la inicial del apellido.",
+      "seventhHeading": "Séptima Tradición",
+      "seventh": "El taller es gratuito. La interpretación en español y en ASL tiene algunos gastos, y se agradecen las contribuciones para ayudar a cubrirlos.\n\nDe acuerdo con nuestra Séptima Tradición, nos mantenemos con nuestras propias contribuciones, así que solo las aceptamos de miembros de A.A. Para saber cómo contribuir, se puede [escribir al comité organizador](mailto:{email}).",
+      "accessibilityHeading": "Accesibilidad e interpretación",
+      "accessibilityNote": "Si los subtítulos están activados en la reunión, el botón **CC** (**Mostrar subtítulos** / *Show Captions*) los muestra, y con **Ver transcripción completa** (*View Full Transcript*) se pueden leer y volver atrás; los genera un programa, no una persona, así que a veces tropiezan con los nombres y las frases de A.A. Este sitio web está hecho para funcionar con lectores de pantalla y con el teclado. Para preguntas sobre la interpretación o sobre cualquier otra cosa que facilite la participación, se puede [escribir al comité organizador](mailto:{email}).",
+      "faqHeading": "Preguntas y respuestas",
+      "faqLead": "",
+      "shareHeading": "Correr la voz"
     },
     "poster": {
-      "headline": "El Increíble Tapiz",
-      "sub": "Entretejiendo los Pasos, las Tradiciones y los Conceptos",
-      "dateLine": "Sábado 12 de diciembre de 2026",
-      "timeLine": "8 a. m. – 4 p. m., hora del Pacífico (PT)",
+      "headline": "The Incredible Tapestry",
+      "sub": "Cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz",
       "whereLine": "En línea por Zoom",
-      "interpretationLine": "Interpretación en ASL y en español",
+      "interpretationLine": "Interpretación en español y en ASL",
       "scanZoom": "Escanear para unirse por Zoom",
-      "scanSite": "Escanear para ver detalles y novedades",
-      "freeLine": "Gratis · Abierto a todo miembro de A.A. · Sin inscripción",
-      "footer": "Taller de A.A. en línea con interpretación en ASL y español · aatapestry.org",
+      "scanSite": "Escanear: programa e información",
+      "freeLine": "Gratuito · Se agradecen las contribuciones · Sin inscripción previa",
+      "footer": "Presentaciones · Compartir · Preguntas y más · aatapestry.org",
       "meetingId": "ID de reunión",
       "passcode": "Código de acceso",
       "fine": "Organizado por miembros de A.A. No está afiliado a A.A. World Services, Inc. ni cuenta con su respaldo.",
+      "questionsLine": "Preguntas:",
+      "pageTitle": "Póster imprimible",
+      "pageDescription": "Póster imprimible (carta y A4, fondo claro) del taller The Incredible Tapestry, con códigos QR para Zoom y el sitio web. Se puede descargar en PDF o PNG.",
+      "flyerLink": "Volante oficial (en inglés)",
       "shareHeading": "Compartir el póster",
-      "shareBody": "Descarga el póster en PDF o PNG, imprímelo en papel carta o A4 y cuélgalo en la cartelera de tu grupo base, o compártelo con tu distrito o intergrupo. Los dos códigos QR funcionan desde el papel."
+      "shareBody": "El póster se puede descargar en PDF o PNG, imprimir en papel carta o A4 y colgar en la cartelera del grupo base, o compartir con el distrito o la oficina intergrupal. Tiene fondo claro, así que gasta poca tinta, y los dos códigos QR funcionan desde el papel. El volante oficial (en inglés) también se puede descargar."
+    },
+    "atcb": {
+      "name": "The Incredible Tapestry — taller en línea",
+      "summary": "Un taller de A.A. gratuito, en línea y de un día: una serie de presentaciones sobre cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz, con bastante tiempo para compartir y hacer preguntas. Habrá interpretación en español y en ASL. No se requiere inscripción previa."
     },
     "footer": {
       "disclaimer": "Este sitio web lo mantienen miembros de A.A. como un servicio para un taller de A.A. No está afiliado a Alcoholics Anonymous World Services, Inc., a la Oficina de Servicios Generales ni a ningún área o distrito de A.A., ni cuenta con su respaldo, salvo que se indique lo contrario.",
       "copyright": "Los Doce Pasos, las Doce Tradiciones y los Doce Conceptos para el Servicio Mundial están protegidos por los derechos de autor de Alcoholics Anonymous World Services, Inc. (A.A.W.S.) y son reproducidos aquí por miembros de A.A. para uso de A.A., con la línea de crédito que solicita A.A.W.S. El permiso para reproducirlos no significa que A.A.W.S. haya revisado o aprobado el contenido de este sitio web, ni que A.A.W.S. necesariamente esté de acuerdo con las opiniones aquí expresadas.",
-      "builtWith": "Hecho por miembros de A.A. para miembros de A.A., en el espíritu de la Quinta Tradición. Este sitio es de código abierto, construido con Eleventy y alojado en GitHub Pages; se actualiza a partir de un solo archivo de datos.",
-      "blurb": "Hecho por miembros de A.A. para miembros de A.A., en el espíritu de la Quinta Tradición.",
+      "builtWith": "Este sitio es de código abierto, construido con Eleventy y alojado en GitHub Pages; se actualiza a partir de un solo archivo de datos.",
+      "blurb": "Hecho por miembros de A.A. para miembros de A.A., en el espíritu de la Quinta Tradición: un solo objetivo primordial.",
       "copyrightShort": "Los Doce Pasos, las Doce Tradiciones y los Doce Conceptos para el Servicio Mundial están protegidos por los derechos de autor de Alcoholics Anonymous World Services, Inc. Este sitio enlaza a los textos oficiales en aa.org y no reproduce ninguno."
     },
     "a11y": {

@@ -1,0 +1,20 @@
+{#- "Questions? For questions, please email: …" — the committee's address from site.json (the same
+    one the flyer prints; no reply-time promise). Shown only when site.contact.email is set.
+    The address is printed ONCE per page: here (or the flyer text / poster). Everywhere else links
+    to it with t.contact.linkText instead of repeating it.
+    Optional before the include:
+      qHeadingLevel – heading level (default 2)
+      qSubject      – mailto subject (default t.contact.subject; e.g. t.contact.subjectProgram)
+      qId           – id for the card                                                            -#}
+{%- set qh = qHeadingLevel or 2 -%}
+{%- set qSubj = (qSubject or t.contact.subject) | tokens -%}
+{% if site.contact.email %}
+<div class="card questions-card"{% if qId %} id="{{ qId }}"{% endif %}>
+  <h{{ qh }} class="h-card">{{ t.contact.heading | tokens }}</h{{ qh }}>
+  <p class="text-muted mt-1">{{ t.contact.body | tokens }}</p>
+  <p class="questions-email mt-2">
+    <a href="{{ site.contact.email | mailto(qSubj) }}" class="tap-link">{% icon "mail", "icon" %}<span>{{ site.contact.email }}</span></a>
+    <button type="button" class="copy-btn" data-copy="{{ site.contact.email }}" data-copied="{{ t.labels.copied | tokens }}" aria-label="{{ (t.contact.copyAddress | tokens) or (t.labels.copy | tokens) }}">{% icon "copy", "icon" %}<span>{{ t.labels.copy | tokens }}</span></button>
+  </p>
+</div>
+{% endif %}

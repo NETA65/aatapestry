@@ -67,8 +67,14 @@ schema: article
           <h2 class="h-card">For sharing or sponsorship</h2>
           <ol class="questions mt-3">{% for q in item.thread.questions %}<li>{{ q }}</li>{% endfor %}</ol>
           <div class="card mt-6">
+            {# The meeting format belongs to the weekly meeting: shown only once meeting.json is published. #}
+            {% if meeting.published %}
             <h3 class="h-card">In a 36 Principles meeting</h3>
             <ol class="prose text-muted text-sm mt-2 list-decimal pl-5">{% for f in meeting.format %}<li>{{ f }}</li>{% endfor %}</ol>
+            {% else %}
+            <h3 class="h-card">Using this page in a group</h3>
+            <p class="text-muted text-sm mt-2">Read the Step, the Tradition and the Concept aloud, then share on the thread that connects them.</p>
+            {% endif %}
             <button type="button" class="btn btn-secondary btn-sm mt-4 no-print" onclick="window.print()">{% icon "printer", "icon" %}<span>{{ t.labels.print }} handout</span></button>
           </div>
         </aside>

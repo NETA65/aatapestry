@@ -8,20 +8,22 @@ joinLangs: ["en", "es"]
 permalink: "{% if plang == 'es' %}/es{% endif %}/join/"
 translated: true
 schema: event
+atcb: true
 eleventyComputed:
   lang: "{{ plang }}"
-  title: "{{ 'Unirse por Zoom' if plang == 'es' else 'Join on Zoom' }}"
-  description: "{{ 'Enlace, ID de reunión y código de acceso de Zoom para el taller El Increíble Tapiz, con instrucciones para la interpretación en español y ASL.' if plang == 'es' else 'Zoom link, meeting ID and passcode for The Incredible Tapestry workshop, with instructions for the ASL and Spanish interpretation channels.' }}"
+  title: "{{ i18n[plang].labels.joinZoom | tokens }}"
+  description: "{% if plang == 'es' %}Cómo unirse por Zoom a The Incredible Tapestry ({{ when.date.day }} de {{ when.date.monthEs }}, {{ when.time.leadShortEs }}): enlace, ID, código de acceso e interpretación en español o en ASL.{% else %}How to join The Incredible Tapestry on Zoom ({{ when.date.medium }}, {{ when.time.leadShort }}): link, meeting ID, passcode, and Spanish or ASL interpretation.{% endif %}"
 ---
 {% import "macros/ui.njk" as ui %}
 <section class="section weave-bg">
   <div class="container-page hero" style="padding-block: clamp(2rem, 5vw, 4rem)">
     <div class="hero-grid">
       <div>
-        <p class="eyebrow">{{ t.landing.eyebrow }}</p>
+        <p class="eyebrow">{{ t.landing.eyebrow | tokens }}</p>
         <h1 class="h-display">{{ title }}</h1>
-        <p class="when-text mt-4"><strong>{{ (when.date.longEs | capitalize) if lang == 'es' else when.date.long }}</strong><br>{{ when.time.rangeEs if lang == 'es' else when.time.range }} {{ when.tzAbbr }}
-          <span class="local-time" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" hidden>{{ t.labels.yourLocalTime }}: <span data-local-value></span></span></p>
+        {% set whenTile = false %}{% set whenClass = "mt-4" %}{% include "partials/when-text.njk" %}
+        {#- Add to calendar here too: the changed-Zoom-link notice below asks people to add the workshop again. #}
+        <div class="hero-actions">{% set atcbLabel = "" %}{% include "partials/atcb.njk" %}</div>
         {% include "partials/countdown.njk" %}
       </div>
       <div>{% set zoomHeadingLevel = 2 %}{% include "partials/zoom-card.njk" %}</div>
@@ -31,17 +33,24 @@ eleventyComputed:
 
 <section class="section">
   <div class="container-page">
-    <div class="grid gap-10 lg:grid-cols-2">
+    {# The changed-Zoom-link notice (t.landing.zoomNotice) is under the How to join heading, in join-steps.njk. #}
+    <div class="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start">
       <div>
-        <h2 class="h-section">{{ t.landing.howToJoinHeading }}</h2>
-        <ol class="steps mt-4">{% for s in t.landing.howToJoin %}<li><div>{{ s | mdInline | safe }}</div></li>{% endfor %}</ol>
+        {% set joinHeadingLevel = 2 %}{% include "partials/join-steps.njk" %}
       </div>
-      <div>
-        <h2 class="h-section">{{ t.landing.interpretationHeading }}</h2>
-        <div class="prose text-muted mt-4">{% for p in t.landing.interpretation %}{{ p | md | safe }}{% endfor %}</div>
-        <h3 class="h-card mt-8">{{ t.landing.etiquetteHeading }}</h3>
-        <ul class="prose text-muted mt-3 list-disc pl-5">{% for e in t.landing.etiquette %}<li>{{ e | mdInline | safe }}</li>{% endfor %}</ul>
-      </div>
+      <aside class="grid gap-6 content-start lg:sticky lg:top-24">
+        {% set qHeadingLevel = 2 %}{% set qSubject = "" %}{% set qId = "questions" %}{% include "partials/questions-card.njk" %}
+        <div class="card">
+          <h2 class="h-card">{% icon "image", "icon" %} {{ t.flyer.heading | tokens }}</h2>
+          {% if t.flyer.lead %}<p class="text-muted mt-1">{{ t.flyer.lead | tokens }}</p>{% endif %}
+          {% if t.flyer.englishOnly %}<p class="text-sm text-muted mt-2">{{ t.flyer.englishOnly | tokens }}</p>{% endif %}
+          <p class="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+            <a href="{{ '/es/flyer/' if lang == 'es' else '/flyer/' }}" class="tap-link">{{ (t.flyer.viewPage or t.flyer.viewFull) | tokens }} {% icon "arrow-right", "icon" %}</a>
+            {% if lang == 'es' %}<a href="/es/poster/" class="tap-link">{% icon "printer", "icon" %}<span>{{ t.flyer.spanishPoster | tokens }}</span></a>{% endif %}
+          </p>
+        </div>
+        {% if t.join.accessibilityLink %}<p class="panel-muted text-sm"><a href="/accessibility/{{ '#espanol' if lang == 'es' }}" class="tap-link"{% if lang == 'es' %} hreflang="en"{% endif %}>{% icon "accessibility", "icon" %}<span>{{ t.join.accessibilityLink | tokens }}</span></a></p>{% endif %}
+      </aside>
     </div>
   </div>
 </section>

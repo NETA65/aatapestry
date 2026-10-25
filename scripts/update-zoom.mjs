@@ -2,8 +2,8 @@
 // Update the Zoom details in src/_data/site.json — from the command line or from the
 // "Update Zoom info" GitHub Actions form (.github/workflows/update-zoom.yml).
 //
-//   node scripts/update-zoom.mjs --meeting-id "701 778 5951" --passcode 446920 \
-//        --join-url "https://us02web.zoom.us/j/7017785951?pwd=…" [--dial-in "+1 669 900 6833, +1 346 248 7799"]
+//   node scripts/update-zoom.mjs --meeting-id "123 4567 8901" --passcode 123456 \
+//        --join-url "https://us02web.zoom.us/j/12345678901?pwd=…" [--dial-in "+1 555 010 0100, +1 555 010 0199"]
 //
 // Empty values keep what is already there. The same values can be passed as environment
 // variables MEETING_ID, PASSCODE, JOIN_URL, DIAL_IN (how the workflow passes form input safely).

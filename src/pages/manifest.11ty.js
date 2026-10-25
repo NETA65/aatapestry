@@ -1,14 +1,17 @@
-// Web app manifest (so the site can be pinned to a phone's home screen).
+// Web app manifest (so the site can be pinned to a phone's home screen). The description is
+// site.json → description (plain text; any {tokens} in it are filled in all the same).
+import { applyTokens } from "../../scripts/lib/tokens.mjs";
+
 export default class {
   data() {
     return { permalink: "/manifest.webmanifest", eleventyExcludeFromCollections: true, layout: false };
   }
-  render({ site }) {
+  render({ site, when }) {
     return JSON.stringify(
       {
         name: site.name,
         short_name: site.shortName,
-        description: site.description,
+        description: applyTokens(site.description, { site, when }),
         start_url: "/",
         scope: "/",
         display: "standalone",
@@ -21,7 +24,8 @@ export default class {
           { src: "/brand/favicon/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
         ],
         shortcuts: [
-          { name: "Join on Zoom", url: "/join/", icons: [{ src: "/brand/favicon/icon-192.png", sizes: "192x192" }] },
+          { name: "How to join", url: "/join/", icons: [{ src: "/brand/favicon/icon-192.png", sizes: "192x192" }] },
+          { name: "The official flyer", url: "/flyer/" },
           { name: "The 36 principles", url: "/principles/" },
         ],
       },

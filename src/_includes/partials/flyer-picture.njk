@@ -1,0 +1,28 @@
+{#- The committee's official flyer (English, image-only), responsive: WebP with a JPEG fallback,
+    width/height set so nothing shifts while it loads. Files and sizes come from site.flyer.
+    If the Zoom ID, passcode or link printed on the flyer (site.flyer.zoomMeetingId / zoomPasscode /
+    zoomJoinUrl) is not the current one, a note above the image says so (t.flyer.staleZoom).
+    As a link (flyerHref), the image's alt says where it goes (t.flyer.linkAlt). Optional before the include:
+      flyerSizes       – the sizes attribute (default "(min-width: 1024px) 24rem, 20rem")
+      flyerLoading     – "lazy" (default) or "eager" (adds fetchpriority="high")
+      flyerDescribedBy – id of the element that carries the flyer's text (aria-describedby)
+      flyerHref        – wrap the image in a link (class flyer-thumb), e.g. "/flyer/"             -#}
+{%- set fl = site.flyer -%}
+{% if fl and fl.base %}
+{%- set fSizes = flyerSizes or "(min-width: 1024px) 24rem, 20rem" -%}
+{%- set fWidths = fl.widths or [600, 1000, 1600] -%}
+{%- set fWebp = [] -%}{%- set fJpg = [] -%}
+{%- for w in fWidths %}{% set _ = fWebp.push(fl.base + "-" + w + ".webp " + w + "w") %}{% set _ = fJpg.push(fl.base + "-" + w + ".jpg " + w + "w") %}{% endfor -%}
+{%- set fz = site.event.zoom -%}
+{%- set fStale = (fl.zoomMeetingId and fl.zoomMeetingId != fz.meetingId) or (fl.zoomPasscode and fl.zoomPasscode != fz.passcode) or (fl.zoomJoinUrl and fl.zoomJoinUrl != fz.joinUrl) -%}
+{%- set fAlt = (t.flyer.linkAlt if (flyerHref and t.flyer.linkAlt) else t.flyer.alt) | tokens -%}
+{% if fStale %}
+<p class="panel-muted text-sm mb-3 flyer-stale" role="note">{% icon "info", "icon" %} {{ t.flyer.staleZoom | tokens }}</p>
+{% endif %}
+{% if flyerHref %}<a href="{{ flyerHref }}" class="flyer-thumb">{% endif %}
+<picture>
+  <source type="image/webp" srcset="{{ fWebp | join(', ') }}" sizes="{{ fSizes }}">
+  <img src="{{ fl.base }}-{{ fl.width or 1000 }}.jpg" srcset="{{ fJpg | join(', ') }}" sizes="{{ fSizes }}" width="{{ fl.width or 1000 }}" height="{{ fl.height or 1343 }}" alt="{{ fAlt }}"{% if flyerDescribedBy %} aria-describedby="{{ flyerDescribedBy }}"{% endif %} loading="{{ flyerLoading or 'lazy' }}" decoding="async"{% if flyerLoading == 'eager' %} fetchpriority="high"{% endif %} class="flyer-img">
+</picture>
+{% if flyerHref %}</a>{% endif %}
+{% endif %}
