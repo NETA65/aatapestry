@@ -1,9 +1,9 @@
 {
-  "_readme": "The FAQ page (/faq/ and /es/faq/), page-level words only; the questions and answers themselves are in src/_data/faq.json. en and es must have the same keys. Plain text. hero.eyebrow is the small gold line above the page title, as on the other inner pages. groups: the headings the questions are sorted under, in the order shown on the page; each key matches the group of the questions in faq.json (add a key in both languages to add a heading). jump.expandAll/collapseAll label the button that opens or closes every answer (shown only when JavaScript runs). There is no contact line here: the footer band right under the questions prints the questions address.",
+  "_readme": "The FAQ page (/faq/ and /es/faq/), page-level words only; the questions and answers themselves are in src/_data/faq.json. en and es must have the same keys. Plain text. Keep meta.description to about 160 characters (search results cut longer ones off); it names the main topics, not the questions address or Zoom numbers. hero.eyebrow is the small gold line above the page title, as on the other inner pages. groups: the headings the questions are sorted under, in the order shown on the page; each key matches the group of the questions in faq.json (add a key in both languages to add a heading). jump.expandAll/collapseAll label the button that opens or closes every answer (shown only when JavaScript runs). There is no contact line here: the footer band right under the questions prints the questions address.",
   "en": {
     "meta": {
       "title": "Questions & answers",
-      "description": "Answers about The Incredible Tapestry, the free online A.A. workshop: who can attend, cost and contributions, Zoom, time zones, interpretation, anonymity and sharing the flyer."
+      "description": "Answers about The Incredible Tapestry, the free online A.A. workshop: who can attend, cost, Zoom, time zones, interpretation and anonymity."
     },
     "hero": {
       "eyebrow": "Good to know",
@@ -25,7 +25,7 @@
   "es": {
     "meta": {
       "title": "Preguntas y respuestas",
-      "description": "Respuestas sobre The Incredible Tapestry, el taller de A.A. en línea y gratuito: quién puede asistir, costo y contribuciones, Zoom, zonas horarias, interpretación, anonimato y cómo compartir el volante."
+      "description": "Respuestas sobre The Incredible Tapestry, el taller de A.A. gratuito en línea: quién puede asistir, costo, Zoom, zonas horarias, interpretación y anonimato."
     },
     "hero": {
       "eyebrow": "Información útil",
