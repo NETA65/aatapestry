@@ -10,7 +10,7 @@
     },
     "zoom": {
       "heading": "Zoom details",
-      "programLink": "Times in your time zone & Add to calendar",
+      "programLink": "See the time where you are and add it to your calendar",
       "qrLabel": "QR code that opens the workshop’s Zoom meeting",
       "qrCaption": "On a computer? Scan this with your phone’s camera to join from your phone."
     },
@@ -20,7 +20,7 @@
       "items": [
         {
           "title": "Open the Zoom meeting",
-          "body": "On the day, use **Join on Zoom** above, or open the Zoom app, choose **Join** and type in the meeting ID and passcode. No pre-registration is required."
+          "body": "On the day, use **Join on Zoom** above, or open the Zoom app, choose **Join** and type in the meeting ID and passcode. No pre-registration is required. **No Zoom app yet?** On a phone or tablet, install the free Zoom app first. On a computer, the link offers to download it, or to join from your browser instead."
         },
         {
           "title": "Choose your display name",
@@ -36,7 +36,7 @@
         }
       ],
       "tipLabel": "Tip",
-      "tip": "Join a few minutes early if you can, so your audio and interpretation are ready before the first presentation."
+      "tip": "Before the day, you can check your speaker, microphone and camera in a [Zoom test meeting](https://zoom.us/test). On the day, join a few minutes early if you can, so your audio and interpretation are ready before the first presentation."
     },
     "interpretation": {
       "heading": "Spanish & ASL interpretation",
@@ -58,7 +58,7 @@
           "summary": "Keep an American Sign Language interpreter on screen.",
           "computer": "If Zoom offers the **sign language view**, choose **ASL** from **Interpretation**: the interpreter opens in a separate window you can resize. If not, hover over the interpreter’s video, open its **…** menu and choose **Pin**.",
           "phone": "Tap **More**, then **Language Interpretation**, and choose **ASL** if it is listed. If it is not, pin the interpreter’s video so it stays on screen.",
-          "note": ""
+          "note": "Not sure which video is the interpreter? Ask the host in the **Chat**."
         },
         {
           "key": "captions",
@@ -111,7 +111,7 @@
     },
     "zoom": {
       "heading": "Datos de Zoom",
-      "programLink": "Horarios en su zona horaria y Agregar al calendario",
+      "programLink": "Vea la hora en su zona horaria y agréguela a su calendario",
       "qrLabel": "Código QR que abre la reunión de Zoom del taller",
       "qrCaption": "¿Está en la computadora? Escanee este código con la cámara del teléfono para unirse desde el teléfono."
     },
@@ -121,7 +121,7 @@
       "items": [
         {
           "title": "Abra la reunión de Zoom",
-          "body": "El día del taller, use **Unirse por Zoom**, aquí arriba, o abra la aplicación de Zoom, elija **Entrar** (*Join*) y escriba el ID de reunión y el código de acceso. No se requiere inscripción previa."
+          "body": "El día del taller, use **Unirse por Zoom**, aquí arriba, o abra la aplicación de Zoom, elija **Entrar** (*Join*) y escriba el ID de reunión y el código de acceso. No se requiere inscripción previa. **¿Aún no tiene Zoom?** En el teléfono o la tableta, instale primero la aplicación gratuita de Zoom. En la computadora, el enlace le ofrece descargarla o unirse desde el navegador (*Join from your browser*)."
         },
         {
           "title": "Elija su nombre en pantalla",
@@ -137,7 +137,7 @@
         }
       ],
       "tipLabel": "Consejo",
-      "tip": "Si puede, entre unos minutos antes, para tener listos el audio y la interpretación antes de la primera presentación."
+      "tip": "Antes del taller, puede probar el altavoz, el micrófono y la cámara en una [reunión de prueba de Zoom](https://zoom.us/test). El día del taller, si puede, entre unos minutos antes, para tener listos el audio y la interpretación antes de la primera presentación."
     },
     "interpretation": {
       "heading": "Interpretación en español y en ASL",
@@ -159,7 +159,7 @@
           "summary": "Tenga siempre a la vista a un intérprete de lengua de señas americana.",
           "computer": "Si Zoom ofrece la **vista de lengua de señas** (*sign language view*), elija **ASL** desde **Interpretación** (*Interpretation*): el intérprete aparece en una ventana aparte, de tamaño ajustable. Si no, pase el cursor sobre el video del intérprete, abra su menú **…** y elija **Fijar** (*Pin*).",
           "phone": "Toque **Más** (*More*), luego **Interpretación de idiomas** (*Language Interpretation*), y elija **ASL** si aparece. Si no aparece, fije el video del intérprete para tenerlo siempre a la vista.",
-          "note": ""
+          "note": "¿No sabe cuál es el video del intérprete? Escríbale al anfitrión por el **Chat**."
         },
         {
           "key": "captions",
