@@ -1,0 +1,29 @@
+---
+pagination:
+  data: redirects
+  size: 1
+  alias: r
+redirects:
+  - { from: "/schedule/", to: "/program/" }
+  - { from: "/accessibility/", to: "/join/#interpretation" }
+  - { from: "/meeting/", to: "/principles/" }
+permalink: "{{ r.from }}"
+layout: false
+eleventyExcludeFromCollections: true
+---
+{#- Pages that moved in the October 2026 redesign. GitHub Pages has no server-side redirects, so each
+    old address is a tiny page that forwards at once (and tells search engines where the page lives now). -#}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ site.name }}</title>
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="{{ r.to | absUrl }}">
+<meta http-equiv="refresh" content="0; url={{ r.to }}">
+</head>
+<body>
+<p>This page has moved: <a href="{{ r.to }}">{{ r.to | absUrl }}</a></p>
+</body>
+</html>

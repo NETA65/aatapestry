@@ -1,5 +1,5 @@
 {
-  "_readme": "SINGLE SOURCE OF TRUTH for the workshop. Edit here and every page, the poster, the QR codes, the calendar files, the JSON-LD and the social cards update on the next build. Prose in copy.json, i18n.json, faq.json, schedule.json and updates.json never repeats the email, date, times or Zoom numbers: it uses tokens such as {email}, {date}, {time}, {startsAlso}, {zoomId} and {passcode}, which the build fills in from here. The exceptions are description and metaDescription, which spell the time out in plain text; update them by hand if the time ever changes. Field notes are in docs/EDITING.md.",
+  "_readme": "SINGLE SOURCE OF TRUTH for the workshop. Edit here and every page, the poster, the QR codes, the calendar files, the JSON-LD and the social cards update on the next build. Prose in i18n.json, src/_data/pagecopy/*.json, copy.json, faq.json and schedule.json never repeats the email, date, times or Zoom numbers: it uses tokens such as {email}, {date}, {time}, {startsAlso}, {zoomId} and {passcode}, which the build fills in from here. The exceptions are description and metaDescription, which spell the time out in plain text; update them by hand if the time ever changes. Field notes are in docs/EDITING.md.",
   "name": "The Incredible Tapestry",
   "shortName": "AA Tapestry",
   "title": "The Incredible Tapestry: Weaving the Steps, Traditions & Concepts Together",
@@ -11,7 +11,7 @@
   "domain": "aatapestry.org",
   "lang": "en",
   "locale": "en_US",
-  "themeColor": "#2F4FA2",
+  "themeColor": "#0B0F1E",
   "backgroundColor": "#FBF7F0",
   "event": {
     "name": "The Incredible Tapestry Workshop",
@@ -26,6 +26,7 @@
     "format": "online",
     "platform": "Zoom",
     "status": "scheduled",
+    "announced": "2026-10-04",
     "calendarSequence": 3,
     "cost": "Free. There will be some expenses for the Spanish and ASL interpretation, and contributions are welcome to help cover them.",
     "audience": "Open to all A.A. members, anyone who thinks they might have a problem with alcohol, and trusted servants at every level. Newcomers warmly welcome.",
@@ -108,7 +109,7 @@
     "fontBody": "Inter"
   },
   "contact": {
-    "_readme": "email is the questions address printed on the official flyer. Each page PRINTS the address at most once: the Questions card (home, /es/, /join/, /es/join/, /schedule/), the flyer text (/flyer/, /es/flyer/), the printed line on the posters, the requests box on /accessibility/. Everywhere else (facts strip, contributions note, FAQ, updates, footer) it is a link labelled 'Email the planning committee' / 'Escribir al comité organizador' (i18n contact.linkText; in Markdown prose [email the planning committee](mailto:{email})); never write a bare {email} in prose, which would print it a second time. The calendar entry (DESCRIPTION), the Add to calendar text and the JSON-LD carry it too. Leave it empty only to hide all of them. icsOrganizer: true would also write it as the .ics ORGANIZER; it is off because Outlook then treats the entry as a meeting request. formUrl: optional link to a contact form (leave empty).",
+    "_readme": "email is the questions address printed on the official flyer. Every page PRINTS it once, in the questions band at the top of the footer (and the printable poster prints it); everywhere else (FAQ answers, the contributions note, the accessibility note) it is a link labelled 'Email the planning committee' / 'Escribir al comité organizador' (i18n contact.linkText; in Markdown prose [email the planning committee](mailto:{email})); never write a bare {email} in prose, which would print it a second time. The calendar entry (DESCRIPTION) and the JSON-LD carry it too. Leave it empty only to hide all of them. icsOrganizer: true would also write it as the .ics ORGANIZER; it is off because Outlook then treats the entry as a meeting request. formUrl: optional link to a contact form (leave empty).",
     "committee": "The Incredible Tapestry Workshop Planning Committee",
     "email": "a44p69delegate@gmail.com",
     "formUrl": "",

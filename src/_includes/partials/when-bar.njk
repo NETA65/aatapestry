@@ -1,0 +1,14 @@
+{#- The flyer's time bar: the Eastern time range, then the PT · MT · CT start times, then (filled in by
+    app.js) the visitor's own time when their zone differs. Values from when.js. Dark surfaces only.
+    The range may break after its dash on narrow screens; the bar goes single-row only when it fits
+    (a container query in main.css; the Spanish times are longer, so they need more room). -#}
+{%- set es = lang == "es" -%}
+<div class="when-wrap">
+  <div class="when-bar{% if es %} when-bar--long{% endif %}">
+    <p class="when-bar-main"><span>{{ when.time.startEs if es else when.time.start }}&nbsp;–</span> <span>{{ when.time.endEs if es else when.time.end }}&nbsp;{{ when.tzShort }}</span></p>
+    <div class="when-bar-zones">
+      {% for a in when.also %}<p class="when-bar-zone"><span>{{ a.startEs if es else a.start }}</span><small>{{ a.short }}</small></p>{% endfor %}
+    </div>
+  </div>
+</div>
+<p class="local-time mt-3" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" hidden>{{ t.labels.yourLocalTime }}: <strong data-local-value></strong></p>

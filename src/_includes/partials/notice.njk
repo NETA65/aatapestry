@@ -1,0 +1,8 @@
+{#- The current notice (i18n → notice): the Zoom link changed on October 25. Shown on the home page
+    and on How to join. Empty notice.text hides it everywhere. -#}
+{% if t.notice and t.notice.text %}
+<div class="notice" role="note">
+  {% icon "info", "icon" %}
+  <p><strong>{{ t.notice.label }}.</strong> {{ t.notice.text | tokens }}</p>
+</div>
+{% endif %}

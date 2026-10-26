@@ -17,7 +17,7 @@ export default class {
   }
   render({ collections, site, build }) {
     const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
-    const pages = collections.all.filter((p) => p.url && p.url.endsWith("/") && !p.data.noindex && p.data.eleventyExcludeFromCollections !== "true");
+    const pages = collections.all.filter((p) => p.url && p.url.endsWith("/") && !p.data.noindex && p.data.layout !== false && p.data.eleventyExcludeFromCollections !== "true");
     const abs = (u) => new URL(u, site.url).href;
     const dataDate = gitDate("src/_data") || gitDate("src");
     const lastmodFor = (p) => {
@@ -25,7 +25,7 @@ export default class {
       const d = [t, dataDate].filter(Boolean).sort().pop();
       return d || build.time.slice(0, 10);
     };
-    const TOP = new Set(["/es/", "/join/", "/schedule/", "/flyer/", "/es/flyer/", "/principles/"]);
+    const TOP = new Set(["/es/", "/program/", "/es/program/", "/join/", "/es/join/", "/flyer/", "/es/flyer/", "/faq/", "/es/faq/", "/principles/"]);
     const priority = (u) => (u === "/" ? "1.0" : TOP.has(u) ? "0.9" : u.startsWith("/principles/") ? "0.7" : "0.6");
     const alt = (p) => {
       if (!p.data.translated) return "";

@@ -1,17 +1,4 @@
-{#- Live countdown (app.js updates it every second; without JS the build-time status shows).
-    Only the state line is a live region — the ticking tiles stay out of it. -#}
-<div class="countdown" data-countdown data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-labels="{{ t.countdown | json }}" role="group" aria-labelledby="countdown-label">
-  {% if when.status.phase == "past" %}
-  <p class="countdown-state" id="countdown-label">{{ t.countdown.concluded }}</p>
-  {% elif when.status.phase == "live" %}
-  <p class="countdown-state is-live" id="countdown-label">{{ t.countdown.happeningNow }}</p>
-  {% else %}
-  <p class="countdown-label" id="countdown-label" data-cd-label>{{ t.countdown.startsIn }}</p>
-  <div class="countdown-tiles" data-cd-tiles>
-    {% for unit in ["days", "hours", "minutes", "seconds"] %}
-    <div class="tile"><span class="num" data-cd="{{ unit }}">{{ when.status.daysUntil if unit == "days" else "—" }}</span><span class="unit">{{ t.countdown[unit] }}</span></div>
-    {% endfor %}
-  </div>
-  <p class="countdown-state" data-cd-state aria-live="polite" hidden></p>
-  {% endif %}
-</div>
+{#- A small status pill: "47 days to go" → "Tomorrow" → "Starts in 2 h 10 min" → "Happening now" → ended.
+    Rendered by app.js from the labels in i18n (t.countdown); hidden without JavaScript. -#}
+{%- set cdLabels = { "days": t.countdown.days, "tomorrow": t.countdown.tomorrow, "today": t.countdown.today, "startsIn": t.countdown.startsIn, "live": t.countdown.live, "ended": t.countdown.ended } -%}
+<p class="countdown" data-countdown data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-start-label="{{ (when.time.startZoneEs if lang == 'es' else when.time.startZone) | plain }}" data-labels="{{ cdLabels | dump }}" aria-live="polite" hidden><span class="countdown-dot" aria-hidden="true"></span><span data-countdown-text></span></p>

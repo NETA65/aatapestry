@@ -1,46 +1,11 @@
-{#- Small reusable pieces. Nunjucks macros only see their arguments, so pass data in. -#}
+{#- Small reusable pieces. Nunjucks macros only see their arguments, so pass data in.
+    Partials (src/_includes/partials/) see the whole page context instead. -#}
 
-{% macro sectionHead(heading, lead="", eyebrow="", id="", level=2) %}
-<div class="section-head"{% if id %} id="{{ id }}"{% endif %}>
+{#- A section heading block: optional eyebrow, the heading (h2 by default) and a lead paragraph. -#}
+{% macro sectionHead(heading, lead="", eyebrow="", id="", level=2, center=false) %}
+<div class="section-head{% if center %} section-head--center{% endif %}">
   {% if eyebrow %}<p class="eyebrow">{{ eyebrow }}</p>{% endif %}
-  <h{{ level }} class="h-section">{{ heading }}</h{{ level }}>
+  <h{{ level }} class="h-section"{% if id %} id="{{ id }}"{% endif %}>{{ heading }}</h{{ level }}>
   {% if lead %}<p class="lead">{{ lead }}</p>{% endif %}
 </div>
-{% endmacro %}
-
-{% macro legacyBadge(legacy, label="") %}
-<span class="badge badge-legacy" style="--legacy: var(--c-{{ legacy.key }}); --legacy-soft: var(--c-{{ legacy.key }}-soft); --legacy-text: var(--c-{{ legacy.key }}-text)">{{ label or legacy.name }}</span>
-{% endmacro %}
-
-{#- One fact in the "at a glance" strip. With href, the value becomes a link (autoescape stays on);
-    sub2 is a second muted line. -#}
-{% macro fact(icon, label, value, sub="", href="", sub2="") %}
-<div class="fact">
-  <span class="fact-icon" aria-hidden="true">{% icon icon, "icon" %}</span>
-  <dt class="fact-label">{{ label }}</dt>
-  <dd class="fact-value">{% if href %}<a href="{{ href }}" class="tap-link">{{ value }}</a>{% else %}{{ value }}{% endif %}{% if sub %}<span class="fact-sub">{{ sub }}</span>{% endif %}{% if sub2 %}<span class="fact-sub">{{ sub2 }}</span>{% endif %}</dd>
-</div>
-{% endmacro %}
-
-{% macro legacyCard(legacy, lang="en", t=null, href="") %}
-<article class="card legacy-card" style="--legacy: var(--c-{{ legacy.key }}); --legacy-soft: var(--c-{{ legacy.key }}-soft); --legacy-text: var(--c-{{ legacy.key }}-text)">
-  <div class="legacy-card-stripe" aria-hidden="true"></div>
-  <p class="eyebrow legacy-eyebrow">{{ (t.legacies[legacy.key] if t else legacy.name) }}</p>
-  <h3 class="h-card">{{ (t.legacies[legacy.shortBody | lower] if t else legacy.body) }}</h3>
-  {% if lang != "es" %}<p class="text-muted">{{ legacy.blurb }}</p><p class="text-xs text-muted mt-2">{{ legacy.source }}</p>{% elif legacy.blurbEs %}<p class="text-muted">{{ legacy.blurbEs }}</p>{% endif %}
-  {% if href %}<a href="{{ href }}" class="tap-link mt-3">{{ "Explorar" if lang == "es" else "Explore" }} {% icon "arrow-right", "icon" %}</a>{% endif %}
-</article>
-{% endmacro %}
-
-{% macro numberTile(item, legacies, href="") %}
-<a href="{{ href or ('/principles/' + item.n + '/') }}" class="number-tile">
-  <span class="number-tile-n"><span class="arabic">{{ item.n }}</span><span class="roman">{{ item.n | roman }}</span></span>
-  <span class="number-tile-title">{{ item.thread.title }}</span>
-  <span class="number-tile-words">
-    {% for key in ["step", "tradition", "concept"] %}
-    {% set lg = legacies[loop.index0] %}
-    <span class="dot" style="--legacy: var(--c-{{ lg.key }})" title="{{ lg.singular }} {{ (item.n | roman) if key == 'concept' else item.n }}: {{ item[key].principle }}">{{ item[key].principle }}</span>
-    {% endfor %}
-  </span>
-</a>
 {% endmacro %}

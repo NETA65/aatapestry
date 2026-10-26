@@ -1,27 +1,5 @@
 {
-  "_readme": "English page prose that the Spanish pages do not share (shared labels, How to join, the contact card, the flyer text and the poster lines are in i18n.json). Write the email, date, times and Zoom numbers ONLY as tokens: {email}, {date}, {time}, {timeLong}, {startsAlso}, {rangesAlso}, {zoomId}, {passcode}; the build fills them in from site.json. The email address is printed at most ONCE per page (the Questions card, the flyer text or the poster line do that), so prose never writes a bare {email}: link to it instead, as [email the planning committee](mailto:{email}). Fields marked (md) in docs/EDITING.md accept simple Markdown (bold, links); every other field is plain text. The program comes from schedule.json; meetingTeaser is shown only when meeting.json → published is true. Keep the voice warm and plain: we are A.A. members talking to A.A. members.",
-  "hero": {
-    "eyebrow": "A 1-day online A.A. workshop",
-    "headline": "The Incredible Tapestry",
-    "sub": "A series of presentations on the Steps, Traditions and Concepts, with plenty of time for sharing and asking questions. Spanish and ASL interpretation will be provided. It’s free, and no pre-registration is required.",
-    "ctaPrimary": "Join on Zoom",
-    "ctaSecondary": "Add to calendar",
-    "ctaFlyer": "View the flyer",
-    "markAlt": "The Incredible Tapestry mark: a circle around a triangle whose three sides are labeled Unity, Service and Recovery, with three overlapping colored circles inside, one for each legacy."
-  },
-  "program": {
-    "heading": "About the day",
-    "lead": "Come join us on {date}, for a 1-day online workshop. There will be a series of presentations that look at how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions.",
-    "history": "The workshop is similar to the Tapestry meetings held previously in Raynham, Massachusetts.",
-    "strandsLine": "Presentations · Sharing · Questions and more",
-    "pageTitle": "Program",
-    "pageDescription": "Times for The Incredible Tapestry, {date}, {time}, on Zoom. The program will be available on this website shortly.",
-    "pageHeading": "The program",
-    "pageLead": "On this page: the day’s times (in your own time zone, too), how to add the workshop to your calendar, and how to join on Zoom.",
-    "allTimes": "All times are Eastern (ET). Where your browser allows, your local time is shown too.",
-    "calendarNote": "If the Zoom details ever change, this site will show the current ones. A calendar entry does not update itself, so if that happens, please delete the old entry and add the workshop to your calendar again.",
-    "programPageCta": "Program page"
-  },
+  "_readme": "English-only copy: the study pages (/principles/ and /principles/N/: intro, legacies, thirtySix, logoStory), the 404 page (notFound) and the one-paragraph event summary used by the JSON-LD and the calendar file (jsonld.eventSummary). The workshop pages have their own bilingual files in src/_data/pagecopy/. Write the email, date, times and Zoom numbers only as tokens ({email}, {date}, {time}…). Fields read through | md accept simple Markdown.",
   "intro": {
     "heading": "Pull one thread and the whole cloth moves",
     "body": [
@@ -43,63 +21,6 @@
     ],
     "cta": "Explore all 36"
   },
-  "accessibility": {
-    "heading": "Accessibility & interpretation",
-    "lead": "The hand of A.A. should reach everyone who wants it. Interpretation will be provided in Spanish and ASL, and this page shows how to use it in Zoom.",
-    "teaser": "Spanish and ASL interpretation will be provided, and the accessibility page shows how to use it in Zoom on a computer or a phone.",
-    "sections": [
-      {
-        "key": "es",
-        "title": "Spanish interpretation",
-        "body": [
-          "Spanish interpretation will be provided on its own audio channel in Zoom.",
-          "To listen in Spanish, click the **Interpretation** (globe) button on the Zoom toolbar and choose **Spanish**. On a phone or tablet the same control is under **More** (the three dots), then **Language Interpretation**. Turn on **Mute Original Audio** if you prefer to hear only the Spanish; leave it off to hear the original speaker quietly underneath."
-        ]
-      },
-      {
-        "key": "asl",
-        "title": "ASL interpretation",
-        "body": [
-          "American Sign Language (ASL) interpretation will be provided.",
-          "On a desktop or laptop, if Zoom’s **sign language interpretation view** is offered, choose ASL from the **Interpretation** (globe) button and the interpreter appears in a dedicated, resizable window. If that option is not showing, hover over the interpreter’s video, open the three-dot menu and choose **Pin** to keep the interpreter on screen."
-        ]
-      },
-      {
-        "key": "captions",
-        "title": "Captions",
-        "body": [
-          "If captions are turned on for the meeting, click **CC** or **Show Captions** on the Zoom toolbar to see them, or choose **View Full Transcript** to read along and scroll back. Captions are generated by software, not a person, so they may stumble on names and A.A. phrases; think of them as a help rather than a record."
-        ]
-      },
-      {
-        "key": "other",
-        "title": "Anything else",
-        "body": [
-          "This website is built to work with screen readers and keyboard navigation."
-        ]
-      }
-    ],
-    "requests": "If you have a question about accessibility, or if anything would make it easier for you to take part, please email:"
-  },
-  "anonymity": {
-    "heading": "A word about anonymity",
-    "body": [
-      "Anonymity is the spiritual foundation of all our Traditions, and it does not take the day off because we are online. Who you see and what you hear in this room stays in this room. Please do not record, screenshot or quote members by name, and if you share about the workshop afterwards, speak of what you learned, not of who was there. On Zoom, please use your first name and last initial as your display name."
-    ]
-  },
-  "seventh": {
-    "heading": "Seventh Tradition",
-    "body": [
-      "The workshop is free. There will be some expenses for the Spanish and ASL interpretation, and contributions are welcome to help cover them.",
-      "In keeping with our Seventh Tradition, we are self-supporting through our own contributions, so we accept them from A.A. members only. To ask how to contribute, please [email the planning committee](mailto:{email})."
-    ]
-  },
-  "meetingTeaser": {
-    "heading": "Keep weaving, every week",
-    "body": "A weekly online A.A. meeting is being planned around the same idea: the Step, the Tradition and the Concept of one number, read aloud together, followed by sharing on how that thread shows up in our recovery, our home groups and our service.",
-    "cta": "About the meeting",
-    "comingSoon": "The meeting day, time and Zoom details will be posted here once the founding group has settled them."
-  },
   "logoStory": {
     "heading": "About the mark",
     "body": [
@@ -107,22 +28,10 @@
       "Inside the triangle, three circles overlap like a Venn diagram, one for each legacy in its own color. Where two meet, a Step and a Tradition, or a Tradition and a Concept, share a principle; the small shape where all three meet is the tapestry itself: the Fellowship, held together by all 36 threads."
     ]
   },
-  "updates": {
-    "heading": "Updates",
-    "feed": "Subscribe (RSS)"
-  },
-  "faq": {
-    "heading": "Questions & answers",
-    "lead": ""
-  },
   "notFound": {
     "heading": "That thread leads nowhere",
     "body": "The page you were looking for has moved or never existed. The whole tapestry is still here, though, starting from the front page.",
     "cta": "Back to the start"
-  },
-  "share": {
-    "heading": "Spread the word",
-    "body": "Tell your home group, your sponsees and your district. The best way an announcement travels in A.A. is still one alcoholic talking to another."
   },
   "jsonld": {
     "eventSummary": "A free, 1-day online A.A. workshop on Zoom: a series of presentations on how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions. Spanish and ASL interpretation will be provided, and no pre-registration is required. It is similar to the Tapestry meetings held previously in Raynham, Massachusetts."

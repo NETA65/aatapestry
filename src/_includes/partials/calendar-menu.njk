@@ -1,0 +1,15 @@
+{#- "Add to calendar": a disclosure listing Google, Apple/.ics, Outlook.com, Microsoft 365 and Yahoo
+    (links from src/_data/calendar.js). Works without JavaScript; app.js closes it on Escape or an
+    outside click and keeps the panel on screen. Optional before the include: calClass (the button's
+    classes, default "btn btn-outline"). -#}
+<details class="cal-menu">
+  <summary class="{{ calClass or 'btn btn-outline' }}">{% icon "calendar-plus", "icon" %}<span>{{ t.labels.addToCalendar }}</span>{% icon "chevron-down", "icon icon-sm chev" %}</summary>
+  <div class="cal-menu-panel">
+    <ul>
+      {% for c in calendar[lang] %}
+      {% set calIcon = "download" if c.download else "calendar" %}
+      <li><a href="{{ c.href }}"{% if c.download %} download{% else %} target="_blank" rel="noopener"{% endif %}>{% icon calIcon, "icon" %}<span>{{ c.label }}</span>{% if not c.download %}<span class="sr-only"> {{ t.a11y.openInNewTab }}</span>{% endif %}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</details>

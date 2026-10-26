@@ -1,36 +1,45 @@
-{#- Site header. Desktop: the menu without "Home" (the brand link is home), the language switch and
-    the Join button. Phones: everything in the menu. Labels from i18n (t.nav, t.labels). -#}
-{%- set items = nav[lang] or nav.en -%}
+{#- Site header (always the flyer's dark navy). Wide screens: logo, the menu, the language switch and
+    the Join button. Narrower: logo, Join (from 480 px) and a Menu button that opens the same links
+    (app.js; without JavaScript the menu button is hidden and the footer carries every link). -#}
+{%- set items = nav[lang].main -%}
 {%- set homeHref = "/es/" if lang == "es" else "/" -%}
-<header class="site-header" x-data="{ open: false }" @keydown.escape.window="open = false">
-  <div class="container-page flex items-center gap-3 py-3">
-    <a href="{{ homeHref }}" class="brand" aria-label="{{ site.name }} — {{ t.nav.home }}">
-      {% inlineSvg "brand/logo/mark-plain.svg", "brand-mark" %}
+{%- macro current(href) -%}{% if page.url == href %} aria-current="page"{% elif href != homeHref and page.url.startsWith(href) %} aria-current="true"{% endif %}{%- endmacro -%}
+<header class="site-header on-dark">
+  <div class="container-page site-header-bar">
+    <a href="{{ homeHref }}" class="brand"{% if page.url == homeHref %} aria-current="page"{% endif %}>
+      {% inlineSvg "src/assets/img/logo-plain.svg", "brand-mark" %}
       <span class="brand-name">{{ site.name }}</span>
     </a>
 
-    <nav class="main-nav" aria-label="{{ 'Principal' if lang == 'es' else 'Primary' }}">
-      {% for item in items %}{% if not item.mobileOnly %}
-      <a href="{{ item.href }}" class="nav-link{% if page.url == item.href %} is-active{% endif %}"{% if page.url == item.href %} aria-current="page"{% endif %}>{{ t.nav[item.key] }}</a>
-      {% endif %}{% endfor %}
-      <a href="{{ page.url | langUrl(otherLang) }}" class="nav-link nav-lang" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon" %}<span>{{ t.switchLabel }}</span></a>
-      <a href="{{ site.event.zoom.joinUrl }}" class="btn btn-primary btn-sm" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+    <nav class="nav-desktop" aria-label="{{ t.nav.primary }}">
+      <ul class="flex items-center gap-0.5">
+        {% for item in items %}<li><a href="{{ item.href }}" class="nav-link"{{ current(item.href) }}>{{ t.nav[item.key] }}</a></li>{% endfor %}
+      </ul>
     </nav>
 
-    <button type="button" class="btn btn-ghost btn-sm menu-btn" @click="open = !open" :aria-expanded="open.toString()" aria-expanded="false" aria-controls="mobile-nav">
-      <span x-show="!open">{% icon "menu", "icon" %}</span>
-      <span x-show="open" x-cloak>{% icon "x", "icon" %}</span>
-      <span>{{ t.a11y.menu }}</span>
-    </button>
+    <div class="nav-actions">
+      <a href="{{ page.url | langUrl(otherLang) }}" class="nav-link hidden nav:inline-flex" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon" %}<span>{{ t.switchLabel }}</span></a>
+      <a href="{{ site.event.zoom.joinUrl }}" class="btn btn-primary btn-sm header-cta" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+      <button type="button" class="menu-toggle" data-menu-toggle aria-expanded="false" aria-controls="site-menu" data-label-open="{{ t.a11y.menu }}" data-label-close="{{ t.a11y.close }}" hidden>
+        {% icon "menu", "icon icon-open" %}{% icon "x", "icon icon-close" %}
+        <span data-menu-label class="sr-only min-[30rem]:not-sr-only">{{ t.a11y.menu }}</span>
+      </button>
+    </div>
   </div>
 
-  <nav id="mobile-nav" class="mobile-nav" aria-label="{{ 'Principal' if lang == 'es' else 'Primary' }}" x-show="open" x-cloak x-transition.opacity @click.outside="open = false">
-    <div class="container-page flex flex-col gap-1 pb-4">
-      {% for item in items %}
-      <a href="{{ item.href }}" class="nav-link{% if page.url == item.href %} is-active{% endif %}"{% if page.url == item.href %} aria-current="page"{% endif %}>{{ t.nav[item.key] }}</a>
-      {% endfor %}
-      <a href="{{ page.url | langUrl(otherLang) }}" class="nav-link" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon" %}<span>{{ t.switchLabel }}</span></a>
-      <a href="{{ site.event.zoom.joinUrl }}" class="btn btn-primary mt-2" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+  <div id="site-menu" class="mobile-menu" hidden>
+    <div class="container-page">
+      <nav aria-label="{{ t.nav.primary }}">
+        <ul>
+          <li><a href="{{ homeHref }}" class="nav-link"{% if page.url == homeHref %} aria-current="page"{% endif %}>{{ t.nav.home }}</a></li>
+          {% for item in items %}<li><a href="{{ item.href }}" class="nav-link"{{ current(item.href) }}>{{ t.nav[item.key] }}</a></li>{% endfor %}
+          <li><a href="{{ page.url | langUrl(otherLang) }}" class="nav-link" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon" %}<span>{{ t.switchLabelLong }}</span></a></li>
+        </ul>
+      </nav>
+      <div class="mobile-menu-actions mobile-menu-cta">
+        <a href="{{ site.event.zoom.joinUrl }}" class="btn btn-primary btn-lg btn-block" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+      </div>
     </div>
-  </nav>
+  </div>
 </header>
+<script>document.querySelector("[data-menu-toggle]").hidden=false</script>

@@ -1,0 +1,101 @@
+{
+  "_readme": "The home page (/ and /es/). en and es must have the same keys. Plain text unless marked: essentials.*.body and about.body accept simple Markdown (bold, links). Write the date, times, Zoom numbers and the email only as tokens ({date}, {start}, {startEs}, {zoomId}, {passcode}, {email}…). The page title and the hero's overline/subtitle come from i18n.json → landing; the date, the times and the Zoom numbers from site.json.",
+  "en": {
+    "hero": {
+      "the": "The",
+      "incredible": "Incredible",
+      "tapestry": "Tapestry",
+      "logoAlt": "The Incredible Tapestry logo: a circle around a triangle whose sides read Unity, Service and Recovery, with three overlapping colored circles inside, one for each legacy.",
+      "langPill": "Información en español"
+    },
+    "essentials": {
+      "heading": "Everything you need for the day",
+      "zoom": {
+        "title": "Join on Zoom",
+        "body": "No pre-registration is required. On the day, use **Join on Zoom**, or open Zoom and type in the meeting ID and passcode.",
+        "link": "Step-by-step instructions"
+      },
+      "interpretation": {
+        "title": "Spanish & ASL interpretation",
+        "body": "Choose Spanish audio or ASL from Zoom’s **Interpretation** (globe) button, on a computer or a phone.",
+        "link": "How to use interpretation"
+      },
+      "free": {
+        "title": "Free to attend",
+        "body": "There will be some expenses for the Spanish and ASL interpretation, and contributions from A.A. members are welcome to help cover them.",
+        "link": "How to contribute"
+      }
+    },
+    "about": {
+      "eyebrow": "About the workshop",
+      "heading": "Three legacies, woven into one day",
+      "body": "Come join us for a 1-day online workshop, similar to the Tapestry meetings held previously in Raynham, Massachusetts. Starting at {start}, there will be a series of presentations that look at how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions.",
+      "audience": "Open to all A.A. members, anyone who thinks they might have a problem with alcohol, and trusted servants at every level. Newcomers are warmly welcome, and no preparation is needed.",
+      "threadsLabel": "The three strands",
+      "threads": {
+        "steps": "How each of us recovers: a spiritual program of action, one day at a time.",
+        "traditions": "How the group stays well: the lessons that keep us together.",
+        "concepts": "How the Fellowship serves: the principles that carry the message worldwide."
+      },
+      "programCta": "See the program",
+      "programNote": "The full program will be posted on this website shortly.",
+      "principlesCta": "Explore the 36 principles"
+    },
+    "flyer": {
+      "heading": "Spread the word",
+      "body": "Print the official flyer for your home group’s bulletin board, or send it to your sponsees, district and intergroup. An announcement still travels best the A.A. way: one alcoholic talking to another.",
+      "download": "Download the flyer (PDF)",
+      "more": "More printing and sharing options",
+      "alt": "The official flyer for The Incredible Tapestry (opens the flyer page)"
+    }
+  },
+  "es": {
+    "hero": {
+      "the": "The",
+      "incredible": "Incredible",
+      "tapestry": "Tapestry",
+      "logoAlt": "Logotipo de The Incredible Tapestry: un círculo alrededor de un triángulo cuyos lados dicen Unidad (Unity), Servicio (Service) y Recuperación (Recovery), con tres círculos de colores superpuestos en su interior, uno por cada legado.",
+      "langPill": "Information in English"
+    },
+    "essentials": {
+      "heading": "Todo lo necesario para el día",
+      "zoom": {
+        "title": "Unirse por Zoom",
+        "body": "No se requiere inscripción previa. El día del taller, use **Unirse por Zoom**, o abra Zoom y escriba el ID de reunión y el código de acceso.",
+        "link": "Instrucciones paso a paso"
+      },
+      "interpretation": {
+        "title": "Interpretación en español y en ASL",
+        "body": "En Zoom, elija el audio en español o ASL con el botón **Interpretación** (*Interpretation*, el globo terráqueo), en la computadora o en el teléfono.",
+        "link": "Cómo usar la interpretación"
+      },
+      "free": {
+        "title": "Gratuito",
+        "body": "La interpretación en español y en ASL tiene algunos gastos, y se agradecen las contribuciones de los miembros de A.A. para cubrirlos.",
+        "link": "Cómo contribuir"
+      }
+    },
+    "about": {
+      "eyebrow": "Sobre el taller",
+      "heading": "Tres legados, entretejidos en un solo día",
+      "body": "Los invitamos a acompañarnos en un taller en línea de un día, parecido a las reuniones Tapestry que se realizaron anteriormente en Raynham, Massachusetts. A partir de las {startEs}, habrá una serie de presentaciones sobre cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz, con bastante tiempo para compartir y hacer preguntas.",
+      "audience": "Abierto a todos los miembros de A.A., a cualquier persona que piense que puede tener un problema con el alcohol y a los servidores de confianza de todos los niveles. Los recién llegados son muy bienvenidos, y no hace falta preparar nada.",
+      "threadsLabel": "Los tres hilos",
+      "threads": {
+        "steps": "Cómo cada uno de nosotros se recupera: un programa espiritual de acción, un día a la vez.",
+        "traditions": "Cómo el grupo se mantiene sano: las lecciones que nos mantienen unidos.",
+        "concepts": "Cómo sirve la Comunidad: los principios que llevan el mensaje a todo el mundo."
+      },
+      "programCta": "Ver el programa",
+      "programNote": "El programa completo se publicará en este sitio web en breve.",
+      "principlesCta": "Los 36 principios (en inglés)"
+    },
+    "flyer": {
+      "heading": "Correr la voz",
+      "body": "Imprima el volante oficial (en inglés) para la cartelera de su grupo base, o envíelo a sus ahijados, a su distrito y a la oficina intergrupal. Un anuncio sigue difundiéndose mejor a la manera de A.A.: un alcohólico hablando con otro.",
+      "download": "Descargar el volante (PDF, en inglés)",
+      "more": "Más opciones para imprimir y compartir",
+      "alt": "El volante oficial (en inglés) de The Incredible Tapestry (abre la página del volante)"
+    }
+  }
+}

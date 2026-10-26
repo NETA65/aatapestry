@@ -1,10 +1,10 @@
 {#- Structured data (schema.org JSON-LD), all from site.json / when.js; prose through | tokens.
-    Event description: copy.jsonld.eventSummary (EN) or t.landing.metaDescription (ES). FAQPage on "/" (q/a)
-    and "/es/" (qEs/aEs). Text through | plain (no no-break spaces or word joiners in search-engine data). -#}
+    Event description: copy.jsonld.eventSummary (EN) or t.landing.metaDescription (ES). FAQPage on "/faq/"
+    (q/a) and "/es/faq/" (qEs/aEs). Text through | plain (no no-break spaces or word joiners in search-engine data). -#}
 {%- set ev = site.event -%}
 {%- set statusMap = { "scheduled": "https://schema.org/EventScheduled", "cancelled": "https://schema.org/EventCancelled", "postponed": "https://schema.org/EventPostponed", "rescheduled": "https://schema.org/EventRescheduled" } -%}
-{%- set firstDate = (updates.items | last).date if (updates.items and updates.items.length) else build.date -%}
-{%- set org = { "@type": "Organization", "@id": site.url + "/#organization", "name": site.contact.committee, "url": site.url, "logo": { "@type": "ImageObject", "url": ("/brand/logo/mark-1024.png" | absUrl) } } -%}
+{%- set firstDate = ev.announced or build.date -%}
+{%- set org = { "@type": "Organization", "@id": site.url + "/#organization", "name": site.contact.committee, "url": site.url, "logo": { "@type": "ImageObject", "url": ("/brand/favicon/icon-512.png" | absUrl) } } -%}
 {%- if site.contact.email %}{% set org = org | merge({ "email": site.contact.email }) %}{% endif -%}
 {%- set website = { "@type": "WebSite", "@id": site.url + "/#website", "url": site.url, "name": site.name, "description": (site.description | tokens | plain), "inLanguage": ["en", "es"], "publisher": { "@id": site.url + "/#organization" } } -%}
 {%- set graph = [org, website] -%}
@@ -34,8 +34,8 @@
 {%- set _ = graph.push(eventNode) -%}
 {%- endif -%}
 
-{%- if schema == "event" and (page.url == "/" or page.url == "/es/") and faq and faq.items -%}
-{%- set fEs = page.url == "/es/" -%}
+{%- if (page.url == "/faq/" or page.url == "/es/faq/") and faq and faq.items -%}
+{%- set fEs = page.url == "/es/faq/" -%}
 {%- set questions = [] -%}
 {%- for q in faq.items -%}
 {%- set qName = (q.qEs if fEs else q.q) | tokens | plain -%}
@@ -50,7 +50,7 @@
 {%- if page.url != "/principles/" and page.url.startsWith("/principles/") -%}
 {%- set _ = crumbs.push({ "@type": "ListItem", "position": 2, "name": t.nav.principles, "item": ("/principles/" | absUrl) }) -%}
 {%- endif -%}
-{%- set _ = crumbs.push({ "@type": "ListItem", "position": crumbs.length + 1, "name": ((title | tokens) or site.name), "item": (page.url | absUrl) }) -%}
+{%- set _ = crumbs.push({ "@type": "ListItem", "position": crumbs.length + 1, "name": ((title | tokens | plain) or site.name), "item": (page.url | absUrl) }) -%}
 {%- set _ = graph.push({ "@type": "BreadcrumbList", "itemListElement": crumbs }) -%}
 {%- endif -%}
 

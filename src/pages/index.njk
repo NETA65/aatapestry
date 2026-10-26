@@ -1,250 +1,150 @@
 ---
-permalink: /
-schema: event
-atcb: true
+pagination:
+  data: homeLangs
+  size: 1
+  alias: plang
+  addAllPagesToCollections: true
+homeLangs: ["en", "es"]
+permalink: "{% if plang == 'es' %}/es/{% else %}/{% endif %}"
 translated: true
+schema: event
+titleFonts: true
 bodyClass: home
+eleventyComputed:
+  lang: "{{ plang }}"
+  title: "{{ i18n[plang].landing.pageTitle }}"
+  description: "{% if plang == 'es' %}{{ i18n.es.landing.metaDescription }}{% endif %}"
 ---
-{% import "macros/ui.njk" as ui %}
-{% set ev = site.event %}
-{% set fl = site.flyer %}
-{% set programPublished = schedule.status == "published" and schedule.sessions and schedule.sessions.length %}
-{#- Order: practical first (when, how to join, flyer, questions), then the study sections.
-    Old anchors kept: #about, #schedule (in #program), #zoom (Zoom card), #share (in #flyer),
-    #faq (FAQ list), #accessibility (card in #contribute). Every prose string goes through | tokens. -#}
+{#- The home page, / and /es/: the flyer as a web page (logo, title, date, times, Join + Add to calendar),
+    then the three things people need (Zoom, interpretation, cost), what the day is, and the flyer to
+    share. Every other detail has its own page. Copy: src/_data/pagecopy/home.json (c) and i18n (t). -#}
+{% set c = pagecopy.home[lang] %}
+{% set es = lang == "es" %}
+{% set p = "/es" if es else "" %}
 
-{# ============ HERO ============ #}
-<section class="weave-bg">
-  <div class="container-page hero">
-    <div class="hero-grid hero-grid--mark">
-      <div>
-        {% if t.langPill %}<p class="mb-4"><a href="/es/" lang="es" hreflang="es" class="badge lang-pill">{% icon "languages", "icon" %}<span>{{ t.langPill | tokens }}</span></a></p>{% endif %}
-        <p class="eyebrow">{{ copy.hero.eyebrow | tokens }}</p>
-        <h1 class="h-display">{{ copy.hero.headline | tokens }}</h1>
-        {% if site.subtitle %}<p class="font-display text-xl sm:text-2xl italic text-muted mt-2 hero-subline">{{ site.subtitle }}</p>{% endif %}
+{# ============ HERO: the flyer, as a web page ============ #}
+<section class="home-hero thread-bg on-dark">
+  <div class="container-page home-hero-inner">
+    <p class="home-hero-lang"><a href="{{ page.url | langUrl(otherLang) }}" class="chip" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon icon-sm" %}<span>{{ c.hero.langPill }}</span></a></p>
 
-        {% set whenTile = true %}{% include "partials/when-text.njk" %}
+    <div class="home-hero-top">
+      {% inlineSvg "src/assets/img/logo.svg", "home-hero-logo", c.hero.logoAlt %}
+      <h1 class="home-title"{% if es %} lang="en"{% endif %}>
+        <span class="lockup">
+          <span class="lockup-the gold-text">{{ c.hero.the }}</span>
+          <span class="lockup-incredible gold-text">{{ c.hero.incredible }}</span>
+          <span class="lockup-tapestry">{{ c.hero.tapestry }}</span>
+        </span>
+      </h1>
+    </div>
+    {% if t.landing.gloss %}<p class="home-gloss">{{ t.landing.gloss }}</p>{% endif %}
 
-        <div class="hero-actions">
-          <a href="{{ ev.zoom.joinUrl }}" class="btn btn-primary btn-lg" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ copy.hero.ctaPrimary | tokens }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
-          {% set atcbLabel = copy.hero.ctaSecondary | tokens %}{% include "partials/atcb.njk" %}
-          <a href="/flyer/" class="btn btn-secondary btn-lg">{% icon "image", "icon" %}<span>{{ copy.hero.ctaFlyer | tokens }}</span></a>
-        </div>
+    {% inlineSvg "src/assets/img/braid.svg", "braid home-braid" %}
 
-        <p class="lead hero-lead">{{ copy.hero.sub | tokens }}</p>
+    <p class="home-overline">{{ t.landing.eyebrow }}</p>
+    <p class="home-subline">{{ t.landing.subline }}</p>
 
-        <div class="hero-badges">
-          <span class="badge">{% icon "video", "icon" %}{{ t.labels.online | tokens }}</span>
-          <span class="badge">{% icon "languages", "icon" %}{{ t.labels.interpretationBadge | tokens }}</span>
-          <span class="badge">{% icon "heart-handshake", "icon" %}{{ t.labels.freeNoRegistration | tokens }}</span>
-        </div>
+    <p class="date-ribbon home-date"><time datetime="{{ when.date.iso }}">{{ (when.date.longEs | capitalize) if es else when.date.long }}</time></p>
 
-        {% include "partials/countdown.njk" %}
-      </div>
-      <div class="hero-mark-col">
-        {% inlineSvg "brand/logo/mark.svg", "hero-mark", (copy.hero.markAlt | tokens) or site.name %}
-      </div>
+    <div class="home-when">{% include "partials/when-bar.njk" %}</div>
+
+    <div class="btn-row home-actions">
+      <a href="{{ site.event.zoom.joinUrl }}" class="btn btn-primary btn-lg" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+      {% set calClass = "btn btn-outline btn-lg" %}{% include "partials/calendar-menu.njk" %}
+    </div>
+
+    <ul class="chip-row home-chips">
+      <li class="chip">{% icon "heart-handshake", "icon icon-sm" %}{{ t.labels.free }}</li>
+      <li class="chip">{% icon "circle-check", "icon icon-sm" %}{{ t.labels.noRegistration }}</li>
+      <li class="chip">{% icon "languages", "icon icon-sm" %}{{ t.labels.interpretationBadge }}</li>
+    </ul>
+
+    {% include "partials/countdown.njk" %}
+  </div>
+</section>
+
+{# ============ ESSENTIALS: Zoom · interpretation · cost ============ #}
+<section class="section" aria-labelledby="essentials-title">
+  <div class="container-page">
+    <div class="mb-8">{% include "partials/notice.njk" %}</div>
+    <h2 class="h-section mb-8" id="essentials-title">{{ c.essentials.heading }}</h2>
+    <div class="essentials-grid">
+      <article class="card essential essential--zoom" data-legacy="recovery">
+        <span class="card-icon">{% icon "video", "icon" %}</span>
+        <h3 class="h-card">{{ c.essentials.zoom.title }}</h3>
+        <p class="essential-body">{{ c.essentials.zoom.body | tokens | mdInline | safe }}</p>
+        {% set zoomActions = false %}{% include "partials/zoom-details.njk" %}
+        <a href="{{ p }}/join/" class="link-arrow mt-auto pt-5">{{ c.essentials.zoom.link }}{% icon "arrow-right", "icon icon-sm" %}</a>
+      </article>
+      <article class="card essential" data-legacy="unity">
+        <span class="card-icon">{% icon "languages", "icon" %}</span>
+        <h3 class="h-card">{{ c.essentials.interpretation.title }}</h3>
+        <p class="essential-body">{{ c.essentials.interpretation.body | tokens | mdInline | safe }}</p>
+        <a href="{{ p }}/join/#interpretation" class="link-arrow mt-auto pt-5">{{ c.essentials.interpretation.link }}{% icon "arrow-right", "icon icon-sm" %}</a>
+      </article>
+      <article class="card essential" data-legacy="service">
+        <span class="card-icon">{% icon "heart-handshake", "icon" %}</span>
+        <h3 class="h-card">{{ c.essentials.free.title }}</h3>
+        <p class="essential-body">{{ c.essentials.free.body | tokens | mdInline | safe }}</p>
+        <a href="{{ p }}/faq/#faq-cost" class="link-arrow mt-auto pt-5">{{ c.essentials.free.link }}{% icon "arrow-right", "icon icon-sm" %}</a>
+      </article>
     </div>
   </div>
 </section>
 
-{# ============ FACTS ============ #}
-<section class="section-tight" id="at-a-glance" aria-label="{{ t.labels.atAGlance | tokens }}">
-  <div class="container-page">
-    <dl class="facts facts--grid6 card">
-      {{ ui.fact("calendar", t.labels.when | tokens, when.date.long, when.time.lead, "", when.time.startsAlso) }}
-      {{ ui.fact("video", t.labels.where | tokens, t.labels.online | tokens, (((t.labels.meetingId | tokens) + " " + ev.zoom.meetingId) | nbsp) + " · " + (((t.labels.passcode | tokens) + " " + ev.zoom.passcode) | nbsp)) }}
-      {{ ui.fact("languages", t.labels.interpretation | tokens, t.labels.interpretationValue | tokens, t.labels.interpretationSub | tokens, "#interpretation") }}
-      {{ ui.fact("heart-handshake", t.labels.cost | tokens, t.labels.freeNoRegistration | tokens, t.labels.contributionsWelcome | tokens) }}
-      {% if programPublished %}{{ ui.fact("clipboard-list", t.labels.program | tokens, copy.program.programPageCta | tokens, "", "/schedule/") }}{% else %}{{ ui.fact("clipboard-list", t.labels.program | tokens, t.labels.programSoon | tokens, t.labels.programWillBePosted | tokens, "#program") }}{% endif %}
-      {% if site.contact.email %}{{ ui.fact("mail", t.labels.questions | tokens, t.contact.linkText | tokens, "", site.contact.email | mailto(t.contact.subject | tokens)) }}{% endif %}
-    </dl>
-  </div>
-</section>
-
-{# ============ ABOUT THE DAY / PROGRAM ============ #}
-<section class="section section-band" id="program">
-  <span id="about" class="anchor"></span><span id="schedule" class="anchor"></span>
-  <div class="container-page">
-    <div class="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-start">
-      <div>
-        <div class="section-head">
-          <h2 class="h-section">{{ copy.program.heading | tokens }}</h2>
-          <div class="lead prose">{{ copy.program.lead | tokens | md | safe }}</div>
-        </div>
-        <div class="prose text-muted">{{ copy.program.history | tokens | md | safe }}</div>
-        <p class="strands mt-6">
-          {% for l in site.legacies %}{{ ui.legacyBadge(l, l.shortBody) }}{% endfor %}
-        </p>
-        {% if copy.program.strandsLine %}<p class="text-muted mt-2">{{ copy.program.strandsLine | tokens }}</p>{% endif %}
+{# ============ ABOUT THE DAY ============ #}
+<section class="section section-alt" aria-labelledby="about-title">
+  <div class="container-page about-grid">
+    <div>
+      <p class="eyebrow">{{ c.about.eyebrow }}</p>
+      <h2 class="h-section mt-3" id="about-title">{{ c.about.heading }}</h2>
+      <div class="prose lead mt-5">{{ c.about.body | tokens | md | safe }}</div>
+      <p class="mt-4 text-muted">{{ c.about.audience | tokens }}</p>
+      <div class="btn-row mt-7">
+        <a href="{{ p }}/program/" class="btn btn-primary">{% icon "clipboard-list", "icon" %}<span>{{ c.about.programCta }}</span></a>
+        <a href="/principles/" class="btn btn-outline"{% if es %} hreflang="en"{% endif %}>{% icon "layers", "icon" %}<span>{{ c.about.principlesCta }}</span></a>
       </div>
-      <div>
-        {% include "partials/program-timeline.njk" %}
-        <p class="text-sm text-muted mt-4">{{ copy.program.allTimes | tokens }}</p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href="/schedule/" class="btn btn-secondary">{% icon "clipboard-list", "icon" %}<span>{{ copy.program.programPageCta | tokens }}</span></a>
-          {% set atcbLabel = "" %}{% include "partials/atcb.njk" %}
-        </div>
-      </div>
+      {% if schedule.status != "published" %}<p class="text-sm text-muted mt-3">{{ c.about.programNote }}</p>{% endif %}
     </div>
-  </div>
-</section>
-
-{# ============ HOW TO JOIN + ZOOM ============ #}
-<section class="section" id="join">
-  <div class="container-page">
-    <div class="grid gap-8 lg:grid-cols-2 lg:items-start">
-      <div class="lg:col-start-1 lg:row-start-1">
-        {% set joinPart = "steps" %}{% include "partials/join-steps.njk" %}
-      </div>
-      <div class="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-24">
-        {% set zoomHeadingLevel = 3 %}{% include "partials/zoom-card.njk" %}
-      </div>
-      <div class="lg:col-start-1 lg:row-start-2">
-        {% set joinPart = "more" %}{% include "partials/join-steps.njk" %}
-      </div>
-    </div>
-    {% if t.join.accessibilityLink %}<p class="panel-muted text-sm mt-8"><a href="/accessibility/" class="tap-link">{% icon "accessibility", "icon" %}<span>{{ t.join.accessibilityLink | tokens }}</span>{% icon "arrow-right", "icon" %}</a></p>{% endif %}
-  </div>
-</section>
-
-{# ============ THE OFFICIAL FLYER ============ #}
-<section class="section section-band" id="flyer">
-  <div class="container-page">
-    <div class="grid gap-8 flyer-band">
-      <div class="flyer-band-head">
-        {{ ui.sectionHead(t.flyer.heading | tokens, t.flyer.lead | tokens) }}
-      </div>
-      <div class="flyer-band-img">
-        {% set flyerSizes = "(min-width: 1024px) 24rem, 20rem" %}{% set flyerLoading = "lazy" %}{% set flyerHref = "/flyer/" %}{% set flyerDescribedBy = "" %}
-        {% include "partials/flyer-picture.njk" %}
-      </div>
-      <div class="flyer-band-body">
-        {% set flyerShowView = true %}{% include "partials/flyer-downloads.njk" %}
-        <h3 class="h-card mt-8" id="share">{{ copy.share.heading | tokens }}</h3>
-        <p class="text-muted mt-1 mb-3">{{ copy.share.body | tokens }}</p>
-        {% set sharePath = "" %}{% include "partials/share.njk" %}
-      </div>
-    </div>
-  </div>
-</section>
-
-{# ============ QUESTIONS ============ #}
-<section class="section" id="questions">
-  <div class="container-page">
-    <div class="section-head">
-      <h2 class="h-section">{{ copy.faq.heading | tokens }}</h2>
-      {% if copy.faq.lead %}<div class="lead prose">{{ copy.faq.lead | tokens | mdInline | mailSubject(t.contact.subject | tokens) | safe }}</div>{% endif %}
-    </div>
-    <div class="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-start">
-      <div class="lg:order-2 lg:sticky lg:top-24">
-        {% set qHeadingLevel = 3 %}{% set qSubject = "" %}{% set qId = "" %}{% include "partials/questions-card.njk" %}
-      </div>
-      <div class="faq" id="faq">
-        {% for q in faq.items %}
-        <details{% if loop.first %} open{% endif %}{% if q.id %} id="faq-{{ q.id }}"{% endif %}>
-          <summary>{{ q.q | tokens }}</summary>
-          <div class="answer prose">{{ q.a | tokens | md | mailSubject(t.contact.subject | tokens) | safe }}</div>
-        </details>
+    <div class="threads">
+      <h3 class="sr-only">{{ c.about.threadsLabel }}</h3>
+      <ul class="thread-list">
+        {% set threadIcons = { "recovery": "book-open", "unity": "users", "service": "network" } %}
+        {% set threadKeys = { "recovery": "steps", "unity": "traditions", "service": "concepts" } %}
+        {% for l in site.legacies %}
+        {% set k = threadKeys[l.key] %}
+        <li class="thread" data-legacy="{{ l.key }}">
+          <span class="thread-icon">{% icon threadIcons[l.key], "icon" %}</span>
+          <div>
+            <p class="thread-name">{{ t.legacies[k + "Short"] }} <span class="thread-legacy">· {{ t.legacies[l.key] }}</span></p>
+            <p class="thread-text">{{ c.about.threads[k] }}</p>
+          </div>
+        </li>
         {% endfor %}
+      </ul>
+      <p class="burst">{{ t.labels.presentations }}!</p>
+    </div>
+  </div>
+</section>
+
+{# ============ THE FLYER + SHARE ============ #}
+<section class="section" aria-labelledby="share-title">
+  <div class="container-page flyer-band">
+    {% set fl = site.flyer %}
+    <a href="{{ p }}/flyer/" class="flyer-thumb">
+      <picture>
+        <source type="image/webp" srcset="{{ fl.base }}-600.webp 600w, {{ fl.base }}-1000.webp 1000w" sizes="(min-width: 64rem) 20rem, (min-width: 40rem) 16rem, 70vw">
+        <img src="{{ fl.base }}-600.jpg" srcset="{{ fl.base }}-600.jpg 600w, {{ fl.base }}-1000.jpg 1000w" sizes="(min-width: 64rem) 20rem, (min-width: 40rem) 16rem, 70vw" width="{{ fl.width }}" height="{{ fl.height }}" alt="{{ c.flyer.alt }}" loading="lazy" decoding="async">
+      </picture>
+    </a>
+    <div>
+      <h2 class="h-section" id="share-title">{{ c.flyer.heading }}</h2>
+      <p class="lead mt-4">{{ c.flyer.body }}</p>
+      <div class="btn-row mt-6">
+        <a href="{{ fl.pdf }}" class="btn btn-primary" download>{% icon "download", "icon" %}<span>{{ c.flyer.download }}</span></a>
+        <a href="{{ p }}/flyer/" class="link-arrow">{{ c.flyer.more }}{% icon "arrow-right", "icon icon-sm" %}</a>
       </div>
-    </div>
-  </div>
-</section>
-
-{# ============ SEVENTH TRADITION · ANONYMITY · ACCESSIBILITY ============ #}
-<section class="section section-band" id="contribute">
-  <span id="seventh" class="anchor"></span>
-  <div class="container-page">
-    <div class="grid-cards">
-      <article class="card">
-        <h2 class="h-card">{% icon "heart-handshake", "icon" %} {{ copy.seventh.heading | tokens }}</h2>
-        {% set seventhHtml %}{% for p in copy.seventh.body %}{{ p | tokens | md | safe }}{% endfor %}{% endset %}
-        <div class="prose text-muted mt-2">{{ seventhHtml | mailSubject(t.contact.subjectContribution | tokens) | safe }}</div>
-        {# The prose normally carries {email} (a mailto link with the contributions subject); if not, add one. #}
-        {% if site.contact.email and not (site.contact.email in seventhHtml) %}<a href="{{ site.contact.email | mailto(t.contact.subjectContribution | tokens) }}" class="tap-link mt-3 email-link">{% icon "mail", "icon" %}<span>{{ t.contact.linkText | tokens }}</span></a>{% endif %}
-      </article>
-      <article class="card">
-        <h2 class="h-card">{% icon "users", "icon" %} {{ copy.anonymity.heading | tokens }}</h2>
-        <div class="prose text-muted mt-2">{% for p in copy.anonymity.body %}{{ p | tokens | md | safe }}{% endfor %}</div>
-      </article>
-      <article class="card" id="accessibility">
-        <h2 class="h-card">{% icon "accessibility", "icon" %} {{ copy.accessibility.heading | tokens }}</h2>
-        <p class="text-muted mt-2">{{ copy.accessibility.teaser | tokens }}</p>
-        <a href="/accessibility/" class="tap-link mt-3">{{ t.nav.accessibility | tokens }} {% icon "arrow-right", "icon" %}</a>
-      </article>
-    </div>
-  </div>
-</section>
-
-{# ============ THREE LEGACIES ============ #}
-<section class="section" id="legacies">
-  <div class="container-page">
-    {% if copy.intro and copy.intro.heading %}
-    <div class="section-head"><h2 class="h-section">{{ copy.intro.heading | tokens }}</h2></div>
-    <div class="prose text-lg mb-10">
-      {% for p in copy.intro.body %}{{ p | tokens | md | safe }}{% endfor %}
-    </div>
-    {% endif %}
-    {{ ui.sectionHead(copy.legacies.heading | tokens, copy.legacies.lead | tokens) }}
-    <div class="grid-cards">
-      {% for l in site.legacies %}{{ ui.legacyCard(l, lang, null, "/principles/#" + l.key) }}{% endfor %}
-    </div>
-    <p class="lead mt-8">{{ copy.legacies.closing | tokens }}</p>
-  </div>
-</section>
-
-{# ============ 36 THREADS ============ #}
-<section class="section section-band" id="thirty-six">
-  <div class="container-page">
-    {{ ui.sectionHead(copy.thirtySix.heading | tokens, copy.thirtySix.lead | tokens, site.hook) }}
-    <div class="prose mb-8">
-      {% for p in copy.thirtySix.body %}{{ p | tokens | md | safe }}{% endfor %}
-    </div>
-    {% if principles and principles.items %}
-    <div class="number-grid">
-      {% for item in principles.items %}{{ ui.numberTile(item, site.legacies) }}{% endfor %}
-    </div>
-    {% endif %}
-    <div class="mt-8"><a href="/principles/" class="btn btn-primary">{% icon "layers", "icon" %}<span>{{ copy.thirtySix.cta | tokens }}</span></a></div>
-  </div>
-</section>
-
-{# ============ WEEKLY MEETING (only once meeting.json is published) ============ #}
-{% if meeting.published %}
-<section class="section" id="meeting">
-  <div class="container-page">
-    <div class="card legacy-card" style="--legacy: var(--c-accent, #7c3a8c); --legacy-soft: var(--c-service-soft)">
-      <div class="legacy-card-stripe" aria-hidden="true"></div>
-      <p class="eyebrow">{{ meeting.name }}</p>
-      <h2 class="h-section">{{ copy.meetingTeaser.heading | tokens }}</h2>
-      <p class="lead">{{ copy.meetingTeaser.body | tokens }}</p>
-      {% if focus.configured %}<p class="mt-3 font-semibold">{{ focus.weekdayLabel }}s · {{ focus.timeLabel }} {{ meeting.timezoneShort }}{% if focus.current and focus.current.n %} · This week: number {{ focus.current.n }}{% endif %}</p>{% endif %}
-      <a href="/meeting/" class="btn btn-primary mt-4">{{ copy.meetingTeaser.cta | tokens }}</a>
-    </div>
-  </div>
-</section>
-{% endif %}
-
-{# ============ UPDATES + ABOUT THE MARK ============ #}
-<section class="section" id="updates">
-  <div class="container-page">
-    <div class="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
-      <div>
-        <h2 class="h-section">{{ copy.updates.heading | tokens }} <a href="/feed.xml" class="text-muted" aria-label="{{ copy.updates.feed | tokens }}">{% icon "rss", "icon" %}</a></h2>
-        <ul class="updates mt-4">
-          {% for u in updates.items | limit(5) %}
-          <li><time datetime="{{ u.date }}">{{ u.date | date("DDD") }}</time><h3 class="font-semibold">{{ u.title | tokens }}</h3><div class="text-muted text-sm prose">{{ u.body | tokens | md | mailSubject(t.contact.subject | tokens) | safe }}</div></li>
-          {% endfor %}
-        </ul>
-      </div>
-      <div>
-        <h2 class="h-card">{{ copy.logoStory.heading | tokens }}</h2>
-        <div class="flex gap-4 items-start mt-2">
-          {% inlineSvg "brand/logo/mark.svg", "w-24 h-24 flex-none mark-disc" %}
-          <div class="prose text-muted">{% for p in copy.logoStory.body %}{{ p | tokens | md | safe }}{% endfor %}</div>
-        </div>
-      </div>
+      <div class="mt-6">{% set sharePath = "" %}{% include "partials/share.njk" %}</div>
     </div>
   </div>
 </section>

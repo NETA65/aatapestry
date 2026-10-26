@@ -1,0 +1,101 @@
+/* Home page (/ and /es/) — src/pages/index.njk. Imported by ../main.css. */
+@layer components {
+  /* ---------- Hero: the flyer as a web page ---------- */
+  .home-hero { overflow: hidden; }
+  .home-hero-inner {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding-block: clamp(1.25rem, 3vw, 2rem) clamp(2.75rem, 6vw, 4.5rem);
+  }
+  .home-hero-lang { align-self: flex-end; }
+  .home-hero-lang .chip { text-decoration: none; min-height: 2.25rem; }
+  .home-hero-lang .chip:hover { background: rgb(251 245 233 / 0.18); color: var(--color-cream); }
+  .home-hero-top {
+    display: flex; flex-direction: column; align-items: center; gap: clamp(0.75rem, 2vw, 1.5rem);
+    margin-top: clamp(0.5rem, 2vw, 1rem);
+  }
+  .home-hero-logo {
+    width: clamp(6.5rem, 26vw, 9rem); height: auto; flex: none;
+    filter: drop-shadow(0 10px 30px rgb(0 0 0 / 0.55));
+  }
+  .home-title { font-size: clamp(2.6rem, 10.5vw, 6.25rem); font-weight: 400; letter-spacing: 0; text-wrap: nowrap; }
+  .home-gloss { margin-top: 0.25rem; font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: clamp(1.125rem, 2.6vw, 1.5rem); color: rgb(251 245 233 / 0.85); }
+  .home-braid { margin-top: clamp(0.5rem, 2vw, 1rem); width: min(100%, 40rem); }
+  .home-overline {
+    margin-top: clamp(1rem, 2.5vw, 1.5rem);
+    font-family: var(--font-title); font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em;
+    font-size: clamp(1.125rem, 3.4vw, 2rem); line-height: 1.15; color: var(--color-cream);
+  }
+  .home-subline {
+    margin-top: 0.5rem; max-width: 40rem;
+    font-family: var(--font-display); font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: clamp(0.875rem, 2vw, 1.125rem); line-height: 1.45; color: rgb(251 245 233 / 0.82); text-wrap: balance;
+  }
+  .home-date { margin-top: clamp(1.5rem, 3.5vw, 2.25rem); }
+  .home-when { margin-top: 1.25rem; width: 100%; max-width: 48rem; display: flex; flex-direction: column; align-items: center; }
+  .home-actions { justify-content: center; margin-top: clamp(1.5rem, 3.5vw, 2rem); }
+  .home-chips { justify-content: center; margin-top: 1.5rem; }
+  .home-hero .countdown { margin-top: 1.25rem; }
+
+  @media (max-width: 29.99rem) {
+    .home-actions { flex-direction: column; align-items: stretch; width: 100%; max-width: 22rem; }
+    .home-actions > .btn, .home-actions > .cal-menu, .home-actions > .cal-menu > summary { width: 100%; }
+  }
+  @media (min-width: 48rem) {
+    .home-hero-top { flex-direction: row; gap: 2rem; }
+    .home-hero-logo { width: clamp(9rem, 17vw, 14.5rem); }
+  }
+
+  /* ---------- Essentials ---------- */
+  .essentials-grid { display: grid; gap: clamp(1rem, 2.5vw, 1.5rem); grid-template-columns: 1fr; }
+  @media (min-width: 48rem) { .essentials-grid { grid-template-columns: 1fr 1fr; } .essential--zoom { grid-column: 1 / -1; } }
+  @media (min-width: 72rem) { .essentials-grid { grid-template-columns: 1.35fr 1fr 1fr; } .essential--zoom { grid-column: auto; } }
+  .essential { display: flex; flex-direction: column; gap: 0.875rem; --tint: var(--legacy-soft); --tint-fg: var(--legacy-text); border-top: 4px solid var(--legacy); }
+  .essential-body { color: var(--muted); }
+  .essential-body strong { color: var(--fg); font-weight: 600; }
+  .essential .kv { margin-top: 0.25rem; }
+
+  /* ---------- About the day ---------- */
+  .about-grid { display: grid; gap: clamp(2.25rem, 5vw, 4rem); align-items: center; }
+  @media (min-width: 60rem) { .about-grid { grid-template-columns: 1.15fr 1fr; } }
+  .about-grid .lead p { color: var(--fg); }
+  .threads { position: relative; }
+  .thread-list { position: relative; display: grid; gap: 1rem; }
+  /* The woven line that ties the three strands together, like the braid on the flyer */
+  .thread-list::before {
+    content: ""; position: absolute; left: 1.75rem; top: 1.75rem; bottom: 1.75rem; width: 4px; border-radius: 4px; transform: translateX(-50%);
+    background: linear-gradient(180deg, var(--c-recovery), var(--c-unity) 50%, var(--c-service));
+  }
+  .thread {
+    position: relative; display: flex; gap: 1rem; align-items: center;
+    padding: 1rem 1.25rem 1rem 1rem; border-radius: var(--radius-card);
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card);
+  }
+  .thread-icon {
+    position: relative; display: grid; place-items: center; flex: none; width: 3.5rem; height: 3.5rem; border-radius: 999px;
+    background: var(--legacy-soft); color: var(--legacy-text); border: 3px solid var(--legacy);
+  }
+  .thread-icon .icon { width: 1.625rem; height: 1.625rem; }
+  .thread-name { font-family: var(--font-title); font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em; font-size: 1.1875rem; color: var(--legacy-text); line-height: 1.2; }
+  .thread-legacy { font-family: var(--font-sans); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted); }
+  .thread-text { margin-top: 0.25rem; color: var(--muted); font-size: 0.9875rem; line-height: 1.5; }
+  .burst {
+    display: inline-block; margin-top: 1.5rem; padding: 0.625rem 1.25rem; transform: rotate(-1.5deg);
+    font-family: var(--font-title); font-weight: 900; text-transform: uppercase; letter-spacing: 0.02em; font-size: 1.0625rem; line-height: 1.25;
+    color: var(--color-navy-900); background: linear-gradient(180deg, #ffe3a0, var(--color-gold-400) 60%, #e7ab45);
+    clip-path: polygon(2% 10%, 30% 0, 70% 6%, 98% 0, 100% 50%, 97% 100%, 60% 92%, 25% 100%, 0 88%, 1% 45%);
+  }
+
+  /* ---------- Flyer + share ---------- */
+  .flyer-band { display: grid; gap: clamp(2rem, 5vw, 3.5rem); align-items: center; }
+  .flyer-band > * { min-width: 0; }
+  @media (min-width: 40rem) { .flyer-band { grid-template-columns: 16rem 1fr; } }
+  @media (min-width: 64rem) { .flyer-band { grid-template-columns: 20rem 1fr; } }
+  .flyer-thumb {
+    display: block; justify-self: center; width: min(70vw, 20rem); border-radius: 0.75rem; overflow: hidden;
+    box-shadow: 0 24px 50px -24px rgb(7 10 20 / 0.6), 0 0 0 1px var(--line);
+    transform: rotate(-2deg); transition: transform 0.2s;
+  }
+  .flyer-thumb:hover { transform: rotate(0) scale(1.01); }
+  .flyer-thumb img { display: block; width: 100%; }
+  @media (min-width: 40rem) { .flyer-thumb { width: 100%; } }
+}
