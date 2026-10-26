@@ -29,15 +29,17 @@ eleventyComputed:
 
     <div class="home-hero-top">
       {% inlineSvg "src/assets/img/logo.svg", "home-hero-logo", c.hero.logoAlt %}
-      <h1 class="home-title"{% if es %} lang="en"{% endif %}>
-        <span class="lockup">
-          <span class="lockup-the gold-text">{{ c.hero.the }}</span>
-          <span class="lockup-incredible gold-text">{{ c.hero.incredible }}</span>
-          <span class="lockup-tapestry">{{ c.hero.tapestry }}</span>
-        </span>
-      </h1>
+      <div class="home-title-col">
+        <h1 class="home-title"{% if es %} lang="en"{% endif %}>
+          <span class="lockup">
+            <span class="lockup-the gold-text">{{ c.hero.the }}</span>
+            <span class="lockup-incredible gold-text">{{ c.hero.incredible }}</span>
+            <span class="lockup-tapestry">{{ c.hero.tapestry }}</span>
+          </span>
+        </h1>
+        {% if t.landing.gloss %}<p class="home-gloss">{{ t.landing.gloss }}</p>{% endif %}
+      </div>
     </div>
-    {% if t.landing.gloss %}<p class="home-gloss">{{ t.landing.gloss }}</p>{% endif %}
 
     {% inlineSvg "src/assets/img/braid.svg", "braid home-braid" %}
 
@@ -73,7 +75,7 @@ eleventyComputed:
         <span class="card-icon">{% icon "video", "icon" %}</span>
         <h3 class="h-card">{{ c.essentials.zoom.title }}</h3>
         <p class="essential-body">{{ c.essentials.zoom.body | tokens | mdInline | safe }}</p>
-        {% set zoomActions = false %}{% include "partials/zoom-details.njk" %}
+        {% set zoomActions = true %}{% set zoomJoinSize = "" %}{% include "partials/zoom-details.njk" %}
         <a href="{{ p }}/join/" class="link-arrow mt-auto pt-5">{{ c.essentials.zoom.link }}{% icon "arrow-right", "icon icon-sm" %}</a>
       </article>
       <article class="card essential" data-legacy="unity">
@@ -116,13 +118,15 @@ eleventyComputed:
         <li class="thread" data-legacy="{{ l.key }}">
           <span class="thread-icon">{% icon threadIcons[l.key], "icon" %}</span>
           <div>
-            <p class="thread-name">{{ t.legacies[k + "Short"] }} <span class="thread-legacy">· {{ t.legacies[l.key] }}</span></p>
+            <p class="thread-name">{{ t.legacies[k + "Short"] }} <span class="thread-legacy"><span class="thread-dot" aria-hidden="true">·&nbsp;</span>{{ t.legacies[l.key] }}</span></p>
             <p class="thread-text">{{ c.about.threads[k] }}</p>
           </div>
         </li>
         {% endfor %}
       </ul>
-      <p class="burst">{{ t.labels.presentationsBurst }}</p>
+      {#- One unbreakable span per item, so a line never starts with "·"; the text read out is unchanged. -#}
+      {% set burstItems = t.labels.presentationsBurst.split(" · ") %}
+      <p class="burst">{% for item in burstItems %}<span class="burst-item">{{ item }}{% if not loop.last %} ·{% endif %}</span>{% if not loop.last %} {% endif %}{% endfor %}</p>
     </div>
   </div>
 </section>
