@@ -1,0 +1,53 @@
+{
+  "_readme": "The FAQ page (/faq/ and /es/faq/), page-level words only; the questions and answers themselves are in src/_data/faq.json. en and es must have the same keys. Plain text. groups: the headings the questions are sorted under, in the order shown on the page; each key matches the group of the questions in faq.json (add a key in both languages to add a heading). jump.expandAll/collapseAll label the button that opens or closes every answer (shown only when JavaScript runs). closing: the line under the last question; its button is labelled with i18n contact.linkText and opens an email to the address in site.json (never written here).",
+  "en": {
+    "meta": {
+      "title": "Questions & answers",
+      "description": "Answers about The Incredible Tapestry, the free online A.A. workshop: who can attend, cost and contributions, Zoom, time zones, interpretation, anonymity and sharing the flyer."
+    },
+    "hero": {
+      "title": "Questions & answers",
+      "lead": "Short answers to what people ask most about the workshop, with links to the full details."
+    },
+    "jump": {
+      "label": "Jump to",
+      "expandAll": "Expand all",
+      "collapseAll": "Collapse all"
+    },
+    "groups": {
+      "attending": "Attending",
+      "on-the-day": "On the day",
+      "legacies": "Steps, Traditions & Concepts",
+      "sharing": "Spreading the word"
+    },
+    "closing": {
+      "heading": "Still have a question?",
+      "body": "The planning committee is glad to help."
+    }
+  },
+  "es": {
+    "meta": {
+      "title": "Preguntas y respuestas",
+      "description": "Respuestas sobre The Incredible Tapestry, el taller de A.A. en línea y gratuito: quién puede asistir, costo y contribuciones, Zoom, zonas horarias, interpretación, anonimato y cómo compartir el volante."
+    },
+    "hero": {
+      "title": "Preguntas y respuestas",
+      "lead": "Respuestas breves a lo que más se pregunta sobre el taller, con enlaces a todos los detalles."
+    },
+    "jump": {
+      "label": "Ir a",
+      "expandAll": "Abrir todas",
+      "collapseAll": "Cerrar todas"
+    },
+    "groups": {
+      "attending": "Cómo asistir",
+      "on-the-day": "Durante el taller",
+      "legacies": "Pasos, Tradiciones y Conceptos",
+      "sharing": "Correr la voz"
+    },
+    "closing": {
+      "heading": "¿Todavía tiene una pregunta?",
+      "body": "El comité organizador le ayudará con gusto."
+    }
+  }
+}
