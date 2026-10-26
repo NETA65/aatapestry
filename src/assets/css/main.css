@@ -508,11 +508,11 @@
     .when-bar:not(.when-bar--long) .when-bar-zones { flex: 0 0 auto; border-top: 0; border-left: 1px solid rgb(251 245 233 / 0.14); }
     .when-bar:not(.when-bar--long) .when-bar-zone { padding: 0.5rem 1rem; }
   }
-  @container (min-width: 60rem) {
-    .when-bar--long { flex-direction: row; justify-content: center; }
-    .when-bar--long .when-bar-main { flex: 0 1 auto; min-width: 0; padding: 0.875rem 1.5rem; font-size: 2.125rem; }
+  @container (min-width: 54rem) {
+    .when-bar--long { flex-direction: row; justify-content: center; width: fit-content; margin-inline: auto; }
+    .when-bar--long .when-bar-main { flex: 0 1 auto; min-width: 0; padding: 0.875rem 1.5rem; font-size: 2rem; }
     .when-bar--long .when-bar-zones { flex: 0 0 auto; border-top: 0; border-left: 1px solid rgb(251 245 233 / 0.14); }
-    .when-bar--long .when-bar-zone { padding: 0.5rem 1rem; }
+    .when-bar--long .when-bar-zone { padding: 0.5rem 0.875rem; }
   }
   .local-time { font-size: 0.9375rem; color: rgb(251 245 233 / 0.8); }
   .local-time strong { color: var(--color-cream); font-weight: 600; }
