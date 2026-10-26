@@ -25,6 +25,10 @@ eleventyComputed:
 {% set p = "/es" if es else "" %}
 {#- In the Spanish copy, *italics* are Zoom's English button names: mark them as English for screen readers. -#}
 {% set em = '<em lang="en">' if es else "<em>" %}
+{#- The Markdown renderer opens outside links (https://…, e.g. Zoom's test meeting) in a new tab: tell screen
+    readers so, like every other new-tab link on the site. Applied after mdInline: | replace(newTab, newTabEnd). -#}
+{% set newTab = r/(<a [^>]*target="_blank"[^>]*>(?:(?!<\/a>)[\s\S])*)<\/a>/g %}
+{% set newTabEnd = '$1<span class="sr-only"> ' + t.a11y.openInNewTab + '</span></a>' %}
 
 {% set hero = { eyebrow: t.labels.online, title: c.hero.title, lead: c.hero.lead } %}
 {% include "partials/page-hero.njk" %}
@@ -38,12 +42,14 @@ eleventyComputed:
         <div class="join-zoom-head">
           <span class="join-zoom-mark">{% icon "video", "icon" %}</span>
           <h2 class="join-zoom-title" id="zoom">{{ c.zoom.heading }}</h2>
-          <p class="join-zoom-when"><span class="whitespace-nowrap"><time datetime="{{ when.startISO }}">{{ (when.date.longEs | capitalize) if es else when.date.long }}</time><span class="join-zoom-sep" aria-hidden="true">·</span></span> <span class="whitespace-nowrap">{{ when.time.leadEs if es else when.time.lead }}</span></p>
+          {#- Date and time: one line with a gold dot on a wide card, two lines (no dot) on a narrow one (join.css).
+              The literal space before the time keeps "2026" and "11:00" apart for screen readers. -#}
+          <p class="join-zoom-when"><time class="join-zoom-date" datetime="{{ when.startISO }}">{{ (when.date.longEs | capitalize) if es else when.date.long }}</time><span class="join-zoom-sep" aria-hidden="true">·</span> <span class="join-zoom-time">{{ when.time.leadEs if es else when.time.lead }}</span></p>
         </div>
         <div class="join-zoom-details">
           {% set zoomActions = true %}{% set zoomJoinSize = "btn-lg" %}{% include "partials/zoom-details.njk" %}
         </div>
-        <p class="join-zoom-more"><a href="{{ p }}/program/" class="join-zoom-more-link">{% icon "calendar-days", "icon icon-sm" %}{% set moreWords = c.zoom.programLink.split(" ") %}{% set moreLast = moreWords.pop() %}<span>{{ moreWords | join(" ") }} <span class="whitespace-nowrap">{{ moreLast }}&nbsp;{% icon "arrow-right", "icon icon-sm join-zoom-more-arrow" %}</span></span></a></p>
+        <p class="join-zoom-more"><a href="{{ p }}/program/#time-zones" class="join-zoom-more-link">{% icon "calendar-days", "icon icon-sm" %}{% set moreWords = c.zoom.programLink.split(" ") %}{% set moreLast = moreWords.pop() %}<span>{{ moreWords | join(" ") }} <span class="whitespace-nowrap">{{ moreLast }}&nbsp;{% icon "arrow-right", "icon icon-sm join-zoom-more-arrow" %}</span></span></a></p>
       </div>
       <figure class="join-qr">
         <div class="join-qr-code">{% inlineSvg "brand/qr/qr-zoom.svg", "join-qr-svg", c.zoom.qrLabel %}</div>
@@ -59,15 +65,15 @@ eleventyComputed:
     <div class="join-split-intro">
       <h2 class="h-section" id="steps">{{ c.steps.heading }}</h2>
       <p class="lead mt-3">{{ c.steps.lead }}</p>
-      <p class="join-tip">{% icon "lightbulb", "icon" %}<span><strong>{{ c.steps.tipLabel }}:</strong> {{ c.steps.tip | tokens | mdInline | replace("<em>", em) | safe }}</span></p>
+      <p class="join-tip">{% icon "lightbulb", "icon" %}<span><strong>{{ c.steps.tipLabel }}:</strong> {{ c.steps.tip | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | safe }}</span></p>
     </div>
     <ol class="join-steps" role="list">
       {% for s in c.steps.items %}
       <li class="join-step">
         <span class="join-step-num">{{ loop.index }}</span>
-        <div class="min-w-0">
+        <div class="join-step-text">
           <h3 class="h-card">{{ s.title }}</h3>
-          <p class="join-step-body">{{ s.body | tokens | mdInline | replace("<em>", em) | safe }}</p>
+          <p class="join-step-body">{{ s.body | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | safe }}</p>
         </div>
       </li>
       {% endfor %}
@@ -97,14 +103,14 @@ eleventyComputed:
         <dl class="join-how">
           <div class="join-how-row">
             <dt>{% icon "monitor", "icon icon-sm" %}<span>{{ c.interpretation.computer }}</span></dt>
-            <dd>{{ card.computer | tokens | mdInline | replace("<em>", em) | safe }}</dd>
+            <dd>{{ card.computer | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | safe }}</dd>
           </div>
           <div class="join-how-row">
             <dt>{% icon "smartphone", "icon icon-sm" %}<span>{{ c.interpretation.phone }}</span></dt>
-            <dd>{{ card.phone | tokens | mdInline | replace("<em>", em) | safe }}</dd>
+            <dd>{{ card.phone | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | safe }}</dd>
           </div>
         </dl>
-        {% if card.note %}<p class="join-interp-note">{{ card.note | tokens | mdInline | replace("<em>", em) | safe }}</p>{% endif %}
+        {% if card.note %}<p class="join-interp-note">{{ card.note | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | safe }}</p>{% endif %}
       </article>
       {% endif %}
       {% endfor %}

@@ -23,8 +23,16 @@
   }
   .join-zoom-mark .icon { width: 1.625rem; height: 1.625rem; }
   .join-zoom-title { font-size: clamp(1.625rem, 3.4vw, 2.125rem); color: var(--color-cream); }
-  .join-zoom-when { font-weight: 500; line-height: 1.45; color: rgb(251 245 233 / 0.85); }
-  .join-zoom-sep { margin-inline: 0.4em 0.1em; color: var(--color-gold-400); }
+  .join-zoom-when { font-weight: 500; line-height: 1.45; color: rgb(251 245 233 / 0.85); text-wrap: balance; }
+  /* Narrow card: the date and the time each on their own line, no separator (no dot left dangling at a line end,
+     nothing forced onto one line that a phone or a large font cannot fit). Wide card: one line with the gold dot.
+     36rem: the one-line Spanish text needs about 35rem of card, the English about 31.6rem; rem, so it follows the font size. */
+  .join-zoom-date, .join-zoom-time { display: block; }
+  .join-zoom-sep { display: none; margin-inline: 0.4em 0.1em; color: var(--color-gold-400); }
+  @container (min-width: 36rem) {
+    .join-zoom-date, .join-zoom-sep { display: inline; }
+    .join-zoom-time { display: inline; white-space: nowrap; }
+  }
   .join-zoom-details { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgb(226 169 59 / 0.35); }
   .join-zoom-more { margin-top: 1rem; font-size: 0.9375rem; }
   /* A two-line label keeps its arrow after the last word, not pushed to the far edge */
@@ -45,7 +53,11 @@
   .join-zoom .copy-btn { min-height: 2.75rem; background: rgb(255 255 255 / 0.06); border-color: rgb(251 245 233 / 0.35); color: var(--color-cream); }
   .join-zoom .copy-btn:hover { border-color: var(--color-cream); }
   .join-zoom .copy-btn.is-copied { border-color: var(--color-thread-green); color: #9ff0c4; }
-  @container (min-width: 32rem) { .join-zoom .kv { grid-template-columns: 1fr 1fr; } }
+  /* Meeting ID and passcode side by side only once each tile (at least 18.1rem) fits the ID and its Copy/Copiar button */
+  @container (min-width: 37rem) { .join-zoom .kv { grid-template-columns: 1fr 1fr; } }
+  /* The narrowest cards: both values on their own line with Copy under them, so the two tiles always match
+     (otherwise only the longer meeting ID pushes its button down) */
+  @container (max-width: 17.99rem) { .join-zoom .kv-value { flex-basis: 100%; } }
 
   /* The QR code: only useful on a computer (scan it to join from a phone), so hidden on small screens */
   .join-qr { display: none; }
@@ -84,14 +96,18 @@
   .join-tip .icon { margin-top: 0.1rem; color: var(--c-service-text); }
   .join-tip strong { font-weight: 600; }
 
+  /* Phones (below 40rem): a small number badge beside the heading, and the text under both across the full
+     card width (a big badge would leave the text a narrow column beside an empty strip). The wrapper div has no
+     semantics, so display: contents just lets the heading and the text join the card's grid.
+     40rem and up: the big badge, with the heading and text in a column beside it. */
   .join-steps { position: relative; display: grid; gap: 1rem; }
-  /* The thread that ties the steps together, in the legacy colours */
+  /* The thread that ties the steps together, in the legacy colours, through the centre of the badges */
   .join-steps::before {
-    content: ""; position: absolute; left: calc(1rem + 1px + 1.75rem); top: 2rem; bottom: 2rem; width: 4px; border-radius: 4px; transform: translateX(-50%);
+    content: ""; position: absolute; left: calc(1rem + 1px + 1.25rem); top: 2rem; bottom: 2rem; width: 4px; border-radius: 4px; transform: translateX(-50%);
     background: linear-gradient(180deg, var(--c-recovery), var(--c-unity) 35%, var(--c-service) 68%, var(--color-thread-purple));
   }
   .join-step {
-    position: relative; display: flex; gap: 1rem; align-items: flex-start;
+    position: relative; display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); gap: 0.625rem 0.75rem; align-items: center;
     padding: 1.125rem 1.25rem 1.25rem 1rem; border-radius: var(--radius-card);
     background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card);
   }
@@ -100,15 +116,22 @@
   .join-step:nth-child(4n + 3) { --legacy: var(--c-service); --legacy-text: var(--c-service-text); --legacy-soft: var(--c-service-soft); }
   .join-step:nth-child(4n + 4) { --legacy: var(--color-thread-purple); --legacy-text: var(--accent); --legacy-soft: var(--accent-soft); }
   .join-step-num {
-    display: grid; place-items: center; flex: none; width: 3.5rem; height: 3.5rem; border-radius: 999px;
-    background: var(--legacy-soft); border: 3px solid var(--legacy); color: var(--legacy-text);
-    font-family: var(--font-title); font-weight: 900; font-size: 1.5rem; line-height: 1;
+    display: grid; place-items: center; flex: none; width: 2.5rem; height: 2.5rem; border-radius: 999px;
+    background: var(--legacy-soft); border: 2px solid var(--legacy); color: var(--legacy-text);
+    font-family: var(--font-title); font-weight: 900; font-size: 1.125rem; line-height: 1;
   }
-  .join-step .h-card { padding-top: 0.25rem; }
-  .join-step-body { margin-top: 0.375rem; color: var(--muted); line-height: 1.55; }
+  .join-step-text { display: contents; }
+  .join-step-body { grid-column: 1 / -1; color: var(--muted); line-height: 1.55; }
   .join-step-body strong { color: var(--fg); font-weight: 600; }
   .join-step-body a { font-weight: 500; }
-  @media (min-width: 40rem) { .join-step { gap: 1.25rem; padding: 1.375rem 1.5rem 1.5rem 1.25rem; } .join-steps::before { left: calc(1.25rem + 1px + 1.75rem); } }
+  @media (min-width: 40rem) {
+    .join-steps::before { left: calc(1.25rem + 1px + 1.75rem); }
+    .join-step { display: flex; gap: 1.25rem; align-items: flex-start; padding: 1.375rem 1.5rem 1.5rem 1.25rem; }
+    .join-step-text { display: block; min-width: 0; }
+    .join-step-num { width: 3.5rem; height: 3.5rem; border-width: 3px; font-size: 1.5rem; }
+    .join-step .h-card { padding-top: 0.25rem; }
+    .join-step-body { margin-top: 0.375rem; }
+  }
 
   /* ---------- Spanish & ASL interpretation, captions ---------- */
   .join-interp { display: grid; gap: clamp(1rem, 2.5vw, 1.5rem); grid-template-columns: 1fr; }
