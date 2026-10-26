@@ -1,7 +1,7 @@
 {
   "_readme": "English-only copy: the study pages (/principles/ and /principles/N/: intro, legacies, thirtySix, logoStory), the 404 page (notFound) and the one-paragraph event summary used by the JSON-LD and the calendar file (jsonld.eventSummary). The workshop pages have their own bilingual files in src/_data/pagecopy/. Write the email, date, times and Zoom numbers only as tokens ({email}, {date}, {time}…). Fields read through | md accept simple Markdown.",
   "intro": {
-    "_readme": "/principles/: the heading and the two short paragraphs above the twelve number tiles (body accepts simple Markdown).",
+    "_readme": "/principles/: the heading and the two short paragraphs above the twelve number tiles, the first section after the hero (body accepts simple Markdown).",
     "heading": "Pull one thread and the whole cloth moves",
     "body": [
       "Most of us met the Steps first, from someone who had been where we were. The Traditions came later, usually when a group business meeting got lively. The Concepts, if we met them at all, arrived with a service job we did not quite ask for. We tend to keep the three in separate drawers.",
@@ -15,11 +15,10 @@
     "literature": "In the literature"
   },
   "thirtySix": {
-    "_readme": "/principles/ (page title, hero lead, meta description, the tiles legend, the side-by-side table and the one link back to the workshop) and, under numberPage, the headings and labels of /principles/1/ … /principles/12/. The 36 principles themselves are in principles.json.",
+    "_readme": "/principles/ (page title, hero lead, meta description, the side-by-side table and the one link back to the workshop) and, under numberPage, the headings and labels of /principles/1/ … /principles/12/. The 36 principles themselves are in principles.json.",
     "title": "The 36 Principles",
     "lead": "Take any number from one to twelve. The Step, the Tradition and the Concept that carry it are three expressions of one idea, seen from the chair, from the group and from the Fellowship as a whole.",
     "description": "All 36 principles of A.A. side by side: the Twelve Steps, Twelve Traditions and Twelve Concepts for World Service, with the thread that runs through each number.",
-    "legend": "Principle words:",
     "tableHeading": "Side by side",
     "tableLead": "All 36 in one table, each with its principle word and a one-line summary. To read one legacy straight through, show it on its own.",
     "tableCaption": "The 36 principles: for each number, the Step, the Tradition and the Concept, each with a principle word and a one-line summary.",
@@ -39,7 +38,7 @@
       "pagerLabel": "More principles",
       "previous": "Previous",
       "next": "Next",
-      "all": "All 36 principles"
+      "all": "All 36 Principles"
     }
   },
   "logoStory": {
