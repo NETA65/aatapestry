@@ -1,0 +1,146 @@
+---
+pagination:
+  data: joinLangs
+  size: 1
+  alias: plang
+  addAllPagesToCollections: true
+joinLangs: ["en", "es"]
+permalink: "{% if plang == 'es' %}/es{% endif %}/join/"
+translated: true
+schema: event
+bodyClass: join
+eleventyComputed:
+  lang: "{{ plang }}"
+  title: "{{ pagecopy.join[plang].hero.title }}"
+  description: "{{ pagecopy.join[plang].meta.description }}"
+---
+{#- How to join, /join/ and /es/join/: the ONE page with everything about getting into the room —
+    the Zoom details (link, meeting ID, passcode, QR), the joining steps, Spanish/ASL interpretation and
+    captions (#interpretation), Zoom etiquette and online anonymity (#etiquette) and website accessibility
+    (#accessibility). Other pages link here instead of repeating it. Copy: src/_data/pagecopy/join.json (c)
+    and i18n (t); the Zoom numbers from site.json, the date and time from when.js. Styles: css/pages/join.css. -#}
+{% import "macros/ui.njk" as ui %}
+{% set c = pagecopy.join[lang] %}
+{% set es = lang == "es" %}
+{% set p = "/es" if es else "" %}
+{#- In the Spanish copy, *italics* are Zoom's English button names: mark them as English for screen readers. -#}
+{% set em = '<em lang="en">' if es else "<em>" %}
+
+{% set hero = { eyebrow: t.labels.online, title: c.hero.title, lead: c.hero.lead } %}
+{% include "partials/page-hero.njk" %}
+
+{# ============ ZOOM DETAILS: the centrepiece ============ #}
+<section class="section-tight" aria-labelledby="zoom">
+  <div class="container-page">
+    {% include "partials/notice.njk" %}
+    <div class="join-zoom thread-bg on-dark">
+      <div class="join-zoom-main">
+        <div class="join-zoom-head">
+          <span class="join-zoom-mark">{% icon "video", "icon" %}</span>
+          <h2 class="join-zoom-title" id="zoom">{{ c.zoom.heading }}</h2>
+          <p class="join-zoom-when"><span class="whitespace-nowrap"><time datetime="{{ when.startISO }}">{{ (when.date.longEs | capitalize) if es else when.date.long }}</time><span class="join-zoom-sep" aria-hidden="true">·</span></span> <span class="whitespace-nowrap">{{ when.time.leadEs if es else when.time.lead }}</span></p>
+        </div>
+        <div class="join-zoom-details">
+          {% set zoomActions = true %}{% set zoomJoinSize = "btn-lg" %}{% include "partials/zoom-details.njk" %}
+        </div>
+        <p class="join-zoom-more"><a href="{{ p }}/program/" class="join-zoom-more-link">{% icon "calendar-days", "icon icon-sm" %}{% set moreWords = c.zoom.programLink.split(" ") %}{% set moreLast = moreWords.pop() %}<span>{{ moreWords | join(" ") }} <span class="whitespace-nowrap">{{ moreLast }}&nbsp;{% icon "arrow-right", "icon icon-sm join-zoom-more-arrow" %}</span></span></a></p>
+      </div>
+      <figure class="join-qr">
+        <div class="join-qr-code">{% inlineSvg "brand/qr/qr-zoom.svg", "join-qr-svg", c.zoom.qrLabel %}</div>
+        <figcaption class="join-qr-caption">{% icon "scan-qr-code", "icon icon-sm" %}<span>{{ c.zoom.qrCaption }}</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+{# ============ STEP BY STEP ============ #}
+<section class="section" aria-labelledby="steps">
+  <div class="container-page join-split">
+    <div class="join-split-intro">
+      <h2 class="h-section" id="steps">{{ c.steps.heading }}</h2>
+      <p class="lead mt-3">{{ c.steps.lead }}</p>
+      <p class="join-tip">{% icon "lightbulb", "icon" %}<span><strong>{{ c.steps.tipLabel }}:</strong> {{ c.steps.tip | tokens | mdInline | replace("<em>", em) | safe }}</span></p>
+    </div>
+    <ol class="join-steps" role="list">
+      {% for s in c.steps.items %}
+      <li class="join-step">
+        <span class="join-step-num">{{ loop.index }}</span>
+        <div class="min-w-0">
+          <h3 class="h-card">{{ s.title }}</h3>
+          <p class="join-step-body">{{ s.body | tokens | mdInline | replace("<em>", em) | safe }}</p>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ============ INTERPRETATION & CAPTIONS (#interpretation) ============ #}
+{% set interpIcons = { "es": "languages", "asl": "hand", "captions": "captions" } %}
+{% set interpLegacy = { "es": "recovery", "asl": "unity", "captions": "service" } %}
+<section class="section section-alt" aria-labelledby="interpretation">
+  <div class="container-page">
+    {{ ui.sectionHead(c.interpretation.heading, c.interpretation.lead, "", "interpretation") }}
+    <div class="join-interp">
+      {% for card in c.interpretation.cards %}
+      {% set i = site.event.interpretation | byKey(card.key) %}
+      {% if i or card.key == "captions" %}
+      <article class="card join-interp-card" data-legacy="{{ interpLegacy[card.key] or 'recovery' }}">
+        <div class="join-interp-head">
+          <span class="card-icon">{% icon interpIcons[card.key] or "info", "icon" %}</span>
+          <div class="min-w-0">
+            <h3 class="h-card">{{ card.title }}</h3>
+            {% if card.key == "es" and not es and i.labelEs %}<p class="join-interp-alt" lang="es">{{ i.labelEs }}</p>{% endif %}
+          </div>
+        </div>
+        <p class="join-interp-summary">{{ card.summary }}</p>
+        <dl class="join-how">
+          <div class="join-how-row">
+            <dt>{% icon "monitor", "icon icon-sm" %}<span>{{ c.interpretation.computer }}</span></dt>
+            <dd>{{ card.computer | tokens | mdInline | replace("<em>", em) | safe }}</dd>
+          </div>
+          <div class="join-how-row">
+            <dt>{% icon "smartphone", "icon icon-sm" %}<span>{{ c.interpretation.phone }}</span></dt>
+            <dd>{{ card.phone | tokens | mdInline | replace("<em>", em) | safe }}</dd>
+          </div>
+        </dl>
+        {% if card.note %}<p class="join-interp-note">{{ card.note | tokens | mdInline | replace("<em>", em) | safe }}</p>{% endif %}
+      </article>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ============ ZOOM ETIQUETTE & ONLINE ANONYMITY (#etiquette) ============ #}
+{% set ruleIcons = { "camera": "video-off", "recording": "camera-off", "afterwards": "message-circle", "link": "share-2" } %}
+<section class="section" aria-labelledby="etiquette">
+  <div class="container-page join-split">
+    <div class="join-split-intro">
+      <h2 class="h-section" id="etiquette">{{ c.etiquette.heading }}</h2>
+      <p class="lead mt-4">{{ c.etiquette.lead }}</p>
+    </div>
+    <ul class="join-rules" role="list">
+      {% for r in c.etiquette.items %}
+      <li class="join-rule">
+        <span class="join-rule-icon">{% icon ruleIcons[r.key] or "check", "icon" %}</span>
+        <p><strong>{{ r.title }}</strong> {{ r.body }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ============ WEBSITE ACCESSIBILITY (#accessibility) ============ #}
+<section class="section-tight section-alt" aria-labelledby="accessibility">
+  <div class="container-page">
+    <div class="join-a11y">
+      <span class="card-icon">{% icon "accessibility", "icon" %}</span>
+      <div class="join-a11y-text">
+        <h2 class="join-a11y-title" id="accessibility">{{ c.accessibility.heading }}</h2>
+        <p>{{ c.accessibility.body }}</p>
+      </div>
+      {% if site.contact.email %}<a href="{{ site.contact.email | mailto(t.contact.subjectAccessibility | tokens) }}" class="btn btn-outline join-a11y-cta">{% icon "mail", "icon" %}<span>{{ t.contact.linkText }}</span></a>{% endif %}
+    </div>
+  </div>
+</section>

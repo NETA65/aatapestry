@@ -1,3 +1,182 @@
-/* join page — rules used only by src/pages/join.njk (and its partials). Imported by ../main.css. */
+/* How to join (/join/ and /es/join/) — src/pages/join.njk. Imported by ../main.css. */
 @layer components {
+  /* ---------- The Zoom card: a dark, flyer-style panel (like the flyer's Zoom box) ---------- */
+  .join-zoom {
+    display: grid; gap: 2rem; margin-top: 1.5rem;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    border-radius: 1.25rem;
+    border: 1.5px solid rgb(226 169 59 / 0.55);
+    box-shadow: 0 30px 60px -36px rgb(7 10 20 / 0.75), 0 0 0 1px rgb(7 10 20 / 0.04);
+  }
+  .join-zoom.thread-bg::before { border-radius: inherit; }
+  .join-zoom-main { min-width: 0; container-type: inline-size; }
+  /* Mark | title, with the date and time under the title; on a narrow card the date and time take the full width. */
+  .join-zoom-head { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 1rem; align-items: center; }
+  .join-zoom-when { grid-column: 1 / -1; margin-top: 0.75rem; }
+  @container (min-width: 26rem) {
+    .join-zoom-mark { grid-row: span 2; }
+    .join-zoom-when { grid-column: 2; margin-top: 0.125rem; }
+  }
+  .join-zoom-mark {
+    display: grid; place-items: center; flex: none; width: 3.25rem; height: 3.25rem; border-radius: 999px;
+    background: var(--color-thread-blue); color: #fff; box-shadow: 0 0 0 4px rgb(68 121 245 / 0.22);
+  }
+  .join-zoom-mark .icon { width: 1.625rem; height: 1.625rem; }
+  .join-zoom-title { font-size: clamp(1.625rem, 3.4vw, 2.125rem); color: var(--color-cream); }
+  .join-zoom-when { font-weight: 500; line-height: 1.45; color: rgb(251 245 233 / 0.85); }
+  .join-zoom-sep { margin-inline: 0.4em 0.1em; color: var(--color-gold-400); }
+  .join-zoom-details { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgb(226 169 59 / 0.35); }
+  .join-zoom-more { margin-top: 1rem; font-size: 0.9375rem; }
+  /* A two-line label keeps its arrow after the last word, not pushed to the far edge */
+  .join-zoom-more-link { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; padding-block: 0.25rem; font-weight: 600; text-decoration: none; line-height: 1.4; }
+  .join-zoom-more-link:hover { text-decoration: underline; }
+  .join-zoom-more-arrow { display: inline-block; vertical-align: -0.15em; transition: transform 0.15s; }
+  .join-zoom-more-link:hover .join-zoom-more-arrow { transform: translateX(2px); }
+  /* Narrow card: Join and Copy link as full-width buttons, one under the other */
+  @container (max-width: 29.99rem) {
+    .join-zoom .btn-row { flex-direction: column; align-items: stretch; }
+    .join-zoom .btn-row > .btn { width: 100%; }
+  }
+
+  /* The shared Zoom details (partials/zoom-details.njk), restyled for the dark card */
+  .join-zoom .kv-row { background: rgb(251 245 233 / 0.06); border-color: rgb(251 245 233 / 0.16); }
+  .join-zoom .kv-row dt { color: var(--color-gold-300); }
+  .join-zoom .kv-value { color: var(--color-cream); }
+  .join-zoom .copy-btn { min-height: 2.75rem; background: rgb(255 255 255 / 0.06); border-color: rgb(251 245 233 / 0.35); color: var(--color-cream); }
+  .join-zoom .copy-btn:hover { border-color: var(--color-cream); }
+  .join-zoom .copy-btn.is-copied { border-color: var(--color-thread-green); color: #9ff0c4; }
+  @container (min-width: 32rem) { .join-zoom .kv { grid-template-columns: 1fr 1fr; } }
+
+  /* The QR code: only useful on a computer (scan it to join from a phone), so hidden on small screens */
+  .join-qr { display: none; }
+  @media (min-width: 48rem) {
+    .join-zoom { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+    .join-qr {
+      display: flex; flex-direction: column; align-items: center; gap: 0.875rem;
+      width: 12.5rem; padding-left: 2rem; border-left: 1px solid rgb(226 169 59 / 0.45);
+    }
+  }
+  @media (min-width: 64rem) { .join-zoom { gap: 3rem; } .join-qr { width: 14rem; padding-left: 3rem; } }
+  .join-qr-code {
+    width: 100%; max-width: 11rem; padding: 0.625rem; border-radius: 0.875rem;
+    background: #fff; border: 3px solid var(--color-gold-400);
+    box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.6);
+  }
+  .join-qr-svg { display: block; width: 100%; height: auto; }
+  .join-qr-caption { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.875rem; line-height: 1.45; color: rgb(251 245 233 / 0.85); }
+  .join-qr-caption .icon { margin-top: 0.15rem; color: var(--color-gold-300); }
+
+  /* ---------- Two-column sections: heading on the left, content on the right ---------- */
+  .join-split { display: grid; gap: clamp(1.75rem, 4vw, 2.5rem); }
+  .join-split > * { min-width: 0; }
+  @media (min-width: 60rem) {
+    .join-split { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.35fr); gap: clamp(3rem, 6vw, 5rem); align-items: start; }
+    .join-split-intro { position: sticky; top: 6rem; }
+  }
+
+  /* ---------- Step by step ---------- */
+  .join-tip {
+    display: flex; gap: 0.75rem; align-items: flex-start; margin-top: 1.5rem;
+    padding: 1rem 1.125rem; border-radius: 0.75rem;
+    background: var(--c-service-soft); border: 1px solid color-mix(in srgb, var(--c-service) 35%, transparent);
+    font-size: 0.9375rem; line-height: 1.55; color: var(--fg);
+  }
+  .join-tip .icon { margin-top: 0.1rem; color: var(--c-service-text); }
+  .join-tip strong { font-weight: 600; }
+
+  .join-steps { position: relative; display: grid; gap: 1rem; }
+  /* The thread that ties the steps together, in the legacy colours */
+  .join-steps::before {
+    content: ""; position: absolute; left: calc(1rem + 1px + 1.75rem); top: 2rem; bottom: 2rem; width: 4px; border-radius: 4px; transform: translateX(-50%);
+    background: linear-gradient(180deg, var(--c-recovery), var(--c-unity) 35%, var(--c-service) 68%, var(--color-thread-purple));
+  }
+  .join-step {
+    position: relative; display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1.125rem 1.25rem 1.25rem 1rem; border-radius: var(--radius-card);
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card);
+  }
+  .join-step:nth-child(4n + 1) { --legacy: var(--c-recovery); --legacy-text: var(--c-recovery-text); --legacy-soft: var(--c-recovery-soft); }
+  .join-step:nth-child(4n + 2) { --legacy: var(--c-unity); --legacy-text: var(--c-unity-text); --legacy-soft: var(--c-unity-soft); }
+  .join-step:nth-child(4n + 3) { --legacy: var(--c-service); --legacy-text: var(--c-service-text); --legacy-soft: var(--c-service-soft); }
+  .join-step:nth-child(4n + 4) { --legacy: var(--color-thread-purple); --legacy-text: var(--accent); --legacy-soft: var(--accent-soft); }
+  .join-step-num {
+    display: grid; place-items: center; flex: none; width: 3.5rem; height: 3.5rem; border-radius: 999px;
+    background: var(--legacy-soft); border: 3px solid var(--legacy); color: var(--legacy-text);
+    font-family: var(--font-title); font-weight: 900; font-size: 1.5rem; line-height: 1;
+  }
+  .join-step .h-card { padding-top: 0.25rem; }
+  .join-step-body { margin-top: 0.375rem; color: var(--muted); line-height: 1.55; }
+  .join-step-body strong { color: var(--fg); font-weight: 600; }
+  .join-step-body a { font-weight: 500; }
+  @media (min-width: 40rem) { .join-step { gap: 1.25rem; padding: 1.375rem 1.5rem 1.5rem 1.25rem; } .join-steps::before { left: calc(1.25rem + 1px + 1.75rem); } }
+
+  /* ---------- Spanish & ASL interpretation, captions ---------- */
+  .join-interp { display: grid; gap: clamp(1rem, 2.5vw, 1.5rem); grid-template-columns: 1fr; }
+  .join-interp > * { min-width: 0; }
+  @media (min-width: 48rem) { .join-interp { grid-template-columns: 1fr 1fr; } }
+  /* Two columns: an odd last card (captions) takes the full row, its computer/phone how-tos side by side */
+  @media (min-width: 48rem) and (max-width: 67.99rem) {
+    .join-interp-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+    .join-interp-card:last-child:nth-child(odd) .join-how { grid-template-columns: 1fr 1fr; column-gap: 2rem; }
+    .join-interp-card:last-child:nth-child(odd) .join-how-row + .join-how-row { margin-top: 0; border-top: 0; }
+  }
+  @media (min-width: 68rem) { .join-interp { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .join-interp-card { display: flex; flex-direction: column; gap: 1rem; border-top: 4px solid var(--legacy); --tint: var(--legacy-soft); --tint-fg: var(--legacy-text); }
+  .join-interp-head { display: flex; align-items: center; gap: 0.875rem; }
+  .join-interp-alt { margin-top: 0.125rem; font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: 0.9375rem; color: var(--legacy-text); }
+  .join-interp-summary { color: var(--muted); }
+  .join-how { display: grid; border-top: 1px solid var(--line); }
+  .join-how-row { padding-top: 0.875rem; }
+  .join-how-row + .join-how-row { margin-top: 0.875rem; border-top: 1px solid var(--line); }
+  .join-how dt {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--legacy-text);
+  }
+  .join-how dd { margin-top: 0.375rem; font-size: 0.9875rem; line-height: 1.55; color: var(--fg); }
+  .join-how dd strong, .join-interp-note strong { font-weight: 600; }
+  .join-interp-note {
+    padding: 0.75rem 0.875rem; border-radius: 0.625rem;
+    background: var(--legacy-soft); font-size: 0.9375rem; line-height: 1.5; color: var(--fg);
+  }
+
+  /* ---------- Zoom etiquette & online anonymity ---------- */
+  .join-rules {
+    display: grid; padding: 0.5rem clamp(1.125rem, 3vw, 1.75rem);
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+  }
+  .join-rule { display: flex; gap: 1rem; align-items: flex-start; padding-block: 1.125rem; }
+  .join-rule + .join-rule { border-top: 1px solid var(--line); }
+  .join-rule-icon {
+    display: grid; place-items: center; flex: none; width: 2.75rem; height: 2.75rem; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent);
+  }
+  .join-rule p { min-width: 0; padding-top: 0.125rem; color: var(--muted); line-height: 1.55; }
+  .join-rule strong { display: block; color: var(--fg); font-weight: 600; }
+
+  /* ---------- Website accessibility ---------- */
+  .join-a11y {
+    display: grid; gap: 1rem 1.25rem; grid-template-columns: auto minmax(0, 1fr); align-items: start;
+    padding: clamp(1.25rem, 3vw, 1.75rem); border-radius: var(--radius-card);
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card);
+    --tint: var(--accent-soft); --tint-fg: var(--accent);
+  }
+  .join-a11y-text { min-width: 0; }
+  .join-a11y-title { font-size: clamp(1.375rem, 2.6vw, 1.75rem); }
+  .join-a11y-text p { margin-top: 0.375rem; max-width: 62ch; color: var(--muted); }
+  .join-a11y-cta { grid-column: 1 / -1; justify-self: start; }
+  @media (min-width: 30rem) { .join-a11y-cta { grid-column: 2; } }
+  @media (min-width: 60rem) {
+    .join-a11y { grid-template-columns: auto minmax(0, 1fr) auto; gap: 1rem 1.5rem; }
+    .join-a11y-cta { grid-column: auto; align-self: center; }
+  }
+
+  /* ---------- Print: the dark card prints black on white, with the QR code and without the buttons ---------- */
+  @media print {
+    .join-zoom { border: 1px solid #000; box-shadow: none; }
+    .join-zoom :is(.join-zoom-title, .join-zoom-when, .kv-row dt, .kv-value, .join-qr-caption) { color: #000; }
+    .join-zoom .kv-row { background: none; border-color: #888; }
+    .join-zoom .copy-btn, .join-zoom .btn-row, .join-zoom-more { display: none; }
+    .join-qr { display: flex; border-left-color: #888; }
+    .join-split-intro { position: static; }
+  }
 }
