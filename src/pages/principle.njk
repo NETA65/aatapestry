@@ -1,0 +1,100 @@
+---
+pagination:
+  data: principles.items
+  size: 1
+  alias: item
+  addAllPagesToCollections: true
+permalink: "/principles/{{ item.n }}/"
+schema: article
+bodyClass: principle
+eleventyComputed:
+  title: "Number {{ item.n }}: {{ item.thread.title | safe }}"
+  description: "{{ item.thread.oneLiner | safe }} Step, Tradition and Concept {{ item.n }}, side by side."
+---
+{#- /principles/1/ … /principles/12/ (English only): one number's Step, Tradition and Concept side by side,
+    the thread that connects them, questions for sharing, and the way to the numbers before and after.
+    Data: principles.json (items[n-1]); labels: copy.json → thirtySix.numberPage; the legacies: site.json.
+    Styles: assets/css/pages/principles.css. -#}
+{% set np = copy.thirtySix.numberPage %}
+{% set strandKey = { "recovery": "step", "unity": "tradition", "service": "concept" } %}
+{% set legacyIcon = { "recovery": "book-open", "unity": "users", "service": "network" } %}
+{% set prev = principles.items[item.n - 2] if item.n > 1 else null %}
+{% set next = principles.items[item.n] if item.n < principles.items.length else null %}
+{% set roman = item.n | roman %}
+
+{# The hero, plus a big decorative number on wide screens (beside the title; hidden from screen readers). #}
+<div class="pp-hero">
+  {% set hero = {
+    eyebrow: site.legacies[0].singular + " " + item.n + " · " + site.legacies[1].singular + " " + item.n + " · " + site.legacies[2].singular + " " + roman,
+    title: item.thread.title,
+    lead: item.thread.oneLiner,
+    crumbs: [{ label: t.nav.principles, href: "/principles/" }]
+  } %}
+  {% include "partials/page-hero.njk" %}
+  <div class="pp-hero-deco" aria-hidden="true"><div class="container-page"><span class="pp-hero-num">{{ item.n }}</span></div></div>
+</div>
+
+{# ============ THE STEP, THE TRADITION AND THE CONCEPT ============ #}
+<div class="section-tight">
+  <div class="container-page pp-strands">
+    {% for l in site.legacies %}
+    {% set k = strandKey[l.key] %}
+    {% set s = item[k] %}
+    {% set num = roman if k == "concept" else item.n %}
+    <div class="pp-strand" id="{{ k }}" data-legacy="{{ l.key }}">
+      <div class="pp-strand-head">
+        <p class="pp-strand-legacy">{% icon legacyIcon[l.key], "icon icon-sm" %}<span>{{ l.name }}</span></p>
+        <h2 class="pp-strand-title"><span class="pp-strand-kicker">{{ l.singular }} {{ num }}<span class="sr-only">:</span></span> <span class="pp-strand-word">{{ s.principle }}</span></h2>
+      </div>
+      <div class="pp-strand-body">
+        {% if s.text %}
+        <blockquote class="pp-strand-text"><p>{{ s.text }}</p></blockquote>
+        {% else %}
+        <p class="pp-strand-gist">{{ s.gist }}</p>
+        {% endif %}
+        {% if s.keywords and s.keywords.length %}
+        <p class="sr-only">{{ np.keywords }}:</p>
+        <ul class="pp-keywords">{% for kw in s.keywords %}<li>{{ kw }}</li>{% endfor %}</ul>
+        {% endif %}
+        <a href="{{ principles.sources[k].url }}" class="pp-link pp-strand-link" target="_blank" rel="noopener">{{ np.readPrefix }} {{ l.singular }} {{ num }} <span class="pp-link-end">{{ np.readSuffix }}{% icon "arrow-up-right", "icon icon-sm" %}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{# ============ THE THREAD ============ #}
+<section class="section pp-thread-section" aria-labelledby="thread-title">
+  <div class="container-page pp-thread">
+    <div class="pp-thread-main">
+      <h2 class="h-section" id="thread-title">{{ np.threadHeading }}</h2>
+      <div class="prose pp-summary">{{ item.thread.summary | md | safe }}</div>
+      <h2 class="h-section pp-weave-title" id="weave-title">{{ np.weaveHeading }}</h2>
+      <div class="prose pp-weave">{{ item.thread.weave | md | safe }}</div>
+    </div>
+    <aside class="card pp-questions" aria-labelledby="questions-title">
+      <h2 class="h-card" id="questions-title">{{ np.questionsHeading }}</h2>
+      <ol class="pp-question-list">{% for q in item.thread.questions %}<li>{{ q }}</li>{% endfor %}</ol>
+      <p class="pp-questions-note">{{ np.questionsNote }}</p>
+    </aside>
+  </div>
+</section>
+
+{# ============ PREVIOUS · NEXT · ALL 36 ============ #}
+<nav class="section-tight section-alt pp-pager-band" aria-label="{{ np.pagerLabel }}">
+  <div class="container-page">
+    <div class="pp-pager">
+      {% if prev %}
+      <a href="/principles/{{ prev.n }}/" class="pp-pager-link pp-pager-prev" rel="prev"><span class="pp-pager-dir">{% icon "arrow-left", "icon icon-sm" %}<span>{{ np.previous }}</span></span><span class="pp-pager-title"><span class="pp-pager-n">{{ prev.n }}</span> {{ prev.thread.title }}</span></a>
+      {% else %}
+      <span class="pp-pager-spacer"></span>
+      {% endif %}
+      {% if next %}
+      <a href="/principles/{{ next.n }}/" class="pp-pager-link pp-pager-next" rel="next"><span class="pp-pager-dir"><span>{{ np.next }}</span>{% icon "arrow-right", "icon icon-sm" %}</span><span class="pp-pager-title"><span class="pp-pager-n">{{ next.n }}</span> {{ next.thread.title }}</span></a>
+      {% else %}
+      <span class="pp-pager-spacer"></span>
+      {% endif %}
+    </div>
+    <p class="pp-pager-all"><a href="/principles/" class="btn btn-outline">{% icon "layout-grid", "icon" %}<span>{{ np.all }}</span></a></p>
+  </div>
+</nav>
