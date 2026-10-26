@@ -1,0 +1,93 @@
+{
+  "_readme": "The Program page (/program/ and /es/program/), src/pages/program.njk. en and es must have the same keys. All plain text. Write dates, times, Zoom numbers and the email only as tokens ({date}, {time}, {dateEs}, {timeEs}…). The page's facts come from elsewhere: the sessions from schedule.json (listed once status is 'published' and sessions is not empty; until then the page shows the announced start, 'coming soon' and the end), the times in every zone from when.js, the Add to calendar links from calendar.js. timeline.kinds labels schedule.json's session kinds; zones.youTag shows on the visitor's own zone (app.js).",
+  "en": {
+    "meta": {
+      "title": "Program",
+      "description": "The program for The Incredible Tapestry, {date}, {time}: the day’s times, the time in your zone, and Add to calendar."
+    },
+    "hero": {
+      "title": "Program",
+      "lead": "How the day unfolds, what time it is where you are, and a reminder for your calendar."
+    },
+    "timeline": {
+      "heading": "The day at a glance",
+      "allTimes": "All times are Eastern Time (ET).",
+      "zonesLink": "Find your time zone",
+      "begins": "Workshop begins",
+      "middle": "Presentations, sharing and questions",
+      "middleTime": "Throughout the day",
+      "pendingNote": "The full program will be posted on this website shortly.",
+      "threadsLabel": "Threads",
+      "ends": "Workshop ends",
+      "to": "to",
+      "allLegacies": "All three legacies",
+      "kinds": {
+        "opening": "Opening",
+        "talk": "Presentation",
+        "session": "Session",
+        "break": "Break",
+        "closing": "Closing"
+      }
+    },
+    "zones": {
+      "heading": "In your time zone",
+      "localLabel": "Your local time",
+      "caption": "The workshop’s hours in each time zone",
+      "zone": "Time zone",
+      "time": "Workshop hours",
+      "eventTag": "Event time",
+      "youTag": "Your zone",
+      "endsNextDay": "ends the next day"
+    },
+    "calendar": {
+      "body": "Get a reminder on your phone or computer. The entry includes the Zoom link, meeting ID and passcode.",
+      "note": "Calendar entries don’t update themselves. If the Zoom details ever change, this site will show the new ones; please then delete the old entry and add the workshop again.",
+      "joinLink": "Zoom details and step-by-step help"
+    }
+  },
+  "es": {
+    "meta": {
+      "title": "Programa",
+      "description": "El programa de The Incredible Tapestry, {dateEs}, {timeEs}: los horarios del día, la hora en su zona y cómo agregarlo a su calendario."
+    },
+    "hero": {
+      "title": "Programa",
+      "lead": "Cómo se desarrolla el día, qué hora es donde usted está y un recordatorio para su calendario."
+    },
+    "timeline": {
+      "heading": "El día de un vistazo",
+      "allTimes": "Todos los horarios están en hora del Este (ET).",
+      "zonesLink": "Buscar su zona horaria",
+      "begins": "Comienza el taller",
+      "middle": "Presentaciones, tiempo para compartir y preguntas",
+      "middleTime": "A lo largo del día",
+      "pendingNote": "El programa completo se publicará en este sitio web en breve.",
+      "threadsLabel": "Hilos",
+      "ends": "Termina el taller",
+      "to": "a",
+      "allLegacies": "Los tres legados",
+      "kinds": {
+        "opening": "Apertura",
+        "talk": "Presentación",
+        "session": "Sesión",
+        "break": "Descanso",
+        "closing": "Clausura"
+      }
+    },
+    "zones": {
+      "heading": "En su zona horaria",
+      "localLabel": "Su hora local",
+      "caption": "El horario del taller en cada zona horaria",
+      "zone": "Zona horaria",
+      "time": "Horario del taller",
+      "eventTag": "Hora del evento",
+      "youTag": "Su zona",
+      "endsNextDay": "termina al día siguiente"
+    },
+    "calendar": {
+      "body": "Reciba un recordatorio en su teléfono o computadora. La entrada incluye el enlace de Zoom, el ID de reunión y el código de acceso.",
+      "note": "Las entradas de calendario no se actualizan solas. Si los datos de Zoom llegaran a cambiar, este sitio mostrará los nuevos; en ese caso, borre la entrada anterior y vuelva a agregar el taller.",
+      "joinLink": "Datos de Zoom e instrucciones paso a paso"
+    }
+  }
+}
