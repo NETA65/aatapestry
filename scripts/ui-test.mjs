@@ -90,7 +90,9 @@ function calItemsOffScreen() {
     .map((a) => `"${(a.querySelector("span") || a).textContent.trim()}"`);
 }
 
-const browser = await puppeteer.launch({ headless: true });
+// The same flags as scripts/pdf.mjs: GitHub's Ubuntu runners block Chrome's sandbox, and the pages are our own build.
+const launchArgs = ["--no-sandbox", "--disable-setuid-sandbox", "--font-render-hinting=none", "--disable-gpu"];
+const browser = await puppeteer.launch({ headless: true, args: launchArgs });
 const failures = [];
 const fail = (where, msg) => { failures.push(`${where}: ${msg}`); };
 let checks = 0;
@@ -334,7 +336,7 @@ for (const url of pages) {
 const minFontProfile = fs.mkdtempSync(path.join(os.tmpdir(), "ui-test-minfont-"));
 fs.mkdirSync(path.join(minFontProfile, "Default"), { recursive: true });
 fs.writeFileSync(path.join(minFontProfile, "Default", "Preferences"), JSON.stringify({ webkit: { webprefs: { minimum_font_size: 24 } } }));
-const bigBrowser = await puppeteer.launch({ headless: true, userDataDir: minFontProfile });
+const bigBrowser = await puppeteer.launch({ headless: true, args: launchArgs, userDataDir: minFontProfile });
 const headerFacts = () => {
   const header = document.querySelector(".site-header");
   const name = document.querySelector(".site-header .brand-name");
