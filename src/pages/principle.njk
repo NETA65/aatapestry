@@ -8,8 +8,8 @@ permalink: "/principles/{{ item.n }}/"
 schema: article
 bodyClass: principle
 eleventyComputed:
-  title: "Number {{ item.n }}: {{ item.thread.title | safe }}"
-  description: "{{ item.thread.oneLiner | safe }} Step, Tradition and Concept {{ item.n }}, side by side."
+  title: "Step {{ item.n }}, Tradition {{ item.n }} and Concept {{ item.n | roman }}: {{ item.thread.title | safe }}"
+  description: "{{ item.thread.oneLiner | safe }} Step {{ item.n }}, Tradition {{ item.n }} and Concept {{ item.n | roman }}, side by side."
 ---
 {#- /principles/1/ … /principles/12/ (English only): one number's Step, Tradition and Concept side by side,
     the thread that connects them, questions for sharing, and the way to the numbers before and after.
