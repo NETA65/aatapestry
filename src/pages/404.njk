@@ -1,0 +1,55 @@
+---
+permalink: /404.html
+title: Page not found
+noindex: true
+eleventyExcludeFromCollections: true
+bodyClass: not-found
+# The heading, the lead and the button come from copy.json → notFound (English).
+# GitHub Pages serves this file for every missing path (also under /es/), so every link and asset
+# here is root-absolute. The page is English with one Spanish line and a link to the Spanish site.
+notFoundEs:
+  line: "Ese hilo no lleva a ninguna parte: la página que busca cambió de lugar o nunca existió."
+  home: "Página principal en español"
+nextHeading: "Pick up another thread"
+nextPages:
+  - { key: "program", href: "/program/", icon: "clipboard-list", legacy: "recovery", desc: "The day’s sessions, and the time where you are." }
+  - { key: "join", href: "/join/", icon: "video", legacy: "unity", desc: "The Zoom link, meeting ID and passcode." }
+  - { key: "flyer", href: "/flyer/", icon: "image", legacy: "service", desc: "Download, print and share the official flyer." }
+  - { key: "faq", href: "/faq/", icon: "circle-help", legacy: "accent", desc: "Cost, interpretation, anonymity and more." }
+---
+{#- The 404 page (/404.html): a short dark band with the logo, the English heading, one Spanish line and
+    the two front pages, then the four workshop pages. Styles: src/assets/css/pages/misc.css. -#}
+{% set nf = copy.notFound %}
+<section class="nf-hero thread-bg on-dark" aria-labelledby="nf-title">
+  <div class="container-page nf-hero-inner">
+    {% inlineSvg "src/assets/img/logo.svg", "nf-logo" %}
+    <p class="eyebrow nf-code">404 · {{ title }}</p>
+    <h1 class="h-display nf-title" id="nf-title">{{ nf.heading | tokens }}</h1>
+    <p class="lead nf-lead">{{ nf.body | tokens }}</p>
+    <p class="nf-es" lang="es">{{ notFoundEs.line }}</p>
+    <div class="btn-row nf-actions">
+      <a href="/" class="btn btn-primary btn-lg">{% icon "house", "icon" %}<span>{{ nf.cta | tokens }}</span></a>
+      <a href="/es/" class="btn btn-outline btn-lg" lang="es" hreflang="es">{% icon "languages", "icon" %}<span>{{ notFoundEs.home }}</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight" aria-labelledby="nf-next">
+  <div class="container-page nf-next">
+    <h2 class="h-card nf-next-title" id="nf-next">{{ nextHeading }}</h2>
+    <ul class="nf-links" role="list">
+      {% for item in nextPages %}
+      <li>
+        <a href="{{ item.href }}" class="nf-link" data-legacy="{{ item.legacy }}">
+          <span class="card-icon">{% icon item.icon, "icon" %}</span>
+          <span class="nf-link-text">
+            <span class="nf-link-title">{{ t.nav[item.key] }}</span>
+            <span class="nf-link-desc">{{ item.desc }}</span>
+          </span>
+          {% icon "arrow-right", "icon nf-link-arrow" %}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
