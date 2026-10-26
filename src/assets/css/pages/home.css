@@ -62,11 +62,27 @@
     .home-hero-lang { display: none; }
     .home-hero-top { margin-top: 0; }
   }
-  /* Short screens (laptops, 1280×720 to 1440×900) */
+  /* The Spanish time bar on one row on laptops and wider, as the English one is, so the Spanish hero is
+     no taller than it needs to be and Join / Add to calendar stay on the first screen. This copies the
+     one-row .when-bar--long in main.css (@container (min-width: 60rem)) at a width the home hero can
+     reach: .home-when is at most 48rem, so that rule never applies here. From 58rem (the page less its two
+     2rem gutters is then 54rem) the box widens to 56rem for the longer Spanish times, and the bar shrinks
+     to its content, so it is no wider than the English bar. The container is the time bar's .when-wrap
+     (100% of .home-when). */
+  @media (min-width: 58rem) { .home-when:has(.when-bar--long) { max-width: 56rem; } }
+  @container (min-width: 54rem) {
+    .home-when .when-bar--long { flex-direction: row; justify-content: center; width: fit-content; margin-inline: auto; }
+    .home-when .when-bar--long .when-bar-main { flex: 0 1 auto; min-width: 0; padding: 0.875rem 1.5rem; font-size: 2rem; }
+    .home-when .when-bar--long .when-bar-zones { flex: 0 0 auto; border-top: 0; border-left: 1px solid rgb(251 245 233 / 0.14); }
+    .home-when .when-bar--long .when-bar-zone { padding: 0.5rem 0.875rem; }
+  }
+  /* Short screens (laptops, 1280×720 to 1440×900): a smaller title and logo and no gap under the title,
+     so the Spanish hero (its translated title adds a line) fits as well as the English one */
   @media (min-width: 48rem) and (max-height: 60rem) {
     .home-hero-inner { padding-block: 1.25rem 2.5rem; }
-    .home-title { font-size: clamp(min(2.6rem, 13vw), 10.5vw, min(6.25rem, 11vh)); }
-    .home-hero-logo { width: clamp(7rem, 23vh, 14.5rem); }
+    .home-title { font-size: clamp(min(2.6rem, 13vw), 10.5vw, min(6.25rem, 9.5vh)); }
+    .home-hero-logo { width: clamp(6.5rem, 19vh, 14.5rem); }
+    .home-gloss { margin-top: 0; }
     .home-braid { margin-top: 0.25rem; }
     .home-overline { margin-top: 0.75rem; }
     .home-date { margin-top: 1rem; }
