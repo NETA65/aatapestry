@@ -1,6 +1,8 @@
 {#- "Add to calendar": a disclosure listing Google, Apple/.ics, Outlook.com, Microsoft 365 and Yahoo
     (links from src/_data/calendar.js). Works without JavaScript; app.js closes it on Escape, an
-    outside click or when focus leaves it, and keeps the panel on screen. Hidden once the workshop has
+    outside click or when focus leaves it, and keeps the panel on screen: shifted sideways to fit,
+    opened upward when there is no room below the button, or scrolled into view when there is room
+    neither way. Hidden once the workshop has
     ended (.js-event-cta, main.css). Optional before the include: calClass (the button's classes,
     default "btn btn-outline").
     The .ics item (c.file) is a plain same-tab link without `download`: iOS Safari then shows its Add to

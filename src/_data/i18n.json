@@ -14,6 +14,8 @@
       "principles": "36 Principles",
       "poster": "Printable poster",
       "calendarFile": "Calendar file (.ics)",
+      "feed": "Updates (RSS)",
+      "contact": "Contact",
       "skip": "Skip to main content",
       "primary": "Main",
       "footer": "Footer",
@@ -60,6 +62,7 @@
       "today": "Today — starts at %start",
       "startsIn": "Starts in %h h %m min",
       "startsInMin": "Starts in %m min",
+      "startsInHours": "Starts in %h h",
       "live": "Happening now — the room is open",
       "ended": "This workshop has ended. Thank you for weaving with us."
     },
@@ -132,6 +135,8 @@
       "principles": "36 principios",
       "poster": "Póster imprimible",
       "calendarFile": "Archivo de calendario (.ics)",
+      "feed": "Novedades (RSS)",
+      "contact": "Contacto",
       "skip": "Saltar al contenido principal",
       "primary": "Principal",
       "footer": "Pie de página",
@@ -178,6 +183,7 @@
       "today": "Es hoy — comienza a las %start",
       "startsIn": "Comienza en %h h %m min",
       "startsInMin": "Comienza en %m min",
+      "startsInHours": "Comienza en %h h",
       "live": "Está en marcha — la sala está abierta",
       "ended": "El taller ha concluido. Gracias por tejer con nosotros."
     },

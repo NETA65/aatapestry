@@ -14,9 +14,16 @@
 // and, once per page, that the mobile menu opens, closes on Escape and when Tab leaves it; and, in each
 // colour scheme, that the Add to calendar menu stays on screen, its items and their focus ring are
 // readable on the panel (computed contrast: axe cannot tell over the hero's texture), and Tab out closes it.
+// Then, per page: the Add to calendar items open fully on screen on real phone and laptop screens
+// (390×844, 1366×768, 360×640), with the button where it is on load and near the bottom edge; without
+// JavaScript the header still has a Menu link to the footer's page list; and with big text (a browser
+// minimum font size of 24 px, or a root font of 24 px) at 1024 and 1280 the header stays one bar (the
+// site name never breaks inside a word, nothing scrolls sideways). Once: /feed.xml is well-formed Atom
+// and keeps the ids its subscribers already have.
 // Exits with status 1 when anything fails, so CI can use it.
 import fs from "node:fs";
 import http from "node:http";
+import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
@@ -71,6 +78,17 @@ const server = http.createServer((req, res) => {
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const base = `http://127.0.0.1:${server.address().port}`;
+
+// In the page: the open Add to calendar items that are not fully on screen (above the screen, under the
+// sticky header, or below the bottom edge). Measured as they open, with no scrolling, like a visitor's tap.
+function calItemsOffScreen() {
+  const header = document.querySelector(".site-header");
+  const top = Math.max(0, header ? header.getBoundingClientRect().bottom : 0);
+  const vw = document.documentElement.clientWidth;
+  return Array.from(document.querySelectorAll("details.cal-menu[open] .cal-menu-panel a"))
+    .filter((a) => { const b = a.getBoundingClientRect(); return b.top < top - 0.5 || b.bottom > window.innerHeight + 0.5 || b.left < -0.5 || b.right > vw + 0.5; })
+    .map((a) => `"${(a.querySelector("span") || a).textContent.trim()}"`);
+}
 
 const browser = await puppeteer.launch({ headless: true });
 const failures = [];
@@ -192,6 +210,8 @@ for (const url of pages) {
           if (scheme === schemes[0]) {
             const r = await page.$eval("details.cal-menu .cal-menu-panel", (p) => { const b = p.getBoundingClientRect(); return { left: b.left, right: b.right, vw: document.documentElement.clientWidth }; });
             if (r.left < 0 || r.right > r.vw) fail(where, `Add to calendar menu off screen (left ${Math.round(r.left)}, right ${Math.round(r.right)}, viewport ${r.vw})`);
+            const off = await page.evaluate(calItemsOffScreen);
+            if (off.length) fail(where, `Add to calendar items open off screen: ${off.join(", ")}`);
             // Every item must be tappable: nothing (a clipping ancestor, the next section) may cover it.
             const blocked = await page.evaluate(() => {
               document.documentElement.style.scrollBehavior = "auto"; // smooth scrolling would fake "blocked" results
@@ -241,6 +261,138 @@ for (const url of pages) {
     }
   }
   process.stdout.write(".");
+}
+
+// Opens a page for the extra checks below (light scheme, reduced motion, the fonts and images in).
+async function openPage(b, url, width, height, { js = true } = {}) {
+  const page = await b.newPage();
+  await page.setJavaScriptEnabled(js);
+  await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: "light" }, { name: "prefers-reduced-motion", value: "reduce" }]);
+  await page.emulateTimezone("America/Chicago");
+  await page.setViewport({ width, height });
+  await page.goto(base + url, { waitUntil: "networkidle0" });
+  await page.evaluate(() => Promise.race([new Promise((r) => setTimeout(r, 3000)), document.fonts.ready]));
+  return page;
+}
+// Lets a change of size settle: app.js re-checks the header a frame or two after it changes size.
+const settle = (page) => page.evaluate(() => new Promise((r) => {
+  const twoFrames = (next) => requestAnimationFrame(() => requestAnimationFrame(next));
+  twoFrames(() => setTimeout(() => twoFrames(r), 150));
+}));
+
+for (const url of pages) {
+  const where = (w, h, extra = "") => `${url} @${w}×${h}${extra}`;
+
+  // Add to calendar on real screen sizes: tapped where the button is on load (when it is on screen),
+  // and with the button near the bottom edge (how a visitor scrolls to it). Every item must open fully
+  // on screen; the 900 px tall views above can hide a panel that opens off the bottom.
+  for (const [w, h] of [[390, 844], [1366, 768], [360, 640]]) {
+    const page = await openPage(browser, url, w, h);
+    if (await page.$("details.cal-menu > summary")) {
+      for (const at of ["load", "bottom"]) {
+        const ok = await page.evaluate((at) => {
+          document.documentElement.style.scrollBehavior = "auto";
+          const s = document.querySelector("details.cal-menu > summary");
+          if (!s || !s.getClientRects().length) return false;
+          if (at === "bottom") window.scrollBy(0, s.getBoundingClientRect().bottom - (window.innerHeight - 8));
+          document.documentElement.style.scrollBehavior = "";
+          const b = s.getBoundingClientRect();
+          const header = document.querySelector(".site-header");
+          return b.top >= Math.max(0, header ? header.getBoundingClientRect().bottom : 0) && b.bottom <= window.innerHeight;
+        }, at);
+        if (!ok) continue; // not on screen at load (the button is further down the page)
+        await page.click("details.cal-menu > summary");
+        await new Promise((r) => setTimeout(r, 150));
+        const off = await page.evaluate(calItemsOffScreen);
+        if (off.length) fail(where(w, h, `, button ${at === "load" ? "where it is on load" : "near the bottom edge"}`), `Add to calendar items open off screen: ${off.join(", ")}`);
+        await page.keyboard.press("Escape");
+      }
+    }
+    await page.close();
+  }
+
+  // Without JavaScript the header's Menu control is a link to the footer's list of pages.
+  {
+    const page = await openPage(browser, url, 390, 844, { js: false });
+    const r = await page.evaluate(() => {
+      const a = document.querySelector(".site-header [data-menu-fallback]");
+      const btn = document.querySelector(".site-header [data-menu-toggle]");
+      const target = a && document.getElementById((a.getAttribute("href") || "").slice(1));
+      return { link: !!a && a.getBoundingClientRect().width > 0, target: !!target && target.tagName === "NAV", button: !!btn && btn.getBoundingClientRect().width > 0 };
+    });
+    if (!r.link) fail(where(390, 844, ", no JavaScript"), "the header has no visible Menu link");
+    else if (!r.target) fail(where(390, 844, ", no JavaScript"), "the header's Menu link does not lead to the footer's page list");
+    if (r.button) fail(where(390, 844, ", no JavaScript"), "the header shows the Menu button, which needs JavaScript");
+    await page.close();
+  }
+  process.stdout.write(":");
+}
+
+// Big text in a wide window: the 64rem breakpoint does not follow a browser minimum font size or a user
+// stylesheet, so app.js must switch the header to Join + Menu when the full menu does not fit.
+// Chrome's minimum font size comes from a profile's preferences; the root font is injected.
+const minFontProfile = fs.mkdtempSync(path.join(os.tmpdir(), "ui-test-minfont-"));
+fs.mkdirSync(path.join(minFontProfile, "Default"), { recursive: true });
+fs.writeFileSync(path.join(minFontProfile, "Default", "Preferences"), JSON.stringify({ webkit: { webprefs: { minimum_font_size: 24 } } }));
+const bigBrowser = await puppeteer.launch({ headless: true, userDataDir: minFontProfile });
+const headerFacts = () => {
+  const header = document.querySelector(".site-header");
+  const name = document.querySelector(".site-header .brand-name");
+  const probe = document.createElement("span");
+  probe.textContent = "Incredible";
+  probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap";
+  name.appendChild(probe);
+  const word = probe.getBoundingClientRect().width;
+  probe.remove();
+  // One bar: its 4rem height (64 px, or 96 px with a 24 px root font) plus the 1 px bottom border.
+  const bar = parseFloat(getComputedStyle(document.querySelector(".site-header-bar")).minHeight) || 64;
+  const vw = document.documentElement.clientWidth;
+  const wide = [];
+  for (const el of document.querySelectorAll("body *")) {
+    const r = el.getBoundingClientRect();
+    if (r.width && r.right > vw + 1 && wide.length < 4) wide.push(`${el.tagName.toLowerCase()}.${String(el.className.baseVal ?? el.className).trim().split(/\s+/).slice(0, 2).join(".")} (right edge ${Math.round(r.right)}px)`);
+  }
+  return { height: Math.round(header.getBoundingClientRect().height), max: Math.round(bar) + 2, name: Math.round(name.getBoundingClientRect().width), word: Math.round(word), overflow: document.documentElement.scrollWidth - vw, wide };
+};
+for (const url of pages) {
+  for (const mode of ["minimum font size 24px", "root font 24px"]) {
+    const page = await openPage(mode.startsWith("minimum") ? bigBrowser : browser, url, 1024, 800);
+    if (mode.startsWith("root")) { await page.addStyleTag({ content: "html { font-size: 24px !important; }" }); await page.evaluate(() => window.dispatchEvent(new Event("resize"))); }
+    for (const w of [1024, 1280]) {
+      if (w !== 1024) await page.setViewport({ width: w, height: 800 });
+      await settle(page);
+      const f = await page.evaluate(headerFacts);
+      const here = `${url} @${w}px, ${mode}`;
+      if (f.height > f.max) fail(here, `header: ${f.height}px tall (want one bar, at most ${f.max})`);
+      if (f.name + 1 < f.word) fail(here, `header: the site name is ${f.name}px wide, narrower than the word "Incredible" (${f.word}px)`);
+      if (f.overflow > 1) fail(here, `horizontal overflow: the page is ${f.overflow}px wider than the screen — ${f.wide.join(", ")}`);
+    }
+    await page.close();
+  }
+}
+await bigBrowser.close();
+try { fs.rmSync(minFontProfile, { recursive: true, force: true }); } catch { /* a locked temp profile is harmless */ }
+
+// The updates feed: well-formed Atom, and the entries subscribers already have keep their ids.
+{
+  const feedFile = path.join(siteDir, "feed.xml");
+  if (!fs.existsSync(feedFile)) fail("/feed.xml", "missing (subscribers to the feed would get the 404 page)");
+  else {
+    const page = await browser.newPage();
+    const r = await page.evaluate((xml) => {
+      const d = new DOMParser().parseFromString(xml, "application/xml");
+      if (d.querySelector("parsererror")) return { error: d.querySelector("parsererror").textContent.slice(0, 200) };
+      return { root: d.documentElement.localName, ids: Array.from(d.getElementsByTagName("entry")).map((e) => (e.getElementsByTagName("id")[0] || {}).textContent) };
+    }, fs.readFileSync(feedFile, "utf8"));
+    if (r.error) fail("/feed.xml", `not well-formed XML: ${r.error}`);
+    else {
+      if (r.root !== "feed") fail("/feed.xml", `root element is <${r.root}>, not an Atom <feed>`);
+      for (const id of ["tag:aatapestry.org,2026-10-25:the-official-flyer-is-out-and-the-zoom-details-are-set", "tag:aatapestry.org,2026-10-04:save-the-date-saturday-december-12-2026"]) {
+        if (!r.ids.includes(id)) fail("/feed.xml", `the published entry ${id} is gone (or its id changed)`);
+      }
+    }
+    await page.close();
+  }
 }
 await browser.close();
 server.close();

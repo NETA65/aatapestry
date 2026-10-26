@@ -146,6 +146,8 @@
     /* Anchored sections clear the sticky header. */
     scroll-padding-top: 5.5rem;
   }
+  /* Phones held sideways: the header scrolls away with the page (header block below), so anchors need no room for it. */
+  @media (orientation: landscape) and (max-height: 30rem) { html { scroll-padding-top: 1rem; } }
   body {
     background: var(--bg);
     color: var(--fg);
@@ -170,6 +172,10 @@
   p, li { text-wrap: pretty; }
   a { color: var(--link); text-underline-offset: 0.18em; text-decoration-thickness: 0.07em; }
   a:hover { color: var(--link-hover); }
+  /* A link inside running text is underlined, so colour is never the only cue (WCAG 1.4.1). Descendant,
+     not child: a link wrapped in a <span> counts too. Classed links (buttons, arrow links, the menus,
+     the footer…) style their own underline in the later component layers. */
+  :where(p, li, dd, td, figcaption) a:not([class]) { text-decoration: underline; }
   :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 0.25rem; }
   ::selection { background: var(--color-gold-300); color: var(--color-navy-900); }
   img, svg, video { max-width: 100%; }
@@ -354,6 +360,8 @@
     border: 1px solid var(--line); box-shadow: var(--shadow-pop);
     text-align: left;
   }
+  /* Too little room below the button (it sits near the bottom of the screen): app.js opens the panel upward. */
+  .cal-menu.is-up .cal-menu-panel { top: auto; bottom: calc(100% + 0.5rem); }
   .cal-menu-panel a {
     display: flex; align-items: center; gap: 0.625rem; min-height: 2.75rem;
     padding: 0.5rem 0.75rem; border-radius: 0.5rem;
@@ -366,9 +374,13 @@
   .on-dark .cal-menu-panel a:not(.btn):hover { color: var(--fg); }
   .on-dark .cal-menu-panel :focus-visible { outline-color: var(--focus); }
 
-  /* Share row (full 44 px touch targets, even with btn-sm) */
+  /* Share row (full 44 px touch targets, even with btn-sm). The buttons grow to fill each line, so a
+     wrapped row never leaves one button stranded at the left. */
   .share-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .share-row .btn { min-height: 2.75rem; }
+  .share-row > .btn { flex: 1 1 auto; min-height: 2.75rem; }
+  /* sms: has no handler on most desktop computers; there Safari and Chrome/Edge show the native Share
+     button instead (which reaches Messages). Touch screens keep Text message. */
+  @media (hover: hover) and (pointer: fine) { .share-row .share-sms { display: none; } }
 
   /* Breadcrumb (inner pages) */
   .breadcrumb { display: flex; flex-wrap: wrap; gap: 0.375rem; font-size: 0.875rem; color: rgb(251 245 233 / 0.7); }
@@ -418,6 +430,15 @@
   .page-hero .lead { margin-top: 0.875rem; max-width: 44rem; }
   .page-hero .breadcrumb { margin-bottom: 1rem; }
   .page-hero-meta { margin-top: 1.25rem; }
+  /* Phones held sideways (the same query as the home hero, pages/home.css): a compact hero, so the page's
+     content starts on the first screen. */
+  @media (orientation: landscape) and (max-height: 30rem) {
+    .page-hero { padding-block: 1.25rem 1.5rem; }
+    .page-hero .breadcrumb { margin-bottom: 0.5rem; }
+    .page-hero .h-display { font-size: clamp(1.75rem, 4.5vw, 2.25rem); margin-top: 0.25rem; }
+    .page-hero .lead { margin-top: 0.5rem; }
+    .page-hero-meta { margin-top: 0.75rem; }
+  }
 
   /* ---------- Brand pieces ---------- */
   /* The flyer's title: gold "THE INCREDIBLE" over a cream script "Tapestry". */
@@ -518,6 +539,9 @@
     -webkit-backdrop-filter: saturate(1.4) blur(10px); backdrop-filter: saturate(1.4) blur(10px);
     border-bottom: 1px solid rgb(251 245 233 / 0.08);
   }
+  /* Phones held sideways get the header's 65 px back while reading: it scrolls away with the page
+     (relative, not static, so z-index keeps the open menu above the content). */
+  @media (orientation: landscape) and (max-height: 30rem) { .site-header { position: relative; } }
   .site-header-bar { display: flex; align-items: center; gap: 1rem; min-height: 4rem; }
   .brand { display: inline-flex; align-items: center; gap: 0.625rem; min-width: 0; text-decoration: none; color: var(--color-cream); }
   .on-dark a.brand, .on-dark a.brand:hover { color: var(--color-cream); }
@@ -544,25 +568,46 @@
     font-weight: 600; font-size: 0.9375rem; cursor: pointer;
   }
   .menu-toggle:hover { border-color: rgb(251 245 233 / 0.5); }
+  /* Without JavaScript the Menu control is a link to the footer's list of pages (header.njk); it looks
+     like the button, not like a gold .on-dark link. */
+  .on-dark a.menu-toggle, .on-dark a.menu-toggle:hover { color: var(--color-cream); text-decoration: none; }
   .menu-toggle .icon-close { display: none; }
   .menu-toggle[aria-expanded="true"] .icon-open { display: none; }
   .menu-toggle[aria-expanded="true"] .icon-close { display: inline; }
   .header-cta { display: none; white-space: nowrap; }
   .mobile-menu { border-top: 1px solid rgb(251 245 233 / 0.08); padding-block: 0.5rem 1.25rem; max-height: calc(100dvh - 4rem); overflow-y: auto; }
   .mobile-menu ul { display: grid; gap: 0.125rem; }
+  /* Contact and the language switch: a second list under a hairline, after the site's pages */
+  .mobile-menu .mobile-menu-extra { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgb(251 245 233 / 0.08); }
   .mobile-menu .nav-link { display: flex; width: 100%; font-size: 1.0625rem; padding: 0.75rem 0.75rem; }
   .mobile-menu .nav-link[aria-current]::after { left: 0.75rem; right: auto; width: 2rem; bottom: 0.35rem; }
   .mobile-menu-actions { display: grid; gap: 0.75rem; margin-top: 1rem; }
   @media (min-width: 30rem) { .header-cta { display: inline-flex; } .mobile-menu .mobile-menu-cta { display: none; } }
-  /* The full menu from 64rem (iPad landscape, a 1024 px window even with a 17 px scrollbar): tighter
-     links up to 72rem (the 2px gaps between them drop too, header.njk), the roomier bar above (which
-     also fits a 1152 px window with a scrollbar). Keep the breakpoint in step with --breakpoint-nav and
-     the matchMedia in app.js. */
+  /* Tablets and phones held sideways: the open menu's links sit in three columns (the language switch
+     takes two, so "Página principal en español" fits), so the panel neither leaves most of the screen
+     empty nor needs scrolling on a phone held sideways. */
+  @media (min-width: 40rem) {
+    .mobile-menu ul { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 1rem; }
+    .mobile-menu .mobile-menu-lang { grid-column: span 2; }
+  }
+  /* The full menu from 64rem (iPad landscape, a 1024 px window even with a 17 px scrollbar), when it
+     fits: tighter links up to 72rem (the 2px gaps between them drop too, header.njk), the roomier bar
+     above (which also fits a 1152 px window with a scrollbar). Keep the breakpoint in step with
+     --breakpoint-nav. From 64rem the site name never breaks inside a word: when the full menu does not
+     fit (a browser minimum font size, a user stylesheet that enlarges the text), app.js adds .nav-compact
+     and the header falls back to Join + Menu, as on a tablet. */
   @media (min-width: 64rem) {
     .nav-desktop { display: flex; align-items: center; gap: 0.125rem; margin-left: auto; }
     .nav-actions { margin-left: 0.5rem; }
     .menu-toggle, .mobile-menu { display: none !important; }
+    .site-header .brand, .site-header .brand-name { min-width: auto; }
+    .site-header .brand-name { overflow-wrap: normal; }
   }
+  .site-header.nav-compact .nav-desktop,
+  .site-header.nav-compact .nav-actions > a.nav-link { display: none !important; }
+  .site-header.nav-compact .nav-actions { margin-left: auto; }
+  .site-header.nav-compact .menu-toggle { display: inline-flex !important; }
+  .site-header.nav-compact .mobile-menu:not([hidden]) { display: block !important; }
   @media (min-width: 64rem) and (max-width: 71.999rem) {
     .nav-desktop .nav-link, .nav-actions .nav-link { padding-inline: 0.5rem; }
     .nav-desktop .nav-link[aria-current]::after { left: 0.5rem; right: 0.5rem; }
@@ -621,7 +666,9 @@
     --c-recovery-soft: #fff; --c-unity-soft: #fff; --c-service-soft: #fff;
     color-scheme: light;
   }
-  .site-header, .skip-link, .mobile-menu, .cal-menu, .share-row, .copy-btn, .countdown, .no-print { display: none !important; }
+  /* Controls that do nothing on paper: menus, copy and share buttons, and the Join on Zoom buttons
+     (.js-event-cta; the meeting ID and passcode still print). */
+  .site-header, .skip-link, .mobile-menu, .cal-menu, .share-row, .copy-btn, [data-copy], .js-event-cta, .countdown, .no-print { display: none !important; }
   body { background: #fff; color: #000; font-size: 11pt; }
   .thread-bg, .on-dark, .site-footer, .questions-band { background: #fff !important; color: #000 !important; }
   /* Text inside the navy and purple bands keeps its cream or gold colour unless forced (the overline,
@@ -634,10 +681,15 @@
   .lockup-tapestry { color: #000; text-shadow: none; }
   .card { box-shadow: none; break-inside: avoid; }
   h2, h3 { break-after: avoid; }
-  /* The questions address stays (the one contact on paper); the footer's site map does not. */
-  .questions-band { border-top: 1px solid #999; padding-block: 0.75rem; break-inside: avoid; }
+  /* The questions address stays (the one contact on paper); the footer's site map does not. The band
+     and the legal lines print as one compact block, never split, so the last sheet never holds only a
+     scrap of the legal text. */
+  .questions-band { border-top: 1px solid #999; padding-block: 0.75rem; break-inside: avoid; break-after: avoid; }
+  .questions-band-inner { padding-block: 0.25rem; }
   .questions-band .email-link { text-decoration-color: currentColor !important; }
   .footer-grid { display: none !important; }
-  .footer-legal { border-top: 0 !important; padding-block: 0.5rem 0 !important; font-size: 8pt !important; }
+  .footer-legal { border-top: 0 !important; padding-block: 0.5rem 0 !important; font-size: 8pt !important; gap: 0.3rem; line-height: 1.4; break-inside: avoid; break-before: avoid; }
+  /* On paper the screen's 80ch cap at 8pt only wraps each paragraph into extra lines */
+  .footer-legal p { max-width: none; }
   a[href^="http"]:not(.btn)::after { content: " (" attr(href) ")"; font-size: 0.85em; word-break: break-all; }
 }

@@ -28,7 +28,6 @@ const foldOctets = (ics) => ics
   })
   .join("\r\n");
 
-const capitalize = (s) => String(s || "").charAt(0).toUpperCase() + String(s || "").slice(1);
 // %title, %url in the alarm texts (not {title}: braces are the build's token syntax)
 const fill = (s, map) => String(s || "").replace(/%([a-z]+)/gi, (m, k) => (k in map ? map[k] : m));
 
@@ -56,10 +55,11 @@ export default class {
     // text (plain() from scripts/lib/tokens.mjs). The summary already says that Spanish and ASL
     // interpretation will be provided and event.cost mentions it again, so there is no "Interpretation:" line.
     // event.cost is English only (the Spanish file leaves it out; the Spanish FAQ has the cost answer).
+    // Spanish writes the weekday in lower case, also after the colon ("Cuándo: sábado 12 de diciembre…").
     const description = plain([
       summary,
       "",
-      `${l.when}: ${es ? `${capitalize(when.date.longEs)}, ${when.time.leadLongEs}` : `${when.date.long}, ${when.time.leadLong}`}`,
+      `${l.when}: ${es ? `${when.date.longEs}, ${when.time.leadLongEs}` : `${when.date.long}, ${when.time.leadLong}`}`,
       es ? when.time.startsAlsoEs : when.time.startsAlso,
       `${l.joinZoom}: ${ev.zoom.joinUrl}`,
       `${l.meetingId}: ${ev.zoom.meetingId}`,
@@ -90,7 +90,7 @@ export default class {
       status: ev.status === "cancelled" ? "CANCELLED" : ev.status === "postponed" ? "TENTATIVE" : "CONFIRMED",
       busyStatus: "BUSY",
       categories: ["A.A.", "Workshop", "Three Legacies"],
-      ...(site.contact.email && site.contact.icsOrganizer === true ? { organizer: { name: site.contact.committee, email: site.contact.email } } : {}),
+      ...(site.contact.email && site.contact.icsOrganizer === true ? { organizer: { name: (es && site.contact.committeeEs) || site.contact.committee, email: site.contact.email } } : {}),
       alarms: [
         { action: "display", description: plain(fill(c.alarmTomorrow, { title, url: ev.zoom.joinUrl })), trigger: { hours: 24, minutes: 0, before: true } },
         { action: "display", description: plain(fill(c.alarmSoon, { title, url: ev.zoom.joinUrl })), trigger: { hours: 0, minutes: 30, before: true } },

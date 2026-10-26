@@ -1,5 +1,5 @@
 {#- Share buttons: native share where the browser has it, then copy link, email, WhatsApp and text
-    message. The message names the event, the date and time, Zoom and interpretation, so it reads on its
+    message (on touch screens only: desktop computers have no sms: handler, main.css). The message names the event, the date and time, Zoom and interpretation, so it reads on its
     own without a link preview. Optional before the include: sharePath (default: this language's home). -#}
 {%- set sEs = lang == "es" -%}
 {%- set shareUrl = (sharePath or ("/es/" if sEs else "/")) | absUrl -%}
@@ -10,5 +10,5 @@
   <button type="button" class="btn btn-outline btn-sm" data-copy="{{ shareUrl }}" data-copied="{{ t.share.copied }}">{% icon "link", "icon" %}<span>{{ t.share.copyLink }}</span></button>
   <a class="btn btn-outline btn-sm" href="mailto:?subject={{ shareTitle | urlencode }}&amp;body={{ (shareText + '\n\n' + shareUrl) | urlencode }}">{% icon "mail", "icon" %}<span>{{ t.share.email }}</span></a>
   <a class="btn btn-outline btn-sm" href="https://wa.me/?text={{ (shareText + ' ' + shareUrl) | urlencode }}" target="_blank" rel="noopener">{% icon "message-circle", "icon" %}<span>{{ t.share.whatsapp }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
-  <a class="btn btn-outline btn-sm" href="sms:?&amp;body={{ (shareText + ' ' + shareUrl) | urlencode }}">{% icon "message-square", "icon" %}<span>{{ t.share.text }}</span></a>
+  <a class="btn btn-outline btn-sm share-sms" href="sms:?&amp;body={{ (shareText + ' ' + shareUrl) | urlencode }}">{% icon "message-square", "icon" %}<span>{{ t.share.text }}</span></a>
 </div>

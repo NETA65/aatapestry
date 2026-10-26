@@ -1,11 +1,14 @@
-{#- Site header (always the flyer's dark navy). Wide screens (from 1024 px): logo, the menu, the language
-    switch and the Join button. Narrower: logo, Join (from 480 px) and a Menu button that opens the same links
-    (app.js; without JavaScript the menu button is hidden and the footer carries every link). The Join
-    buttons (.js-event-cta) go away once the workshop has ended (main.css). -#}
+{#- Site header (always the flyer's dark navy). Wide screens (from 1024 px, when it fits): logo, the menu,
+    the language switch and the Join button. Narrower (or when the full menu does not fit, app.js →
+    .nav-compact): logo, Join (from 480 px) and a Menu button that opens the same links plus Contact (the
+    footer's questions band) and the language switch. Without JavaScript the Menu control is a link to the
+    footer's list of pages (app.js swaps in the button once the menu works). The Join buttons
+    (.js-event-cta) go away once the workshop has ended (main.css). -#}
 {%- set items = nav[lang].main -%}
 {%- set homeHref = "/es/" if lang == "es" else "/" -%}
 {#- The language switch goes to this page's twin; on the English-only pages (the study pages, the 404)
-    it goes to the Spanish home page, and the menu's longer label says so. -#}
+    it goes to the Spanish home page, and the menu's longer label says so. Links to the twin carry
+    data-lang-switch: app.js adds the current #section to them (both languages use the same ids). -#}
 {%- set switchHref = page.url | langUrl(otherLang) -%}
 {%- set switchToHome = otherLang == "es" and switchHref == "/es/" and page.url != "/" -%}
 {#- aria-current: "page" on the page itself, "true" on its section (the study pages under 36 Principles,
@@ -25,10 +28,12 @@
     </nav>
 
     <div class="nav-actions">
-      <a href="{{ switchHref }}" class="nav-link hidden nav:inline-flex" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon" %}<span>{{ t.switchLabel }}</span></a>
+      <a href="{{ switchHref }}" class="nav-link hidden nav:inline-flex" lang="{{ otherLang }}" hreflang="{{ otherLang }}"{% if not switchToHome %} data-lang-switch{% endif %}>{% icon "languages", "icon" %}<span>{{ t.switchLabel }}</span></a>
       <a href="{{ site.event.zoom.joinUrl }}" class="btn btn-primary btn-sm header-cta js-event-cta" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
-      {#- The button's name stays "Menu" (aria-expanded says whether it is open; only the icon changes).
-          The word shows from 768 px; on phones the button is icon-only, so the site name keeps its room. -#}
+      {#- The Menu control's name stays "Menu" (aria-expanded says whether it is open; only the icon changes).
+          The word shows from 768 px; on phones it is icon-only, so the site name keeps its room. The link
+          (no JavaScript) and the button look the same, so swapping them does not move anything. -#}
+      <a href="#site-nav-footer" class="menu-toggle" data-menu-fallback>{% icon "menu", "icon" %}<span class="sr-only min-[48rem]:not-sr-only">{{ t.a11y.menu }}</span></a>
       <button type="button" class="menu-toggle" data-menu-toggle aria-expanded="false" aria-controls="site-menu" hidden>
         {% icon "menu", "icon icon-open" %}{% icon "x", "icon icon-close" %}
         <span class="sr-only min-[48rem]:not-sr-only">{{ t.a11y.menu }}</span>
@@ -42,7 +47,11 @@
         <ul>
           <li><a href="{{ homeHref }}" class="nav-link"{% if page.url == homeHref %} aria-current="page"{% endif %}>{{ t.nav.home }}</a></li>
           {% for item in items %}<li><a href="{{ item.href }}" class="nav-link"{{ current(item.href) }}>{{ t.nav[item.key] }}</a></li>{% endfor %}
-          <li><a href="{{ switchHref }}" class="nav-link" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon" %}<span>{{ t.switchLabelHome if switchToHome else t.switchLabelLong }}</span></a></li>
+        </ul>
+        <ul class="mobile-menu-extra">
+          {#- Contact: the footer's questions band (shown only when there is an address, as in footer.njk). -#}
+          {% if site.contact.email %}<li><a href="#questions-band-label" class="nav-link">{% icon "mail", "icon" %}<span>{{ t.nav.contact }}</span></a></li>{% endif %}
+          <li class="mobile-menu-lang"><a href="{{ switchHref }}" class="nav-link" lang="{{ otherLang }}" hreflang="{{ otherLang }}"{% if not switchToHome %} data-lang-switch{% endif %}>{% icon "languages", "icon" %}<span>{{ t.switchLabelHome if switchToHome else t.switchLabelLong }}</span></a></li>
         </ul>
       </nav>
       <div class="mobile-menu-actions mobile-menu-cta js-event-cta">
@@ -51,4 +60,3 @@
     </div>
   </div>
 </header>
-<script>document.querySelector("[data-menu-toggle]").hidden=false</script>
