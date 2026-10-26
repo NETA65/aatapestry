@@ -1,5 +1,5 @@
 {
-  "_readme": "The home page (/ and /es/). en and es must have the same keys. Plain text unless marked: essentials.*.body and about.body accept simple Markdown (bold, links). Write the date, times, Zoom numbers and the email only as tokens ({date}, {start}, {startEs}, {zoomId}, {passcode}, {email}…). The page title and the hero's overline/subtitle come from i18n.json → landing; the date, the times and the Zoom numbers from site.json.",
+  "_readme": "The home page (/ and /es/). en and es must have the same keys. Plain text unless marked: essentials.*.body and about.body accept simple Markdown (bold, links); in the Spanish essentials, *italics* are kept for Zoom's English button names (the page marks them as English). about.programCtaPending labels the program button until schedule.json is published with sessions; about.programCta labels it after. Write the date, times, Zoom numbers and the email only as tokens ({date}, {start}, {startEs}, {zoomId}, {passcode}, {email}…). The page title and the hero's overline/subtitle come from i18n.json → landing; the date, the times and the Zoom numbers from site.json.",
   "en": {
     "hero": {
       "the": "The",
@@ -38,7 +38,7 @@
         "concepts": "How the Fellowship serves: the principles that carry the message worldwide."
       },
       "programCta": "See the program",
-      "programNote": "The full program will be posted on this website shortly.",
+      "programCtaPending": "The day at a glance",
       "principlesCta": "Explore the 36 principles"
     },
     "flyer": {
@@ -87,7 +87,7 @@
         "concepts": "Cómo sirve la Comunidad: los principios que llevan el mensaje a todo el mundo."
       },
       "programCta": "Ver el programa",
-      "programNote": "El programa completo se publicará en este sitio web en breve.",
+      "programCtaPending": "El día de un vistazo",
       "principlesCta": "Los 36 principios (en inglés)"
     },
     "flyer": {

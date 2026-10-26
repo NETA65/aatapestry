@@ -22,11 +22,15 @@ eleventyComputed:
 {% set c = pagecopy.home[lang] %}
 {% set es = lang == "es" %}
 {% set p = "/es" if es else "" %}
+{#- In the Spanish copy, *italics* are Zoom's English button names: mark them as English for screen readers. -#}
+{% set em = '<em lang="en">' if es else "<em>" %}
+{#- The program counts as published only once it has sessions (the same test as program.njk). -#}
+{% set programPublished = schedule.status == "published" and schedule.sessions and schedule.sessions.length %}
 
 {# ============ HERO: the flyer, as a web page ============ #}
 <section class="home-hero thread-bg on-dark">
   <div class="container-page home-hero-inner">
-    <p class="home-hero-lang"><a href="{{ page.url | langUrl(otherLang) }}" class="chip" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon icon-sm" %}<span>{{ c.hero.langPill }}</span></a></p>
+    <p class="home-hero-lang no-print"><a href="{{ page.url | langUrl(otherLang) }}" class="chip" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon icon-sm" %}<span>{{ c.hero.langPill }}</span></a></p>
 
     <div class="home-hero-top">
       {% inlineSvg "src/assets/img/logo.svg", "home-hero-logo", c.hero.logoAlt %}
@@ -51,7 +55,7 @@ eleventyComputed:
 
     <div class="home-when">{% include "partials/when-bar.njk" %}</div>
 
-    <div class="btn-row home-actions">
+    <div class="btn-row home-actions no-print">
       <a href="{{ site.event.zoom.joinUrl }}" class="btn btn-primary btn-lg js-event-cta" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
       {% set calClass = "btn btn-outline btn-lg" %}{% include "partials/calendar-menu.njk" %}
     </div>
@@ -75,21 +79,21 @@ eleventyComputed:
       <article class="card essential essential--zoom" data-legacy="recovery">
         <span class="card-icon">{% icon "video", "icon" %}</span>
         <h3 class="h-card">{{ c.essentials.zoom.title }}</h3>
-        <p class="essential-body">{{ c.essentials.zoom.body | tokens | mdInline | safe }}</p>
+        <p class="essential-body">{{ c.essentials.zoom.body | tokens | mdInline | replace("<em>", em) | safe }}</p>
         {% set zoomActions = true %}{% set zoomJoinSize = "" %}{% include "partials/zoom-details.njk" %}
-        {{ ui.arrowLink(p + "/join/", c.essentials.zoom.link, "mt-auto pt-5") }}
+        <p class="essential-more">{{ ui.arrowLink(p + "/join/", c.essentials.zoom.link) }}</p>
       </article>
       <article class="card essential" data-legacy="unity">
         <span class="card-icon">{% icon "languages", "icon" %}</span>
         <h3 class="h-card">{{ c.essentials.interpretation.title }}</h3>
-        <p class="essential-body">{{ c.essentials.interpretation.body | tokens | mdInline | safe }}</p>
-        {{ ui.arrowLink(p + "/join/#interpretation", c.essentials.interpretation.link, "mt-auto pt-5") }}
+        <p class="essential-body">{{ c.essentials.interpretation.body | tokens | mdInline | replace("<em>", em) | safe }}</p>
+        <p class="essential-more">{{ ui.arrowLink(p + "/join/#interpretation", c.essentials.interpretation.link) }}</p>
       </article>
       <article class="card essential" data-legacy="service">
         <span class="card-icon">{% icon "heart-handshake", "icon" %}</span>
         <h3 class="h-card">{{ c.essentials.free.title }}</h3>
-        <p class="essential-body">{{ c.essentials.free.body | tokens | mdInline | safe }}</p>
-        {{ ui.arrowLink(p + "/faq/#faq-cost", c.essentials.free.link, "mt-auto pt-5") }}
+        <p class="essential-body">{{ c.essentials.free.body | tokens | mdInline | replace("<em>", em) | safe }}</p>
+        <p class="essential-more">{{ ui.arrowLink(p + "/faq/#faq-cost", c.essentials.free.link) }}</p>
       </article>
     </div>
   </div>
@@ -103,11 +107,12 @@ eleventyComputed:
       <h2 class="h-section mt-3" id="about-title">{{ c.about.heading }}</h2>
       <div class="prose lead mt-5">{{ c.about.body | tokens | md | safe }}</div>
       <p class="mt-4 text-muted">{{ c.about.audience | tokens }}</p>
-      <div class="btn-row mt-7">
-        <a href="{{ p }}/program/" class="btn btn-primary">{% icon "clipboard-list", "icon" %}<span>{{ c.about.programCta }}</span></a>
+      {#- Until the program is published, the button names what /program/ shows now (its "The day at a glance"),
+          and /program/ itself says the full program is coming. -#}
+      <div class="btn-row mt-7 no-print">
+        <a href="{{ p }}/program/" class="btn btn-primary">{% icon "clipboard-list", "icon" %}<span>{{ c.about.programCta if programPublished else c.about.programCtaPending }}</span></a>
         <a href="/principles/" class="btn btn-outline"{% if es %} hreflang="en"{% endif %}>{% icon "layers", "icon" %}<span>{{ c.about.principlesCta }}</span></a>
       </div>
-      {% if schedule.status != "published" %}<p class="text-sm text-muted mt-3">{{ c.about.programNote }}</p>{% endif %}
     </div>
     <div class="threads">
       <h3 class="sr-only">{{ c.about.threadsLabel }}</h3>
@@ -118,16 +123,17 @@ eleventyComputed:
         {% set k = threadKeys[l.key] %}
         <li class="thread" data-legacy="{{ l.key }}">
           <span class="thread-icon">{% icon threadIcons[l.key], "icon" %}</span>
-          <div>
+          <div class="thread-body">
             <p class="thread-name">{{ t.legacies[k + "Short"] }} <span class="thread-legacy"><span class="thread-dot" aria-hidden="true">·&nbsp;</span>{{ t.legacies[l.key] }}</span></p>
             <p class="thread-text">{{ c.about.threads[k] }}</p>
           </div>
         </li>
         {% endfor %}
       </ul>
-      {#- One unbreakable span per item, so a line never starts with "·"; the text read out is unchanged. -#}
+      {#- One unbreakable span per item, with its "·" glued on by a no-break space (very narrow screens let an
+          item wrap between its words, home.css), so a line never starts with "·"; the text read out is unchanged. -#}
       {% set burstItems = t.labels.presentationsBurst.split(" · ") %}
-      <p class="burst">{% for item in burstItems %}<span class="burst-item">{{ item }}{% if not loop.last %} ·{% endif %}</span>{% if not loop.last %} {% endif %}{% endfor %}</p>
+      <p class="burst">{% for item in burstItems %}<span class="burst-item">{{ item }}{% if not loop.last %}&nbsp;·{% endif %}</span>{% if not loop.last %} {% endif %}{% endfor %}</p>
     </div>
   </div>
 </section>
@@ -145,7 +151,7 @@ eleventyComputed:
     <div>
       <h2 class="h-section" id="share-title">{{ c.flyer.heading }}</h2>
       <p class="lead mt-4">{{ c.flyer.body }}</p>
-      <div class="btn-row mt-6">
+      <div class="btn-row mt-6 no-print">
         <a href="{{ fl.pdf }}" class="btn btn-primary" download>{% icon "download", "icon" %}<span>{{ c.flyer.download }}</span></a>
         {{ ui.arrowLink(p + "/flyer/", c.flyer.more) }}
       </div>
