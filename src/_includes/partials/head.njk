@@ -46,8 +46,14 @@
 <link rel="apple-touch-icon" href="/brand/favicon/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="alternate" type="text/calendar" title="{{ t.calendar.title | tokens | plain }}" href="{{ calendar.ics[lang] }}">
-{# The updates feed (src/pages/feed.njk, entries in src/_data/feed.json): advertised only while it exists. #}
-{% if feed and feed.items and feed.items.length %}<link rel="alternate" type="application/atom+xml" title="{{ site.name }} — updates" href="/feed.xml">{% endif %}
+{% if isHome %}
+{#- Links into the old one-page site (/#join, /es/#unirse …) still circulate in emails and announcements.
+    GitHub Pages cannot redirect a #fragment, so send each old section to its new page before anything paints. -#}
+<script>(function(){var h=location.hash.slice(1);if(!h)return;var m={{ ({
+  "en": { "join": "/join/", "zoom": "/join/", "accessibility": "/join/#interpretation", "program": "/program/", "schedule": "/program/", "faq": "/faq/", "questions": "/faq/", "contribute": "/faq/#faq-cost", "seventh": "/faq/#faq-cost", "flyer": "/flyer/", "share": "#share-title", "at-a-glance": "#essentials-title", "updates": "#essentials-title", "about": "#about-title", "legacies": "/principles/#legacies", "thirty-six": "/principles/", "meeting": "/principles/" },
+  "es": { "unirse": "/es/join/", "zoom": "/es/join/", "interpretacion": "/es/join/#interpretation", "programa": "/es/program/", "faq": "/es/faq/", "preguntas": "/es/faq/", "septima": "/es/faq/#faq-cost", "volante": "/es/flyer/", "compartir": "#share-title", "datos": "#essentials-title", "legados": "#about-title" }
+})[lang] | dump | safe }}[h];if(m)location.replace(m.charAt(0)==="#"?location.pathname+m:m)})()</script>
+{% endif %}
 
 <link rel="preload" href="/assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/fraunces-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>

@@ -77,8 +77,15 @@ jobs:
           ELEVENTY_RUN_MODE: build
 
       - name: Poster PDF + PNG (the site still deploys if this fails)
+        id: pdf
         run: npm run pdf
         continue-on-error: true
+
+      - name: Warn when the committed poster files were published instead
+        if: steps.pdf.outcome == 'failure'
+        run: |
+          echo "::warning::npm run pdf failed; this deploy ships the committed brand/poster files. Check they still match /poster/ and /es/poster/."
+          echo "- ⚠️ Poster PDF/PNG step failed: the committed brand/poster files were published." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate HTML and internal links
         run: npm test

@@ -36,10 +36,11 @@ Each piece of information lives on exactly one page; the others link to it.
 | `/faq/` | `/es/faq/` | Questions and answers, grouped, including cost and contributions (`#faq-cost`) |
 | `/poster/` | `/es/poster/` | Printer-friendly poster (light background, Letter and A4) with QR codes; PDF/PNG downloads |
 | `/principles/`, `/principles/1/` … `/12/` | — | The 36 principles side by side, one page per number (English only) |
-| `/aatapestry-workshop.ics` | | Calendar file (stable UID; SEQUENCE bumps when the Zoom details change) |
+| `/aatapestry-workshop.ics` | `/es/aatapestry-workshop.ics` | Calendar file (same UID and SEQUENCE in both languages, so re-importing either updates one entry; SEQUENCE bumps when the Zoom details change) |
 
 Old addresses forward to their new home: `/schedule/` → `/program/`, `/accessibility/` →
-`/join/#interpretation`, `/meeting/` → `/principles/`. Also generated: `/sitemap.xml`, `/robots.txt`,
+`/join/#interpretation`, `/meeting/` → `/principles/`, and links into sections of the old one-page home
+(`/#join`, `/es/#unirse`, …) go to the page that now holds that section. Also generated: `/sitemap.xml`, `/robots.txt`,
 `/manifest.webmanifest`, `/404.html`.
 
 The questions address is printed once on every page, in the purple band at the top of the footer

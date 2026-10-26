@@ -24,6 +24,7 @@ eleventyComputed:
     screens, to its left on wide ones), so screen readers also hear "11:00 AM ET, Workshop begins".
     This page owns the times and the calendar; the Zoom details live on /join/ (one link here).
     Copy: src/_data/pagecopy/program.json (c) and i18n (t); times from when.js. -#}
+{% import "macros/ui.njk" as ui %}
 {% set c = pagecopy.program[lang] %}
 {% set es = lang == "es" %}
 {% set p = "/es" if es else "" %}
@@ -45,7 +46,7 @@ eleventyComputed:
       <div class="program-head">
         <h2 class="h-section" id="day-title">{{ c.timeline.heading }}</h2>
         <p class="program-tz">{% icon "clock", "icon icon-sm" %}<span>{{ c.timeline.allTimes }}</span></p>
-        <p class="program-tz-jump"><a href="#time-zones" class="link-arrow">{{ c.timeline.zonesLink }}{% icon "arrow-down", "icon icon-sm" %}</a></p>
+        <p class="program-tz-jump">{{ ui.arrowLink("#time-zones", c.timeline.zonesLink, "", "arrow-down") }}</p>
       </div>
 
       <ol class="tl" role="list">

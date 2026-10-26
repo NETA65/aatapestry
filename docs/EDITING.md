@@ -42,7 +42,7 @@ link to it.
 | `event.timezoneShort`, `event.timezoneLabel`, `event.timezoneLabelEs` | `ET`, `Eastern Time`, `hora del Este`. Typed, not computed: change them together with `event.timezone`. Never "EDT": December is standard time |
 | `event.status` | `scheduled` · `postponed` · `cancelled` — the schema.org and .ics status |
 | `event.announced` | the date the workshop was first announced (search-engine data) |
-| `event.cost`, `event.audience` | the .ics description and search-engine data (plain text) |
+| `event.cost`, `event.audience`, `event.audienceEs` | the .ics description and search-engine data (plain text; `audienceEs` is the Spanish audience for the Spanish pages' data) |
 | `event.interpretation` | Spanish (`es`) and ASL (`asl`) labels used by the poster and flyer text |
 | `event.zoom.*` | meeting ID, passcode, join link, dial-in numbers → every Join button, the Zoom details on the home page and *How to join*, the poster, the **QR code**, the .ics file, the calendar links, JSON-LD, the `{zoomId}`/`{passcode}` tokens. Easier: Actions → *Update Zoom info*. The printed flyer does **not** follow (see *The official flyer*) |
 | `event.calendarSequence` | bumped automatically when Zoom details change; bump it by hand if you change the date or time, so re-importing `/aatapestry-workshop.ics` updates an existing entry. Google, Outlook.com, Microsoft 365 and Yahoo links always add a new entry, so the site asks people to delete the old one first |
@@ -84,6 +84,13 @@ and the flyer image are written out in full, so check those by hand whenever a f
   session has `start` and `end` (`HH:MM`, Eastern), `title`, `titleEs`, `summary`, `summaryEs`,
   `legacy` (`recovery` · `unity` · `service` · `all`, which colours the row) and `kind` (`opening` ·
   `talk` · `session` · `break` · `closing`). Enter only what the committee has announced.
+
+## Calendar entries
+
+The *Add to calendar* menus and both calendar files (`/aatapestry-workshop.ics`, `/es/aatapestry-workshop.ics`)
+take their title, description, labels and reminder texts from `i18n.json → en/es.calendar` (`title`,
+`details`, `questionsLabel`, `detailsLabel`, `alarmTomorrow`, `alarmSoon`; the reminders use `%title`
+and `%url`), and the date, time and Zoom details from `site.json`.
 
 ## The notice about the Zoom link
 

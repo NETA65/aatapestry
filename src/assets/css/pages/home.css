@@ -4,10 +4,6 @@
   /* Clip sideways only: the open "Add to calendar" panel must be free to hang below the hero, over the
      next section, or its last links can't be tapped. */
   .home-hero { overflow-x: clip; }
-  /* The calendar panel is a light card even inside this dark hero: keep its links and focus ring in the
-     card's own colours, not the gold that .on-dark gives links on the navy. */
-  .home-hero .cal-menu-panel a:not(.btn), .home-hero .cal-menu-panel a:not(.btn):hover { color: var(--fg); }
-  .home-hero .cal-menu-panel :focus-visible { outline-color: var(--focus); }
   .home-hero-inner {
     display: flex; flex-direction: column; align-items: center; text-align: center;
     padding-block: clamp(1.25rem, 3vw, 2rem) clamp(2.75rem, 6vw, 4.5rem);

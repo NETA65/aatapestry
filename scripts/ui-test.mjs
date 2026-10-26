@@ -192,6 +192,20 @@ for (const url of pages) {
           if (scheme === schemes[0]) {
             const r = await page.$eval("details.cal-menu .cal-menu-panel", (p) => { const b = p.getBoundingClientRect(); return { left: b.left, right: b.right, vw: document.documentElement.clientWidth }; });
             if (r.left < 0 || r.right > r.vw) fail(where, `Add to calendar menu off screen (left ${Math.round(r.left)}, right ${Math.round(r.right)}, viewport ${r.vw})`);
+            // Every item must be tappable: nothing (a clipping ancestor, the next section) may cover it.
+            const blocked = await page.evaluate(() => {
+              document.documentElement.style.scrollBehavior = "auto"; // smooth scrolling would fake "blocked" results
+              const out = [];
+              for (const a of document.querySelectorAll("details.cal-menu[open] .cal-menu-panel a")) {
+                a.scrollIntoView({ block: "center" });
+                const b = a.getBoundingClientRect();
+                const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
+                if (!hit || !a.contains(hit)) out.push(a.textContent.trim());
+              }
+              document.documentElement.style.scrollBehavior = "";
+              return out;
+            });
+            for (const label of blocked) fail(where, `Add to calendar item "${label}" is covered or clipped and cannot be tapped`);
           }
           await page.keyboard.press("Tab"); // keyboard focus on the first item, so :focus-visible applies
           const low = await page.evaluate(() => {

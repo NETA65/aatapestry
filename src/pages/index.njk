@@ -18,6 +18,7 @@ eleventyComputed:
 {#- The home page, / and /es/: the flyer as a web page (logo, title, date, times, Join + Add to calendar),
     then the three things people need (Zoom, interpretation, cost), what the day is, and the flyer to
     share. Every other detail has its own page. Copy: src/_data/pagecopy/home.json (c) and i18n (t). -#}
+{% import "macros/ui.njk" as ui %}
 {% set c = pagecopy.home[lang] %}
 {% set es = lang == "es" %}
 {% set p = "/es" if es else "" %}
@@ -51,7 +52,7 @@ eleventyComputed:
     <div class="home-when">{% include "partials/when-bar.njk" %}</div>
 
     <div class="btn-row home-actions">
-      <a href="{{ site.event.zoom.joinUrl }}" class="btn btn-primary btn-lg" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+      <a href="{{ site.event.zoom.joinUrl }}" class="btn btn-primary btn-lg js-event-cta" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
       {% set calClass = "btn btn-outline btn-lg" %}{% include "partials/calendar-menu.njk" %}
     </div>
 
@@ -76,19 +77,19 @@ eleventyComputed:
         <h3 class="h-card">{{ c.essentials.zoom.title }}</h3>
         <p class="essential-body">{{ c.essentials.zoom.body | tokens | mdInline | safe }}</p>
         {% set zoomActions = true %}{% set zoomJoinSize = "" %}{% include "partials/zoom-details.njk" %}
-        <a href="{{ p }}/join/" class="link-arrow mt-auto pt-5">{{ c.essentials.zoom.link }}{% icon "arrow-right", "icon icon-sm" %}</a>
+        {{ ui.arrowLink(p + "/join/", c.essentials.zoom.link, "mt-auto pt-5") }}
       </article>
       <article class="card essential" data-legacy="unity">
         <span class="card-icon">{% icon "languages", "icon" %}</span>
         <h3 class="h-card">{{ c.essentials.interpretation.title }}</h3>
         <p class="essential-body">{{ c.essentials.interpretation.body | tokens | mdInline | safe }}</p>
-        <a href="{{ p }}/join/#interpretation" class="link-arrow mt-auto pt-5">{{ c.essentials.interpretation.link }}{% icon "arrow-right", "icon icon-sm" %}</a>
+        {{ ui.arrowLink(p + "/join/#interpretation", c.essentials.interpretation.link, "mt-auto pt-5") }}
       </article>
       <article class="card essential" data-legacy="service">
         <span class="card-icon">{% icon "heart-handshake", "icon" %}</span>
         <h3 class="h-card">{{ c.essentials.free.title }}</h3>
         <p class="essential-body">{{ c.essentials.free.body | tokens | mdInline | safe }}</p>
-        <a href="{{ p }}/faq/#faq-cost" class="link-arrow mt-auto pt-5">{{ c.essentials.free.link }}{% icon "arrow-right", "icon icon-sm" %}</a>
+        {{ ui.arrowLink(p + "/faq/#faq-cost", c.essentials.free.link, "mt-auto pt-5") }}
       </article>
     </div>
   </div>
@@ -146,7 +147,7 @@ eleventyComputed:
       <p class="lead mt-4">{{ c.flyer.body }}</p>
       <div class="btn-row mt-6">
         <a href="{{ fl.pdf }}" class="btn btn-primary" download>{% icon "download", "icon" %}<span>{{ c.flyer.download }}</span></a>
-        <a href="{{ p }}/flyer/" class="link-arrow">{{ c.flyer.more }}{% icon "arrow-right", "icon icon-sm" %}</a>
+        {{ ui.arrowLink(p + "/flyer/", c.flyer.more) }}
       </div>
       <div class="mt-6">{% set sharePath = "" %}{% include "partials/share.njk" %}</div>
     </div>

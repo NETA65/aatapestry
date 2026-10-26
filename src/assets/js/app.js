@@ -99,7 +99,8 @@
     const sameDay = start.toDateString() === end.toDateString();
     const localDay = start.toLocaleDateString("en-CA");
     const eventDay = String(el.dataset.start).slice(0, 10);
-    let text = `${fmtTime(start)}${NB}–⁠${NB}${fmtTime(end)}${NB}${zone}`;
+    // Each time and its zone stay whole; the range may break after its dash on a narrow card or a large font.
+    let text = `${fmtTime(start)}${NB}– ${fmtTime(end)}${NB}${zone}`;
     if (!sameDay) text = `${dateFmt.format(start)}, ${fmtTime(start)} – ${dateFmt.format(end)}, ${fmtTime(end)}${NB}${zone}`;
     else if (el.dataset.withDate || localDay !== eventDay) text = `${dateFmt.format(start)}, ${text}`;
     (el.querySelector("[data-local-value]") || el).textContent = text;
