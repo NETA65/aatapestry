@@ -1,0 +1,123 @@
+{
+  "_readme": "The flyer page (/flyer/ and /es/flyer/): the committee's official flyer (English), its downloads, the printable posters and the flyer's full text. en and es must have the same keys. Plain text unless noted: englishNote, stale.text and text.body accept simple Markdown. Write the date, times, Zoom numbers and file sizes only as tokens ({date}, {time}, {start}, {startEs}, {pdfSize}, {jpgSize}, {domain}…); the Zoom ID, passcode and link in the flyer's text come from site.json. Never write {email} here: the footer prints the address on every page, so the flyer's text links to it (i18n contact.linkText).",
+  "en": {
+    "meta": {
+      "title": "The official flyer",
+      "description": "The official flyer for The Incredible Tapestry, a free 1-day online A.A. workshop on {date}, {timeShort}. Download it as a PDF or a print-quality image, or print the light-background poster."
+    },
+    "hero": {
+      "eyebrow": "Spread the word",
+      "title": "The official flyer",
+      "crumb": "Flyer",
+      "lead": "Download it, print it for your home group’s bulletin board, or pass it along to your sponsees, district and intergroup."
+    },
+    "englishNote": "",
+    "stale": {
+      "text": "The Zoom details printed on this flyer are out of date.",
+      "link": "Use the current details on How to join"
+    },
+    "image": {
+      "alt": "The official flyer for The Incredible Tapestry, a 1-day online A.A. workshop on {date}, {time}, on Zoom (opens the full-size image)",
+      "caption": "Select the flyer to open it full size."
+    },
+    "downloads": {
+      "heading": "Download the flyer",
+      "pdf": "Flyer (PDF)",
+      "pdfMeta": "1 page · Letter size · {pdfSize}",
+      "jpg": "Print-quality image (JPG)",
+      "jpgMeta": "300 dpi · {jpgSize}"
+    },
+    "posters": {
+      "heading": "Printable poster",
+      "body": "A light-background version that’s easy on a home printer, with QR codes for Zoom and this website.",
+      "letter": "Poster (PDF, Letter)",
+      "letterMeta": "8.5 × 11 in",
+      "a4": "Poster (PDF, A4)",
+      "a4Meta": "210 × 297 mm",
+      "png": "Poster image (PNG)",
+      "pngMeta": "300 dpi",
+      "view": "Preview and print the poster",
+      "other": "Póster en español"
+    },
+    "share": {
+      "heading": "Share the flyer"
+    },
+    "text": {
+      "summary": "Read the flyer’s text",
+      "hint": "For screen readers, translation tools and anyone who prefers text",
+      "overline": "A 1-day online workshop",
+      "title": "The Incredible Tapestry",
+      "subline": "How the Steps, Traditions and Concepts weave this incredible tapestry",
+      "body": "Come join us for a 1-day, online Incredible Tapestry workshop similar to the Tapestry meetings held previously in Raynham, Mass. Starting at {start}, there will be a series of presentations which look at how the Steps, Traditions and Concepts weave this incredible tapestry with plenty of time for sharing and asking questions.",
+      "strands": "Steps · Traditions · Concepts",
+      "burst": "Presentations · Sharing · Questions and more!",
+      "cost": "The meeting is free, but there will be some expenses for interpretation, which will be provided in Spanish and ASL, and contributions will be welcomed. No pre-registration is required.",
+      "zoomId": "Zoom ID",
+      "passcode": "Passcode",
+      "link": "Link",
+      "program": "The program will be available on the website, {domain}, shortly.",
+      "programLink": "See the program",
+      "questions": "For questions:"
+    }
+  },
+  "es": {
+    "meta": {
+      "title": "El volante oficial",
+      "description": "Volante oficial (en inglés) del taller The Incredible Tapestry, {dateEs}, {timeShortEs}, con su texto completo en español. Se puede descargar en PDF o como imagen, y hay un póster imprimible en español."
+    },
+    "hero": {
+      "eyebrow": "Correr la voz",
+      "title": "El volante oficial",
+      "crumb": "Volante",
+      "lead": "Descárguelo, imprímalo para la cartelera de su grupo base o compártalo con sus ahijados, su distrito y la oficina intergrupal."
+    },
+    "englishNote": "El volante oficial está en inglés. En esta página puede [leer su texto completo en español](#flyer-text), y también hay un [póster imprimible en español](/es/poster/).",
+    "stale": {
+      "text": "Los datos de Zoom impresos en este volante ya no están vigentes.",
+      "link": "Use los datos actuales de Cómo unirse"
+    },
+    "image": {
+      "alt": "Volante oficial (en inglés) de The Incredible Tapestry, un taller de A.A. en línea de un día, el {dateEs}, {timeEs}, por Zoom (abre la imagen en tamaño completo)",
+      "caption": "Toque o haga clic en el volante para verlo en tamaño completo."
+    },
+    "downloads": {
+      "heading": "Descargar el volante",
+      "pdf": "Volante (PDF, en inglés)",
+      "pdfMeta": "1 página · tamaño carta · {pdfSize}",
+      "jpg": "Imagen para imprimir (JPG)",
+      "jpgMeta": "300 dpi · {jpgSize}"
+    },
+    "posters": {
+      "heading": "Póster imprimible en español",
+      "body": "Una versión en español con fondo claro, que gasta poca tinta, con códigos QR para Zoom y para este sitio web.",
+      "letter": "Póster (PDF, carta)",
+      "letterMeta": "8,5 × 11 pulgadas",
+      "a4": "Póster (PDF, A4)",
+      "a4Meta": "210 × 297 mm",
+      "png": "Póster en imagen (PNG)",
+      "pngMeta": "300 dpi",
+      "view": "Ver e imprimir el póster",
+      "other": "Poster in English"
+    },
+    "share": {
+      "heading": "Compartir el volante"
+    },
+    "text": {
+      "summary": "Leer el texto del volante",
+      "hint": "En español, para lectores de pantalla, traductores y quien prefiera leer el texto",
+      "overline": "Un taller en línea de un día",
+      "title": "The Incredible Tapestry",
+      "subline": "Cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz",
+      "body": "Los invitamos a acompañarnos en The Incredible Tapestry, un taller en línea de un día parecido a las reuniones Tapestry que se realizaron anteriormente en Raynham, Massachusetts. A partir de las {startEs}, habrá una serie de presentaciones sobre cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz, con bastante tiempo para compartir y hacer preguntas.",
+      "strands": "Pasos · Tradiciones · Conceptos",
+      "burst": "Presentaciones · Compartir · ¡Preguntas y más!",
+      "cost": "El taller es gratuito, pero la interpretación, que se ofrecerá en español y en ASL, tendrá algunos gastos, y se agradecerán las contribuciones. No se requiere inscripción previa.",
+      "zoomId": "ID de Zoom",
+      "passcode": "Código de acceso",
+      "link": "Enlace",
+      "program": "El programa estará disponible próximamente en el sitio web, {domain}.",
+      "programLink": "Ver el programa",
+      "questions": "Para preguntas:"
+    }
+  }
+}
