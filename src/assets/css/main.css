@@ -6,8 +6,12 @@
    Order: page stylesheets (imported) → tokens → fonts → base → layout →
    components → brand pieces → header/footer → print.
    Each page's own rules live in ./pages/<page>.css (inside @layer components).
+   Cascade layers: theme → base → components → utilities. This file's shared components sit in the
+   sub-layer components.shared, so a page stylesheet's rule (plain @layer components) always overrides
+   the shared component it restyles, whatever the specificity; Tailwind utilities override both.
    Light by default; follows the visitor's dark-mode setting automatically.
    ===================================================================== */
+@layer theme, base, components, components.shared, utilities;
 @import "tailwindcss" source(none);
 @import "./pages/home.css";
 @import "./pages/program.css";
@@ -45,7 +49,7 @@
   --color-thread-orange: #f5aa2c;
   --color-thread-purple: #9b5cdb;
 
-  --breakpoint-nav: 68rem;
+  --breakpoint-nav: 64rem; /* the header's full menu (main.css header block, app.js) */
   --radius-card: 1rem;
   --shadow-card: 0 1px 2px rgb(16 22 43 / 0.05), 0 10px 30px -18px rgb(16 22 43 / 0.25);
   --shadow-pop: 0 12px 40px -12px rgb(7 10 20 / 0.45);
@@ -152,6 +156,9 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     overflow-wrap: break-word;
+    /* Lining figures everywhere: Playfair Display (the flyer's title face) defaults to old-style
+       figures ("ıı:oo"); Inter and Fraunces already use lining figures. */
+    font-variant-numeric: lining-nums;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
@@ -168,6 +175,9 @@
   img, svg, video { max-width: 100%; }
   img { height: auto; }
   [hidden] { display: none !important; }
+  /* Copy buttons need app.js; without JavaScript the values they copy are plain text and links.
+     The "js" class is set by an inline script in partials/head.njk, before the first paint. */
+  html:not(.js) [data-copy] { display: none !important; }
   main:focus { outline: none; }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -176,7 +186,7 @@
 }
 
 /* ---------- Layout & components ---------- */
-@layer components {
+@layer components.shared {
   .container-page {
     width: 100%;
     max-width: 74rem;
@@ -189,12 +199,15 @@
   .section-alt { background: var(--bg-alt); }
   .section + .section:not(.section-alt):not(.on-dark) { border-top: 1px solid var(--line); }
 
+  /* Hidden above the page by its own height (plus 2rem), so it stays out of sight however many lines
+     a large default font wraps it to; on focus it sits 1rem from the top. */
   .skip-link {
-    position: absolute; left: 1rem; top: -4rem; z-index: 100;
+    position: absolute; left: 1rem; top: 1rem; z-index: 100; max-width: calc(100vw - 2rem);
+    transform: translateY(calc(-100% - 2rem));
     background: var(--color-gold-400); color: var(--color-navy-900);
     padding: 0.75rem 1.25rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none;
   }
-  .skip-link:focus { top: 1rem; }
+  .skip-link:focus { transform: none; }
 
   /* Headings & text */
   .eyebrow {
@@ -237,6 +250,11 @@
   .btn:active { transform: translateY(1px); }
   .btn-lg { min-height: 3.25rem; padding: 0.875rem 1.75rem; font-size: 1.0625rem; }
   .btn-sm { min-height: 2.5rem; padding: 0.5rem 1rem; font-size: 0.9375rem; }
+  /* Small phones: keep labels on one line (a wrapped label leaves its icon stranded at the edge) */
+  @media (max-width: 24rem) {
+    .btn { padding-inline: 1rem; gap: 0.375rem; font-size: 0.9375rem; }
+    .btn-lg { padding-inline: 1.125rem; font-size: 1rem; }
+  }
   .btn-block { width: 100%; }
   .btn-primary {
     background: linear-gradient(180deg, var(--color-gold-300), var(--color-gold-400) 45%, var(--color-gold-500));
@@ -258,6 +276,9 @@
   .link-arrow:hover { text-decoration: underline; }
   .link-arrow .icon { transition: transform 0.15s; }
   .link-arrow:hover .icon { transform: translateX(2px); }
+  /* A trailing arrow (macros/ui.njk → arrowLink) glued to the last word, so a two-line label keeps
+     its arrow right after the text instead of at the far edge */
+  .link-arrow-end { display: inline-block; vertical-align: -0.15em; margin-inline-start: 0.375rem; }
 
   /* Cards & panels */
   .card {
@@ -300,12 +321,18 @@
     display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.25rem 0.75rem;
     padding: 0.625rem 0.75rem 0.625rem 1rem; border-radius: 0.75rem;
     background: var(--bg); border: 1px solid var(--line);
+    container-type: inline-size;
   }
   .kv-row dt { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); flex-basis: 100%; }
   .kv-row dd { display: contents; }
   .kv-value { font-family: var(--font-mono); font-size: 1.1875rem; font-weight: 600; letter-spacing: 0.04em; color: var(--fg); }
+  /* A narrow row: a slightly smaller number first; too narrow for number + button, every row stacks the
+     same way (the Meeting ID never drops its button while the passcode keeps it inline). */
+  @container (max-width: 17rem) { .kv-value { font-size: 1.0625rem; letter-spacing: 0.02em; } }
+  @container (max-width: 15.75rem) { .kv-value { flex-basis: 100%; } }
+  /* min-width fits "Copied" / "Copiado", so tapping never reflows the row */
   .copy-btn {
-    display: inline-flex; align-items: center; gap: 0.375rem;
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; min-width: 6.75rem;
     min-height: 2.75rem; padding: 0.375rem 0.875rem; border-radius: 999px;
     border: 1px solid var(--line-strong); background: var(--surface); color: var(--fg);
     font-size: 0.875rem; font-weight: 600; cursor: pointer;
@@ -334,6 +361,10 @@
   }
   .cal-menu-panel a:hover, .cal-menu-panel a:focus-visible { background: color-mix(in srgb, var(--fg) 7%, transparent); }
   .cal-menu-panel .icon { color: var(--muted); }
+  /* The panel is a light/dark surface even inside .on-dark heroes: undo the gold on-dark link and focus colours. */
+  .on-dark .cal-menu-panel a:not(.btn),
+  .on-dark .cal-menu-panel a:not(.btn):hover { color: var(--fg); }
+  .on-dark .cal-menu-panel :focus-visible { outline-color: var(--focus); }
 
   /* Share row (full 44 px touch targets, even with btn-sm) */
   .share-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -341,7 +372,8 @@
 
   /* Breadcrumb (inner pages) */
   .breadcrumb { display: flex; flex-wrap: wrap; gap: 0.375rem; font-size: 0.875rem; color: rgb(251 245 233 / 0.7); }
-  .breadcrumb a { color: rgb(251 245 233 / 0.85); text-decoration: none; }
+  /* Inline padding enlarges the tap area to about 25px without changing the line box */
+  .breadcrumb a { color: rgb(251 245 233 / 0.85); text-decoration: none; padding-block: 0.25rem; }
   .breadcrumb a:hover { color: var(--color-cream); text-decoration: underline; }
   .breadcrumb li + li::before { content: "/"; margin-right: 0.375rem; opacity: 0.6; }
 
@@ -377,6 +409,11 @@
 
   /* Inner-page hero */
   .page-hero { padding-block: clamp(2.25rem, 6vw, 4rem) clamp(2.5rem, 6vw, 4.25rem); }
+  /* Dark mode: the hero's navy equals --bg, so without a line its edge is just where the texture and
+     corner glows stop. Draw it like the header's edge. */
+  @media (prefers-color-scheme: dark) {
+    .page-hero, .home-hero, .nf-hero { border-bottom: 1px solid rgb(251 245 233 / 0.08); }
+  }
   .page-hero .h-display { color: var(--color-cream); margin-top: 0.5rem; }
   .page-hero .lead { margin-top: 0.875rem; max-width: 44rem; }
   .page-hero .breadcrumb { margin-bottom: 1rem; }
@@ -386,8 +423,7 @@
   /* The flyer's title: gold "THE INCREDIBLE" over a cream script "Tapestry". */
   .lockup { display: inline-flex; flex-direction: column; align-items: center; line-height: 1; }
   .lockup-the, .lockup-incredible { font-family: var(--font-title); font-weight: 900; text-transform: uppercase; }
-  /* Playfair Display defaults to old-style figures; the flyer's numbers are lining figures. */
-  .lockup, .date-ribbon, .when-bar, .home-overline, .burst, .thread-name { font-variant-numeric: lining-nums; }
+  /* (Lining figures, like the flyer's: set once on body, see @layer base.) */
   .lockup-the { font-size: 0.3em; letter-spacing: 0.2em; margin-bottom: 0.06em; padding-left: 0.2em; }
   .lockup-incredible { font-size: 1em; letter-spacing: 0; line-height: 0.92; }
   .lockup-tapestry {
@@ -401,6 +437,12 @@
     filter: drop-shadow(0 0.03em 0 rgb(0 0 0 / 0.45));
   }
   @media (forced-colors: active) { .gold-text { color: CanvasText; background: none; filter: none; } }
+  @media (forced-colors: active) {
+    /* Forced colours paint a Canvas backplate behind each line; un-overlap the lockup so no line erases another */
+    .lockup-the { margin-bottom: 0.5em; }
+    .lockup-incredible { line-height: 1.05; }
+    .lockup-tapestry { margin-top: 0.05em; line-height: 1.1; text-shadow: none; }
+  }
 
   /* The date ribbon, like the flyer's gold brush stroke */
   .date-ribbon {
@@ -419,7 +461,7 @@
     display: flex; flex-direction: column; align-items: stretch;
     border: 1.5px solid rgb(100 160 255 / 0.55); border-radius: 1rem;
     background: rgb(11 15 30 / 0.65); box-shadow: 0 0 24px -6px rgb(68 121 245 / 0.45);
-    color: var(--color-cream); overflow: hidden;
+    color: var(--color-cream);
   }
   .when-bar-main {
     display: flex; flex-wrap: wrap; align-items: center; justify-content: center; column-gap: 0.3em;
@@ -427,24 +469,28 @@
     font-family: var(--font-title); font-weight: 900; font-size: clamp(1.375rem, 7.5cqi, 2.125rem); line-height: 1.15;
   }
   .when-bar-main > span { white-space: nowrap; }
-  .when-bar-zones { display: flex; border-top: 1px solid rgb(251 245 233 / 0.14); }
+  /* The zones wrap (2 + 1) when the times do not fit side by side (a very narrow screen, a large
+     default font, wider text spacing): each zone draws its own left and top separator, and the
+     overflow: hidden here clips only the separators of a zone that starts a line, never any text. */
+  .when-bar-zones { display: flex; flex-wrap: wrap; overflow: hidden; border-top: 1px solid rgb(251 245 233 / 0.14); }
   .when-bar-zone {
     flex: 1 1 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 0.5rem 0.5rem; text-align: center; font-family: var(--font-display); font-weight: 600; font-size: 0.9375rem; line-height: 1.2; white-space: nowrap;
+    border-left: 1px solid var(--color-gold-500); border-top: 1px solid rgb(251 245 233 / 0.14); margin: -1px 0 0 -1px;
   }
-  .when-bar-zone + .when-bar-zone { border-left: 1px solid var(--color-gold-500); }
   .when-bar-zone small { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.06em; color: var(--color-gold-300); }
-  /* One row (range | PT | MT | CT) once it fits; the Spanish times need a wider container. */
+  /* One row (range | PT | MT | CT) once it fits; the Spanish times need a wider container. In a row the
+     PT/MT/CT block keeps its width and the range gives way (it may wrap after its dash). */
   @container (min-width: 46rem) {
     .when-bar:not(.when-bar--long) { flex-direction: row; justify-content: center; }
-    .when-bar:not(.when-bar--long) .when-bar-main { flex: 0 0 auto; padding: 0.875rem 1.5rem; font-size: 2.125rem; }
-    .when-bar:not(.when-bar--long) .when-bar-zones { flex: 0 1 auto; border-top: 0; border-left: 1px solid rgb(251 245 233 / 0.14); }
+    .when-bar:not(.when-bar--long) .when-bar-main { flex: 0 1 auto; min-width: 0; padding: 0.875rem 1.5rem; font-size: 2.125rem; }
+    .when-bar:not(.when-bar--long) .when-bar-zones { flex: 0 0 auto; border-top: 0; border-left: 1px solid rgb(251 245 233 / 0.14); }
     .when-bar:not(.when-bar--long) .when-bar-zone { padding: 0.5rem 1rem; }
   }
   @container (min-width: 60rem) {
     .when-bar--long { flex-direction: row; justify-content: center; }
-    .when-bar--long .when-bar-main { flex: 0 0 auto; padding: 0.875rem 1.5rem; font-size: 2.125rem; }
-    .when-bar--long .when-bar-zones { flex: 0 1 auto; border-top: 0; border-left: 1px solid rgb(251 245 233 / 0.14); }
+    .when-bar--long .when-bar-main { flex: 0 1 auto; min-width: 0; padding: 0.875rem 1.5rem; font-size: 2.125rem; }
+    .when-bar--long .when-bar-zones { flex: 0 0 auto; border-top: 0; border-left: 1px solid rgb(251 245 233 / 0.14); }
     .when-bar--long .when-bar-zone { padding: 0.5rem 1rem; }
   }
   .local-time { font-size: 0.9375rem; color: rgb(251 245 233 / 0.8); }
@@ -476,10 +522,12 @@
   .brand { display: inline-flex; align-items: center; gap: 0.625rem; min-width: 0; text-decoration: none; color: var(--color-cream); }
   .on-dark a.brand, .on-dark a.brand:hover { color: var(--color-cream); }
   .brand-mark { width: 2.5rem; height: 2.5rem; flex: none; }
-  .brand-name { font-family: var(--font-display); font-weight: 600; font-size: 1.125rem; line-height: 1.15; white-space: nowrap; }
+  /* The name wraps to two balanced lines ("The Incredible / Tapestry") inside the 4rem bar when the
+     buttons need the room, instead of running under them; the buttons keep their natural width. */
+  .brand-name { font-family: var(--font-display); font-weight: 600; font-size: 1.125rem; line-height: 1.15; min-width: 0; text-wrap: balance; }
   @media (max-width: 22.5rem) { .brand-name { font-size: 1rem; } .brand-mark { width: 2.25rem; height: 2.25rem; } }
   .nav-desktop { display: none; }
-  .nav-actions { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; }
+  .nav-actions { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; flex: none; }
   .nav-link {
     position: relative; display: inline-flex; align-items: center; gap: 0.375rem; min-height: 2.75rem; padding: 0.5rem 0.75rem;
     border-radius: 0.5rem; font-size: 0.9375rem; font-weight: 500; text-decoration: none; white-space: nowrap;
@@ -499,19 +547,35 @@
   .menu-toggle .icon-close { display: none; }
   .menu-toggle[aria-expanded="true"] .icon-open { display: none; }
   .menu-toggle[aria-expanded="true"] .icon-close { display: inline; }
-  .header-cta { display: none; }
+  .header-cta { display: none; white-space: nowrap; }
   .mobile-menu { border-top: 1px solid rgb(251 245 233 / 0.08); padding-block: 0.5rem 1.25rem; max-height: calc(100dvh - 4rem); overflow-y: auto; }
   .mobile-menu ul { display: grid; gap: 0.125rem; }
   .mobile-menu .nav-link { display: flex; width: 100%; font-size: 1.0625rem; padding: 0.75rem 0.75rem; }
   .mobile-menu .nav-link[aria-current]::after { left: 0.75rem; right: auto; width: 2rem; bottom: 0.35rem; }
   .mobile-menu-actions { display: grid; gap: 0.75rem; margin-top: 1rem; }
   @media (min-width: 30rem) { .header-cta { display: inline-flex; } .mobile-menu .mobile-menu-cta { display: none; } }
-  @media (min-width: 68rem) {
+  /* The full menu from 64rem (iPad landscape, a 1024 px window even with a 17 px scrollbar): tighter
+     links up to 72rem (the 2px gaps between them drop too, header.njk), the roomier bar above (which
+     also fits a 1152 px window with a scrollbar). Keep the breakpoint in step with --breakpoint-nav and
+     the matchMedia in app.js. */
+  @media (min-width: 64rem) {
     .nav-desktop { display: flex; align-items: center; gap: 0.125rem; margin-left: auto; }
     .nav-actions { margin-left: 0.5rem; }
     .menu-toggle, .mobile-menu { display: none !important; }
-    .brand-name { font-size: 1.1875rem; }
   }
+  @media (min-width: 64rem) and (max-width: 71.999rem) {
+    .nav-desktop .nav-link, .nav-actions .nav-link { padding-inline: 0.5rem; }
+    .nav-desktop .nav-link[aria-current]::after { left: 0.5rem; right: 0.5rem; }
+    .site-header .brand-name { font-size: 1.0625rem; }
+  }
+  @media (min-width: 72rem) { .brand-name { font-size: 1.1875rem; } }
+  /* Windows High Contrast / forced colours turns the bar's background into Canvas: draw it in CanvasText */
+  @media (forced-colors: active) {
+    .nav-link[aria-current]::after { background: CanvasText; }
+  }
+  /* After the workshop (data-phase on <html>: an inline script in partials/head.njk, kept current by app.js),
+     the Join and Add to calendar buttons go away; the countdown says it has ended. */
+  [data-phase="ended"] .js-event-cta { display: none !important; }
 
   /* ---------- Footer ---------- */
   .questions-band {
@@ -519,8 +583,13 @@
       radial-gradient(60% 140% at 0% 50%, rgb(155 92 219 / 0.55), transparent 70%),
       linear-gradient(90deg, #3a1f66, #5a2f8f 55%, #3a1f66);
     color: var(--color-cream);
+    /* A gold focus ring on the purple, in light mode too (the band is not .on-dark: its cream email
+       link would otherwise turn gold) */
+    --focus: var(--color-gold-300);
   }
   .questions-band-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.75rem 1.25rem; padding-block: 1.5rem; text-align: center; }
+  /* The address and its Copy button wrap as one group, so Copy never sits alone on a line */
+  .questions-band-address { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.75rem 1.25rem; min-width: 0; }
   .questions-band .icon-lg { color: var(--color-gold-300); }
   .questions-band-label { font-family: var(--font-display); font-size: 1.1875rem; font-weight: 500; }
   .questions-band a.email-link { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.125rem, 3.4vw, 1.375rem); color: var(--color-cream); text-decoration: underline; text-decoration-color: rgb(248 219 143 / 0.6); word-break: break-all; }
@@ -552,14 +621,23 @@
     --c-recovery-soft: #fff; --c-unity-soft: #fff; --c-service-soft: #fff;
     color-scheme: light;
   }
-  .site-header, .skip-link, .mobile-menu, .cal-menu, .share-row, .questions-band .copy-btn, .countdown, .no-print { display: none !important; }
+  .site-header, .skip-link, .mobile-menu, .cal-menu, .share-row, .copy-btn, .countdown, .no-print { display: none !important; }
   body { background: #fff; color: #000; font-size: 11pt; }
   .thread-bg, .on-dark, .site-footer, .questions-band { background: #fff !important; color: #000 !important; }
+  /* Text inside the navy and purple bands keeps its cream or gold colour unless forced (the overline,
+     the chips, the PT/MT/CT labels, the footer headings, the legal lines, the questions address). */
+  .on-dark *, .questions-band * { color: #000 !important; }
   .thread-bg::before { display: none; }
   .on-dark a, .site-footer a, .on-dark .eyebrow, .on-dark .lead, .page-hero .h-display, .breadcrumb, .breadcrumb a, .when-bar, .local-time, .local-time strong { color: #000 !important; }
   .when-bar { background: #fff !important; box-shadow: none !important; border-color: #999 !important; }
   .gold-text { color: #000; background: none; filter: none; }
   .lockup-tapestry { color: #000; text-shadow: none; }
   .card { box-shadow: none; break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  /* The questions address stays (the one contact on paper); the footer's site map does not. */
+  .questions-band { border-top: 1px solid #999; padding-block: 0.75rem; break-inside: avoid; }
+  .questions-band .email-link { text-decoration-color: currentColor !important; }
+  .footer-grid { display: none !important; }
+  .footer-legal { border-top: 0 !important; padding-block: 0.5rem 0 !important; font-size: 8pt !important; }
   a[href^="http"]:not(.btn)::after { content: " (" attr(href) ")"; font-size: 0.85em; word-break: break-all; }
 }

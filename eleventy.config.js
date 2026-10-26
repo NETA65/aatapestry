@@ -107,12 +107,19 @@ export default async function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy(fonts);
 
   // ---------- Tailwind CSS, compiled before every build ----------
-  eleventyConfig.on("eleventy.before", async ({ dir }) => {
+  // Into the real output folder: `directories.output` follows --output (the legacy `dir.output` stays
+  // "_site"), relative to the working directory like Eleventy's own output.
+  const cssOut = (directories) => path.resolve(directories.output, "assets/css/main.css");
+  eleventyConfig.on("eleventy.before", async ({ directories }) => {
     const cli = path.join(__dirname, "node_modules/@tailwindcss/cli/dist/index.mjs");
     const input = path.join(__dirname, "src/assets/css/main.css");
-    const output = path.join(__dirname, dir.output, "assets/css/main.css");
+    const output = cssOut(directories);
     fs.mkdirSync(path.dirname(output), { recursive: true });
     execFileSync(process.execPath, [cli, "-i", input, "-o", output, ...(isProd ? ["--minify"] : [])], { stdio: "inherit" });
+  });
+  // A missing stylesheet fails loudly instead of leaving an unstyled site.
+  eleventyConfig.on("eleventy.after", ({ directories }) => {
+    if (!fs.existsSync(cssOut(directories))) throw new Error(`[css] ${cssOut(directories)} was not written`);
   });
   eleventyConfig.on("eleventy.before", () => {
     try { liveSite = JSON.parse(read("src/_data/site.json")); } catch { /* keep the last good copy */ }
@@ -133,7 +140,7 @@ export default async function (eleventyConfig) {
 
   // ---------- Tokens in prose data ----------
   // Safety net: the prose data files are loaded with every {token} already replaced, so a template
-  // that forgets `| tokens` (or JSON-LD, the .ics) still never prints a literal "{email}".
+  // that forgets `| tokens` (or JSON-LD, the .ics files, the feed) still never prints a literal "{email}".
   // Templates apply `| tokens` anyway (it is idempotent).
   eleventyConfig.addDataExtension("json", (contents, filePath) => {
     const data = JSON.parse(contents);
@@ -220,6 +227,26 @@ export default async function (eleventyConfig) {
     if (!value) return "";
     const dt = value instanceof Date ? DateTime.fromJSDate(value, { zone }) : DateTime.fromISO(String(value), { zone });
     return dt.isValid ? dt.setLocale(locale).toFormat(fmt) : String(value);
+  });
+  // When a page last changed (YYYY-MM-DD): the later of its template's and src/_data's last git commit,
+  // so the scheduled rebuilds do not claim every page changed; the build date when git has no answer.
+  // The sitemap's <lastmod> and the JSON-LD Article dateModified: {{ page.inputPath | lastmod }}
+  const gitDates = new Map();
+  eleventyConfig.on("eleventy.before", () => gitDates.clear());
+  const gitDate = (p) => {
+    if (!gitDates.has(p)) {
+      let d = "";
+      try {
+        d = execFileSync("git", ["log", "-1", "--format=%cI", "--", p], { cwd: __dirname, stdio: ["ignore", "pipe", "ignore"] }).toString().trim().slice(0, 10);
+      } catch { d = ""; }
+      gitDates.set(p, d);
+    }
+    return gitDates.get(p);
+  };
+  eleventyConfig.addFilter("lastmod", (inputPath) => {
+    const dataDate = gitDate("src/_data") || gitDate("src");
+    const d = [inputPath ? gitDate(inputPath) : "", dataDate].filter(Boolean).sort().pop();
+    return d || new Date().toISOString().slice(0, 10);
   });
   eleventyConfig.addFilter("dateISO", (value) => (value instanceof Date ? DateTime.fromJSDate(value) : DateTime.fromISO(String(value))).toISO());
   eleventyConfig.addFilter("rfc822", (value) => (value instanceof Date ? DateTime.fromJSDate(value) : DateTime.fromISO(String(value))).toRFC2822());

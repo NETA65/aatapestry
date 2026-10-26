@@ -1,6 +1,7 @@
 {#- <head>: title, description, canonical, hreflang, social cards, icons, fonts, CSS and JSON-LD.
     Page front matter: title, description, noindex, translated (has an /es/ twin), ogImage, titleFonts
-    (preload the flyer lettering fonts on pages that show the title lockup). -#}
+    (preload the flyer lettering fonts on pages that show the title lockup), schema ("article" → og:type).
+    A noindex page (the 404) has no canonical and no og:url. Used by both layouts (base and poster). -#}
 {%- set isHome = page.url == "/" or page.url == "/es/" -%}
 {%- set pageTitle = (title if (isHome and title) else ((title + " · " + site.name) if title else site.title)) | tokens | plain -%}
 {%- set pageDesc = ((description or (t.landing.metaDescription if lang == "es" else (site.metaDescription or site.description))) | tokens | plain) -%}
@@ -11,7 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{ pageTitle }}</title>
 <meta name="description" content="{{ pageDesc }}">
-<link rel="canonical" href="{{ canonical }}">
+{% if not noindex %}<link rel="canonical" href="{{ canonical }}">{% endif %}
 {% if noindex %}<meta name="robots" content="noindex, follow">{% else %}<meta name="robots" content="index, follow, max-image-preview:large">{% endif %}
 {% if translated %}
 <link rel="alternate" hreflang="en" href="{{ page.url | langUrl('en') | absUrl }}">
@@ -23,13 +24,13 @@
 <meta name="author" content="{{ site.contact.committee }}">
 <meta name="format-detection" content="telephone=no">
 
-<meta property="og:type" content="website">
+<meta property="og:type" content="{{ 'article' if schema == 'article' else 'website' }}">
 <meta property="og:site_name" content="{{ site.name }}">
 <meta property="og:locale" content="{{ 'es_US' if lang == 'es' else site.locale }}">
 {% if translated %}<meta property="og:locale:alternate" content="{{ site.locale if lang == 'es' else 'es_US' }}">{% endif %}
 <meta property="og:title" content="{{ pageTitle }}">
 <meta property="og:description" content="{{ pageDesc }}">
-<meta property="og:url" content="{{ canonical }}">
+{% if not noindex %}<meta property="og:url" content="{{ canonical }}">{% endif %}
 <meta property="og:image" content="{{ ogImageAbs }}">
 <meta property="og:image:width" content="{{ ogImageWidth or 1200 }}">
 <meta property="og:image:height" content="{{ ogImageHeight or 630 }}">
@@ -44,7 +45,9 @@
 <link rel="icon" href="/brand/favicon/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/brand/favicon/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="alternate" type="text/calendar" title="{{ site.event.name }}" href="/aatapestry-workshop.ics">
+<link rel="alternate" type="text/calendar" title="{{ t.calendar.title | tokens | plain }}" href="{{ calendar.ics[lang] }}">
+{# The updates feed (src/pages/feed.njk, entries in src/_data/feed.json): advertised only while it exists. #}
+{% if feed and feed.items and feed.items.length %}<link rel="alternate" type="application/atom+xml" title="{{ site.name }} — updates" href="/feed.xml">{% endif %}
 
 <link rel="preload" href="/assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/fraunces-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -52,5 +55,9 @@
 <link rel="preload" href="/assets/fonts/playfair-display-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/great-vibes-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 {% endif %}
+{#- Before the first paint: the "js" class (copy buttons show only with JavaScript) and the workshop's
+    phase on <html data-phase> (upcoming, live, ended: the Join and Add to calendar buttons hide once it
+    has ended; app.js keeps it current on a page left open). -#}
+<script>(function(d){d.classList.add("js");var n=Date.now(),s=Date.parse("{{ when.startISO }}"),e=Date.parse("{{ when.endISO }}");d.dataset.phase=n>=e?"ended":n>=s?"live":"upcoming"})(document.documentElement)</script>
 <link rel="stylesheet" href="/assets/css/main.css">
 {% include "partials/jsonld.njk" %}

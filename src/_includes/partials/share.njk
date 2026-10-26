@@ -4,7 +4,7 @@
 {%- set sEs = lang == "es" -%}
 {%- set shareUrl = (sharePath or ("/es/" if sEs else "/")) | absUrl -%}
 {%- set shareTitle = (site.name + ((" — " + t.landing.gloss) if (sEs and t.landing.gloss) else "")) | plain -%}
-{%- set shareText = (site.name + " — " + t.landing.eyebrow + ": " + ((when.date.longEs | capitalize) if sEs else when.date.long) + ", " + (when.time.leadEs if sEs else when.time.lead) + " (" + (when.time.startsAlsoEs if sEs else when.time.startsAlso) + "). " + t.labels.online + " · " + t.labels.interpretationBadge + " · " + t.labels.free + " · " + t.labels.noRegistration + ".") | plain -%}
+{%- set shareText = (site.name + " — " + t.landing.eyebrow + ": " + (when.date.longEs if sEs else when.date.long) + ", " + (when.time.leadEs if sEs else when.time.lead) + " (" + (when.time.startsAlsoEs if sEs else when.time.startsAlso) + "). " + t.labels.online + " · " + t.labels.interpretationBadge + " · " + t.labels.free + " · " + t.labels.noRegistration + ".") | plain -%}
 <div class="share-row" data-share-root data-url="{{ shareUrl }}" data-title="{{ shareTitle }}" data-text="{{ shareText }}">
   <button type="button" class="btn btn-outline btn-sm" data-share hidden>{% icon "share-2", "icon" %}<span>{{ t.labels.share }}</span></button>
   <button type="button" class="btn btn-outline btn-sm" data-copy="{{ shareUrl }}" data-copied="{{ t.share.copied }}">{% icon "link", "icon" %}<span>{{ t.share.copyLink }}</span></button>

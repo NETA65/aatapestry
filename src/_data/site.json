@@ -30,6 +30,7 @@
     "calendarSequence": 3,
     "cost": "Free. There will be some expenses for the Spanish and ASL interpretation, and contributions are welcome to help cover them.",
     "audience": "Open to all A.A. members, anyone who thinks they might have a problem with alcohol, and trusted servants at every level. Newcomers warmly welcome.",
+    "audienceEs": "Abierto a todos los miembros de A.A., a cualquier persona que piense que puede tener un problema con el alcohol y a los servidores de confianza de todos los niveles. Los recién llegados son muy bienvenidos.",
     "registration": {
       "required": false,
       "url": "",

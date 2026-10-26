@@ -1,7 +1,9 @@
 /* The Incredible Tapestry — small, dependency-free enhancements.
    Every page works without this file (links, the menu's no-JS fallback, the calendar file);
    it adds: the mobile menu · copy buttons · native share · the visitor's local time ·
-   the countdown · the Add to calendar menu's keyboard and outside-click behaviour. */
+   the countdown · the Add to calendar menu's keyboard and outside-click behaviour.
+   (The "js" class and <html data-phase> are set earlier, by an inline script in partials/head.njk,
+   so the page is styled right from the first paint.) */
 (() => {
   "use strict";
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -10,21 +12,27 @@
   document.documentElement.classList.add("js");
 
   /* ---------- Mobile menu ---------- */
+  // The button's name stays "Menu"; aria-expanded says whether it is open (only the icon changes).
   const toggle = document.querySelector("[data-menu-toggle]");
   const menu = toggle && document.getElementById(toggle.getAttribute("aria-controls"));
   if (toggle && menu) {
-    const label = toggle.querySelector("[data-menu-label]");
     const setOpen = (open, focusToggle) => {
       toggle.setAttribute("aria-expanded", String(open));
       menu.hidden = !open;
-      if (label) label.textContent = open ? toggle.dataset.labelClose : toggle.dataset.labelOpen;
       if (!open && focusToggle) toggle.focus();
     };
     toggle.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !menu.hidden) setOpen(false, true); });
     document.addEventListener("click", (e) => { if (!menu.hidden && !menu.contains(e.target) && !toggle.contains(e.target)) setOpen(false); });
     menu.addEventListener("click", (e) => { if (e.target.closest("a")) setOpen(false); });
-    window.matchMedia("(min-width: 68rem)").addEventListener("change", (e) => { if (e.matches) setOpen(false); });
+    // Tabbing out of the open menu closes it, so it never covers the control that now has focus
+    // (WCAG 2.4.11). Focus is already moving: do not move it. Shift+Tab back to the button keeps it open.
+    menu.addEventListener("focusout", (e) => {
+      const to = e.relatedTarget;
+      if (!menu.hidden && to && !menu.contains(to) && !toggle.contains(to)) setOpen(false);
+    });
+    // Keep in step with the header's breakpoint (main.css, --breakpoint-nav).
+    window.matchMedia("(min-width: 64rem)").addEventListener("change", (e) => { if (e.matches) setOpen(false); });
   }
 
   /* ---------- Copy buttons ---------- */
@@ -101,6 +109,9 @@
   if (tz) $$("[data-zone]").forEach((row) => { if (row.dataset.zone === tz) row.classList.add("is-local"); });
 
   /* ---------- Countdown ("47 days to go" → "Starts in 2 h 10 min" → "Happening now") ---------- */
+  // The pill is role="timer" (not announced as it changes). Only a change of phase while the page is
+  // open (the start, the end) is announced, through the polite live region above. The phase also goes
+  // on <html data-phase>, which hides the Join and Add to calendar buttons once the workshop has ended.
   $$("[data-countdown]").forEach((el) => {
     const start = new Date(el.dataset.start), end = new Date(el.dataset.end);
     if (Number.isNaN(start.getTime())) return;
@@ -119,16 +130,27 @@
         // Calendar days between today and the start day, in the visitor's own time zone.
         const midnight = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
         const dayDiff = Math.round((midnight(start) - midnight(now)) / 864e5);
-        if (ms < 12 * 36e5) text = fill(L.startsIn, { h: Math.floor(ms / 36e5), m: Math.floor((ms % 36e5) / 6e4) });
+        if (ms < 12 * 36e5) {
+          // Minutes rounded up, so it never says "0 min"; the last hour reads "Starts in 10 min".
+          const mins = Math.ceil(ms / 6e4), h = Math.floor(mins / 60), m = mins % 60;
+          text = fill(h === 0 ? (L.startsInMin || L.startsIn) : L.startsIn, { h, m });
+        }
         else if (dayDiff <= 0) text = fill(L.today, { start: el.dataset.startLabel || "" });
         else if (dayDiff === 1) text = L.tomorrow;
         else text = fill(L.days, { n: dayDiff });
       }
-      if (text) out.textContent = text;
+      // Write only a changed text (an identical rewrite is still a DOM change).
+      if (text && out.textContent !== text) out.textContent = text;
+      if (el.dataset.phase && el.dataset.phase !== phase && (phase === "live" || phase === "ended")) {
+        live.textContent = "";
+        setTimeout(() => { live.textContent = text; }, 50);
+      }
       el.dataset.phase = phase;
+      document.documentElement.dataset.phase = phase;
       el.hidden = false;
       if (phase === "ended") return;
-      setTimeout(tick, phase === "upcoming" && start - now > 36e5 * 13 ? 6e4 : 15e3);
+      // Every 15 s in the last 13 hours (the minutes change), otherwise every minute.
+      setTimeout(tick, phase === "upcoming" && start - now <= 36e5 * 13 ? 15e3 : 6e4);
     };
     tick();
   });
@@ -154,6 +176,11 @@
     });
     d.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && d.open) { d.open = false; d.querySelector("summary").focus(); }
+    });
+    // Tabbing out closes the panel, so it never covers the next control (WCAG 2.4.11). Requiring a
+    // relatedTarget keeps a mouse click on an item (Safari does not focus links) from closing it early.
+    d.addEventListener("focusout", (e) => {
+      if (d.open && e.relatedTarget && !d.contains(e.relatedTarget)) d.open = false;
     });
   });
   document.addEventListener("click", (e) => { menus.forEach((d) => { if (d.open && !d.contains(e.target)) d.open = false; }); });

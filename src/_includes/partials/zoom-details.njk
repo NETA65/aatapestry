@@ -22,7 +22,8 @@
   {% endif %}
 </dl>
 {% if zoomActions !== false %}
-<div class="btn-row mt-5">
+{#- js-event-cta: hidden once the workshop has ended (main.css); the meeting ID and passcode stay. -#}
+<div class="btn-row mt-5 js-event-cta">
   <a href="{{ z.joinUrl }}" class="btn btn-primary {{ zoomJoinSize }}" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
   <button type="button" class="btn btn-outline {{ zoomJoinSize }}" data-copy="{{ z.joinUrl }}" data-copied="{{ t.share.copied }}">{% icon "link", "icon" %}<span>{{ t.labels.copyLink }}</span></button>
 </div>
