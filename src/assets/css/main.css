@@ -662,6 +662,7 @@
   :root {
     --bg: #fff; --bg-alt: #fff; --surface: #fff; --fg: #000; --muted: #333; --line: #ccc; --line-strong: #999;
     --link: #000; --info-bg: #fff; --info-line: #999; --accent-soft: #fff;
+    --accent: #6a3e9e; --c-recovery: #2f4fa2; --c-unity: #1b8a6b; --c-service: #d9941f;
     --c-recovery-text: #2f4fa2; --c-unity-text: #156b53; --c-service-text: #8a5a0b;
     --c-recovery-soft: #fff; --c-unity-soft: #fff; --c-service-soft: #fff;
     color-scheme: light;
@@ -680,7 +681,7 @@
   .gold-text { color: #000; background: none; filter: none; }
   .lockup-tapestry { color: #000; text-shadow: none; }
   .card { box-shadow: none; break-inside: avoid; }
-  h2, h3 { break-after: avoid; }
+  h2, h3, .eyebrow { break-after: avoid; }
   /* The questions address stays (the one contact on paper); the footer's site map does not. The band
      and the legal lines print as one compact block, never split, so the last sheet never holds only a
      scrap of the legal text. */

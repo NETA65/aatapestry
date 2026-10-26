@@ -92,6 +92,13 @@ take their title, description, labels and reminder texts from `i18n.json → en/
 `details`, `questionsLabel`, `detailsLabel`, `alarmTomorrow`, `alarmSoon`; the reminders use `%title`
 and `%url`), and the date, time and Zoom details from `site.json`.
 
+## News for the updates feed (`/feed.xml`)
+
+Entries live in `site.json → updates.items`, newest first, each with `id` (permanent; for a new item use
+`tag:aatapestry.org,<date>:<short-slug>`), `date`, `title`, `link` and a Markdown `body` that uses tokens.
+Feed readers notify their subscribers of every new item, so add one only for real news (the program is
+posted, the Zoom details change).
+
 ## The notice about the Zoom link
 
 `i18n.json → en/es.notice` is the short notice shown on the home page and on *How to join* (now: the
@@ -187,7 +194,9 @@ it, on a dark disc; `npm run brand:site` derives it from `brand/src/mark.svg`.
 Colours, fonts and components are in `src/assets/css/main.css` (Tailwind v4 `@theme` tokens and
 components); each page's own rules are in `src/assets/css/pages/`. The palette comes from the flyer:
 navy, gold, cream, and the legacy colours (Recovery blue, Unity green, Service gold). The title
-lettering uses Playfair Display (*THE INCREDIBLE*) and Great Vibes (*Tapestry*); headings use
+lettering uses Playfair Display (*THE INCREDIBLE*) and Great Vibes (*Tapestry* — shipped as a subset with
+only the letters of that word, `src/assets/fonts/great-vibes-tapestry.woff2`; any other text set in the
+script font needs the subset regenerated, see the comment in `eleventy.config.js`); headings use
 Fraunces and text uses Inter. Dark mode follows the visitor's system setting.
 
 ## Checking your work

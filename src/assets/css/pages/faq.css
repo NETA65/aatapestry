@@ -15,6 +15,7 @@
   @media (min-width: 64rem) {
     .faq-layout { grid-template-columns: 16rem minmax(0, 1fr); gap: clamp(3rem, 5vw, 4.5rem); align-items: start; }
     .faq-aside { position: sticky; top: 6rem; }
+    @media (orientation: landscape) and (max-height: 30rem) { .faq-aside { top: 1rem; } }
   }
 
   /* ---------- Jump to (+ the Expand all button, shown only with JavaScript) ---------- */

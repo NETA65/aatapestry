@@ -94,8 +94,6 @@
   .flyer-card-links { display: grid; gap: 0.125rem; margin-top: 0.875rem; }
   .flyer-card-cta + .flyer-card-links { margin-top: 0.5rem; }
   .flyer-card-links .link-arrow { min-height: 2.75rem; }
-  /* Full-size (44 px) touch targets for the share buttons in this card */
-  .flyer-card--share .share-row .btn { min-height: 2.75rem; }
 
   /* ---------- Download list (also on /poster/) ---------- */
   .dl-list { display: grid; gap: 0.5rem; margin-top: 1rem; }

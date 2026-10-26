@@ -53,7 +53,7 @@
       }
     ],
     "zoom": {
-      "_readme": "Also editable from GitHub → Actions → 'Update Zoom info' without touching this file.",
+      "_readme": "Also editable from GitHub → Actions → 'Update Zoom info' without touching this file. dialIn: the \"Dial by your location\" phone numbers from the host’s Zoom invitation, only if telephone audio is on for the meeting; leave [] to hide the Dial in row (then /join/ step 1 tells members to email the committee about joining by telephone).",
       "meetingId": "824 7491 1898",
       "passcode": "218564",
       "joinUrl": "https://us02web.zoom.us/j/82474911898?pwd=EwOXRz2NWKHgCirlpAAv1gseGMybGe.1",

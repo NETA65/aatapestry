@@ -165,7 +165,7 @@
     font-size: 0.9375rem; color: var(--muted);
   }
   .pp-companion .icon { margin-top: 0.15rem; color: var(--accent); }
-  .pp-companion-link { font-weight: 600; white-space: nowrap; }
+  .pp-companion-link { font-weight: 600; white-space: nowrap; text-decoration: underline; }
 
   /* ======================= /principles/N/ ======================= */
 

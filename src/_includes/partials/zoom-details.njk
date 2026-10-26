@@ -1,8 +1,21 @@
-{#- The Zoom meeting ID and passcode, each with a copy button, then (unless zoomActions is false) the
-    Join on Zoom button and Copy link. Values from site.json → event.zoom; labels from i18n.
-    Optional before the include: zoomActions (default true), zoomJoinSize ("btn-lg" or "").
-    Used on the home page's Zoom card and on /join/. -#}
+{#- The Zoom meeting ID and passcode, each with a copy button, and (unless zoomActions is false) the
+    Join on Zoom button and Copy link: after the details, or before them when zoomActionsFirst is true.
+    Values from site.json → event.zoom; labels from i18n.
+    Optional before the include: zoomActions (default true), zoomActionsFirst (default false: /join/ sets it,
+    so Join is on a phone's first screen; it changes the DOM order, so the focus order matches what is seen),
+    zoomJoinSize ("btn-lg" or ""). Used on the home page's Zoom card and on /join/. -#}
 {%- set z = site.event.zoom -%}
+{%- set zActionsFirst = zoomActionsFirst === true -%}
+{%- set zActions -%}
+{% if zoomActions !== false %}
+{#- js-event-cta: hidden once the workshop has ended (main.css); the meeting ID and passcode stay. -#}
+<div class="btn-row {{ 'mb-5' if zActionsFirst else 'mt-5' }} js-event-cta no-print">
+  <a href="{{ z.joinUrl }}" class="btn btn-primary {{ zoomJoinSize }}" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+  <button type="button" class="btn btn-outline {{ zoomJoinSize }}" data-copy="{{ z.joinUrl }}" data-copied="{{ t.share.copied }}">{% icon "link", "icon" %}<span>{{ t.labels.copyLink }}</span></button>
+</div>
+{% endif %}
+{%- endset -%}
+{% if zActionsFirst %}{{ zActions | safe }}{% endif %}
 <dl class="kv">
   <div class="kv-row">
     <dt>{{ t.labels.meetingId }}</dt>
@@ -21,10 +34,4 @@
   </div>
   {% endif %}
 </dl>
-{% if zoomActions !== false %}
-{#- js-event-cta: hidden once the workshop has ended (main.css); the meeting ID and passcode stay. -#}
-<div class="btn-row mt-5 js-event-cta">
-  <a href="{{ z.joinUrl }}" class="btn btn-primary {{ zoomJoinSize }}" target="_blank" rel="noopener">{% icon "video", "icon" %}<span>{{ t.labels.joinZoom }}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
-  <button type="button" class="btn btn-outline {{ zoomJoinSize }}" data-copy="{{ z.joinUrl }}" data-copied="{{ t.share.copied }}">{% icon "link", "icon" %}<span>{{ t.labels.copyLink }}</span></button>
-</div>
-{% endif %}
+{% if not zActionsFirst %}{{ zActions | safe }}{% endif %}

@@ -1,5 +1,5 @@
 {
-  "_readme": "English-only copy: the study pages (/principles/ and /principles/N/: intro, legacies, thirtySix, logoStory), the 404 page (notFound) and the one-paragraph event summary used by the JSON-LD and the calendar file (jsonld.eventSummary). The workshop pages have their own bilingual files in src/_data/pagecopy/. Write the email, date, times and Zoom numbers only as tokens ({email}, {date}, {time}…). Fields read through | md accept simple Markdown.",
+  "_readme": "English-only copy: the study pages (/principles/ and /principles/N/: intro, legacies, thirtySix, logoStory), the English half of the 404 page (notFound; its Spanish twin is in the front matter of src/pages/404.njk) and the one-paragraph event summary used by the JSON-LD and the calendar file (jsonld.eventSummary). The workshop pages have their own bilingual files in src/_data/pagecopy/. Write the email, date, times and Zoom numbers only as tokens ({email}, {date}, {time}…). Fields read through | md accept simple Markdown.",
   "intro": {
     "_readme": "/principles/: the heading and the two short paragraphs below the twelve number tiles, the first section after the hero (body accepts simple Markdown).",
     "heading": "Pull one thread and the whole cloth moves",

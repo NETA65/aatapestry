@@ -40,7 +40,7 @@ Each piece of information lives on exactly one page; the others link to it.
 
 Old addresses forward to their new home: `/schedule/` → `/program/`, `/accessibility/` →
 `/join/#interpretation`, `/meeting/` → `/principles/`, and links into sections of the old one-page home
-(`/#join`, `/es/#unirse`, …) go to the page that now holds that section. Also generated: `/sitemap.xml`, `/robots.txt`,
+(`/#join`, `/es/#unirse`, …) go to the page that now holds that section. Also generated: `/feed.xml` (the updates feed, Atom; entries in `site.json → updates`), `/sitemap.xml`, `/robots.txt`,
 `/manifest.webmanifest`, `/404.html`.
 
 The questions address is printed once on every page, in the purple band at the top of the footer
