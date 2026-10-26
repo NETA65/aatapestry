@@ -14,6 +14,7 @@
     "clean": "node -e \"require('fs').rmSync('_site',{recursive:true,force:true})\"",
     "test:html": "html-validate \"_site/**/*.html\"",
     "test:links": "linkinator _site --recurse --skip \"^https?://(?!localhost|127\\.0\\.0\\.1)\" --verbosity error",
+    "test:ui": "node scripts/ui-test.mjs",
     "zoom:update": "node scripts/update-zoom.mjs",
     "zoom:sync": "node scripts/sync-zoom.mjs",
     "brand:mark": "node scripts/make-aa-mark.mjs",

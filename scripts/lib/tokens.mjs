@@ -1,5 +1,5 @@
 // Tokens: the ONE place the email, the date, the times and the Zoom numbers get into prose.
-// Copy in copy.json / i18n.json / faq.json / updates.json / schedule.json writes them only as
+// Copy in i18n.json / pagecopy/*.json / copy.json / faq.json / schedule.json writes them only as
 // tokens ({email}, {time}, …); this module swaps in the real values from site.json + when.js.
 // Used by the `tokens` Nunjucks filter (eleventy.config.js), the .ics generator
 // (src/pages/workshop-ics.11ty.js) and scripts/build-brand.mjs, so every output says the same.
