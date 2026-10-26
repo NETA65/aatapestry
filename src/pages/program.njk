@@ -16,9 +16,12 @@ eleventyComputed:
 {#- The Program page, /program/ and /es/program/: the day's timeline (main column), then the time in
     every zone and Add to calendar (sidebar on wide screens, below on narrow ones).
     Until schedule.json has status "published" AND sessions, the timeline shows only what is announced:
-    the start (ET, then PT · MT · CT), "presentations, sharing and questions — coming soon", the end.
+    the start (ET), "presentations, sharing and questions — coming soon", the end (ET). The other zones
+    are in the table beside it, not repeated in the timeline.
     Once published it lists each session (start–end in ET, title/titleEs, summary/summaryEs, kind, and
     the legacy colour via data-legacy: recovery | unity | service | all).
+    In every item the time comes first in the source, as it is shown first (above the title on narrow
+    screens, to its left on wide ones), so screen readers also hear "11:00 AM ET, Workshop begins".
     This page owns the times and the calendar; the Zoom details live on /join/ (one link here).
     Copy: src/_data/pagecopy/program.json (c) and i18n (t); times from when.js. -#}
 {% set c = pagecopy.program[lang] %}
@@ -59,6 +62,10 @@ eleventyComputed:
         {% if isBreak %}{% set legacyLabel = "" %}{% elif s.legacy == "all" %}{% set legacyLabel = c.timeline.allLegacies %}{% elif threadKeys[s.legacy] %}{% set legacyLabel = t.legacies[threadKeys[s.legacy] + "Short"] %}{% else %}{% set legacyLabel = "" %}{% endif %}
         <li class="tl-item{% if isBreak %} tl-item--break{% endif %}"{% if legacyLabel %} data-legacy="{{ s.legacy }}"{% endif %}>
           <span class="tl-node" aria-hidden="true">{% icon kindIcons[s.kind] or "circle", "icon" %}</span>
+          <p class="tl-time">
+            <time datetime="{{ when.date.iso }}T{{ s.start }}{{ when.offset }}">{{ s.start | time12(tLocale) }}</time>
+            {% if s.end %}<span class="tl-end"><span aria-hidden="true">–&nbsp;</span><span class="sr-only">{{ c.timeline.to }} </span><time datetime="{{ when.date.iso }}T{{ s.end }}{{ when.offset }}">{{ s.end | time12(tLocale) }}</time></span>{% endif %}
+          </p>
           <div class="tl-body">
             <h3 class="tl-title"{% if titleEn %} lang="en"{% endif %}>{{ sTitle }}</h3>
             {% if kindLabel or legacyLabel %}
@@ -69,23 +76,19 @@ eleventyComputed:
             {% endif %}
             {% if sSummary %}<p class="tl-text"{% if summaryEn %} lang="en"{% endif %}>{{ sSummary }}</p>{% endif %}
           </div>
-          <p class="tl-time">
-            <time datetime="{{ when.date.iso }}T{{ s.start }}{{ when.offset }}">{{ s.start | time12(tLocale) }}</time>
-            {% if s.end %}<span class="tl-end"><span aria-hidden="true">–&nbsp;</span><span class="sr-only">{{ c.timeline.to }} </span><time datetime="{{ when.date.iso }}T{{ s.end }}{{ when.offset }}">{{ s.end | time12(tLocale) }}</time></span>{% endif %}
-          </p>
         </li>
         {% endfor %}
       {% else %}
         <li class="tl-item tl-item--edge" data-legacy="recovery">
           <span class="tl-node" aria-hidden="true">{% icon "door-open", "icon" %}</span>
+          <p class="tl-time"><time datetime="{{ when.startISO }}">{{ when.time.startEs if es else when.time.start }}</time> <span class="tl-zone">{{ when.tzShort }}</span></p>
           <div class="tl-body">
             <h3 class="tl-title">{{ c.timeline.begins }}</h3>
-            <p class="tl-text">{{ when.time.startsAlsoEs if es else when.time.startsAlso }}</p>
           </div>
-          <p class="tl-time"><time datetime="{{ when.startISO }}">{{ when.time.startEs if es else when.time.start }}</time> <span class="tl-zone">{{ when.tzShort }}</span></p>
         </li>
         <li class="tl-item tl-item--pending" data-legacy="unity">
           <span class="tl-node" aria-hidden="true">{% icon "messages-square", "icon" %}</span>
+          <p class="tl-time tl-time--span">{{ c.timeline.middleTime }}</p>
           <div class="tl-body tl-card">
             <h3 class="tl-title">{{ c.timeline.middle }}</h3>
             <p class="tl-soon">{% icon "hourglass", "icon icon-sm" %}<span>{{ t.labels.comingSoon }}</span></p>
@@ -97,15 +100,13 @@ eleventyComputed:
               </ul>
             </div>
           </div>
-          <p class="tl-time tl-time--span">{{ c.timeline.middleTime }}</p>
         </li>
         <li class="tl-item tl-item--edge" data-legacy="service">
           <span class="tl-node" aria-hidden="true">{% icon "flag", "icon" %}</span>
+          <p class="tl-time"><time datetime="{{ when.endISO }}">{{ when.time.endEs if es else when.time.end }}</time> <span class="tl-zone">{{ when.tzShort }}</span></p>
           <div class="tl-body">
             <h3 class="tl-title">{{ c.timeline.ends }}</h3>
-            <p class="tl-text">{{ when.time.endsAlsoEs if es else when.time.endsAlso }}</p>
           </div>
-          <p class="tl-time"><time datetime="{{ when.endISO }}">{{ when.time.endEs if es else when.time.end }}</time> <span class="tl-zone">{{ when.tzShort }}</span></p>
         </li>
       {% endif %}
       </ol>
