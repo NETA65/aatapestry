@@ -1,7 +1,9 @@
-// /aatapestry-workshop.ics — the calendar invite, generated from site.json with the `ics`
-// library. UID is stable and SEQUENCE comes from site.json → event.calendarSequence, so a
-// calendar app that RE-IMPORTS the file updates the entry (new Zoom link etc.) instead of
-// adding a duplicate. Entries do not update by themselves.
+// /aatapestry-workshop.ics and /es/aatapestry-workshop.ics — the calendar invite in English and in
+// Spanish, generated from site.json with the `ics` library. Title and location are the same as the
+// Google / Outlook / Yahoo links (src/_data/calendar.js → calendar.text); the wording is i18n.json →
+// calendar and labels. UID is stable, the same in both files, and SEQUENCE comes from site.json →
+// event.calendarSequence, so a calendar app that RE-IMPORTS either file updates the entry (new Zoom
+// link etc.) instead of adding a duplicate. Entries do not update by themselves.
 //
 // No ORGANIZER by default: with one, Outlook and some Google/iOS imports treat the file as a
 // meeting request (Accept/Decline, RSVP mail to that address). The questions email goes in the
@@ -26,31 +28,48 @@ const foldOctets = (ics) => ics
   })
   .join("\r\n");
 
+const capitalize = (s) => String(s || "").charAt(0).toUpperCase() + String(s || "").slice(1);
+// %title, %url in the alarm texts (not {title}: braces are the build's token syntax)
+const fill = (s, map) => String(s || "").replace(/%([a-z]+)/gi, (m, k) => (k in map ? map[k] : m));
+
 export default class {
   data() {
-    return { permalink: "/aatapestry-workshop.ics", eleventyExcludeFromCollections: true, layout: false };
+    return {
+      pagination: { data: "icsLangs", size: 1, alias: "icsLang" },
+      icsLangs: ["en", "es"],
+      permalink: (data) => data.calendar.ics[data.icsLang],
+      eleventyExcludeFromCollections: true,
+      layout: false,
+    };
   }
-  render({ site, when, copy }) {
+  render({ site, when, copy, i18n, calendar, icsLang }) {
+    const es = icsLang === "es";
     const ev = site.event;
+    const c = (i18n[icsLang] && i18n[icsLang].calendar) || {};
+    const l = (i18n[icsLang] && i18n[icsLang].labels) || {};
     const tk = (s) => applyTokens(String(s ?? ""), { site, when });
-    const summary = tk((copy && copy.jsonld && copy.jsonld.eventSummary) || site.description);
+    const { title, location } = calendar.text[icsLang];
+    const pageUrl = new URL(es ? "/es/" : "/", site.url).href;
+    // English: the longer JSON-LD summary; Spanish: the same details as the other providers' links.
+    const summary = es ? tk(c.details) : tk((copy && copy.jsonld && copy.jsonld.eventSummary) || site.description);
     // when.js keeps each time together with no-break spaces (for the web pages); a calendar entry is plain
     // text (plain() from scripts/lib/tokens.mjs). The summary already says that Spanish and ASL
     // interpretation will be provided and event.cost mentions it again, so there is no "Interpretation:" line.
+    // event.cost is English only (the Spanish file leaves it out; the Spanish FAQ has the cost answer).
     const description = plain([
       summary,
       "",
-      `When: ${when.date.long}, ${when.time.leadLong}`,
-      when.time.startsAlso,
-      `Zoom: ${ev.zoom.joinUrl}`,
-      `Meeting ID: ${ev.zoom.meetingId}`,
-      `Passcode: ${ev.zoom.passcode}`,
-      ...(ev.zoom.dialIn && ev.zoom.dialIn.length ? [`Dial in: ${ev.zoom.dialIn.join(", ")}`] : []),
+      `${l.when}: ${es ? `${capitalize(when.date.longEs)}, ${when.time.leadLongEs}` : `${when.date.long}, ${when.time.leadLong}`}`,
+      es ? when.time.startsAlsoEs : when.time.startsAlso,
+      `${l.joinZoom}: ${ev.zoom.joinUrl}`,
+      `${l.meetingId}: ${ev.zoom.meetingId}`,
+      `${l.passcode}: ${ev.zoom.passcode}`,
+      ...(ev.zoom.dialIn && ev.zoom.dialIn.length ? [`${l.dialIn}: ${ev.zoom.dialIn.join(", ")}`] : []),
       "",
-      ...(ev.cost ? [tk(ev.cost)] : []),
-      ...(site.contact.email ? [`Questions: ${site.contact.email}`] : []),
+      ...(ev.cost && !es ? [tk(ev.cost)] : []),
+      ...(site.contact.email ? [`${c.questionsLabel}: ${site.contact.email}`] : []),
       "",
-      `Details and updates: ${site.url}`,
+      `${c.detailsLabel}: ${pageUrl}`,
     ].join("\n"));
 
     const { error, value } = createEvent({
@@ -64,17 +83,17 @@ export default class {
       end: when.endArray,
       endInputType: "utc",
       endOutputType: "utc",
-      title: ev.name,
+      title,
       description,
-      location: `Zoom - Meeting ID ${ev.zoom.meetingId}, passcode ${ev.zoom.passcode}`,
-      url: site.url,
+      location,
+      url: pageUrl,
       status: ev.status === "cancelled" ? "CANCELLED" : ev.status === "postponed" ? "TENTATIVE" : "CONFIRMED",
       busyStatus: "BUSY",
       categories: ["A.A.", "Workshop", "Three Legacies"],
       ...(site.contact.email && site.contact.icsOrganizer === true ? { organizer: { name: site.contact.committee, email: site.contact.email } } : {}),
       alarms: [
-        { action: "display", description: `${ev.name} is tomorrow`, trigger: { hours: 24, minutes: 0, before: true } },
-        { action: "display", description: `${ev.name} starts in 30 minutes: ${ev.zoom.joinUrl}`, trigger: { hours: 0, minutes: 30, before: true } },
+        { action: "display", description: plain(fill(c.alarmTomorrow, { title, url: ev.zoom.joinUrl })), trigger: { hours: 24, minutes: 0, before: true } },
+        { action: "display", description: plain(fill(c.alarmSoon, { title, url: ev.zoom.joinUrl })), trigger: { hours: 0, minutes: 30, before: true } },
       ],
     });
     if (error) throw error;

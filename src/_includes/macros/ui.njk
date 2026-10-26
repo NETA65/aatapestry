@@ -9,3 +9,15 @@
   {% if lead %}<p class="lead">{{ lead }}</p>{% endif %}
 </div>
 {% endmacro %}
+
+{#- A text link with a trailing arrow glued to its last word ("How to use interpretation →"), so a label
+    that wraps keeps its arrow right after the text, not at the far edge (main.css .link-arrow-end).
+    cls: extra classes on the <a>; icon: the trailing Lucide icon ("arrow-down" for a jump down the page);
+    leadIcon: an optional icon in front; hreflang: for a link to a page in the other language.
+      {% import "macros/ui.njk" as ui %}
+      {{ ui.arrowLink(p + "/join/", c.essentials.zoom.link, "mt-auto pt-5") }} -#}
+{% macro arrowLink(href, text, cls="", icon="arrow-right", leadIcon="", hreflang="") %}
+{%- set words = (text | string).split(" ") -%}
+{%- set last = words.pop() -%}
+<a href="{{ href }}" class="link-arrow{% if cls %} {{ cls }}{% endif %}"{% if hreflang %} hreflang="{{ hreflang }}"{% endif %}>{% if leadIcon %}{% icon leadIcon, "icon icon-sm" %}{% endif %}<span>{% if words.length %}{{ words | join(" ") }} {% endif %}<span class="whitespace-nowrap">{{ last }}{% icon icon, "icon icon-sm link-arrow-end" %}</span></span></a>
+{%- endmacro %}

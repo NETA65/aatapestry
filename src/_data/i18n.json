@@ -4,6 +4,7 @@
     "langName": "English",
     "switchLabel": "Español",
     "switchLabelLong": "Ver en español",
+    "switchLabelHome": "Página principal en español",
     "nav": {
       "home": "Home",
       "program": "Program",
@@ -24,25 +25,20 @@
       "meetingId": "Meeting ID",
       "passcode": "Passcode",
       "joinZoom": "Join on Zoom",
-      "zoomLink": "Zoom link",
       "copy": "Copy",
       "copied": "Copied",
       "copyLink": "Copy link",
       "addToCalendar": "Add to calendar",
-      "downloadIcs": "Download calendar file (.ics)",
       "yourLocalTime": "In your time zone",
       "online": "Online on Zoom",
       "free": "Free",
       "noRegistration": "No pre-registration",
       "interpretationValue": "Spanish · ASL",
       "interpretationBadge": "Spanish & ASL interpretation",
-      "presentations": "Presentations · Sharing · Questions and more",
       "presentationsBurst": "Presentations · Sharing · Questions and more!",
       "share": "Share",
       "dialIn": "Dial in",
       "comingSoon": "Coming soon",
-      "updated": "Updated",
-      "learnMore": "Learn more",
       "englishOnly": "in English"
     },
     "calendar": {
@@ -52,13 +48,18 @@
       "yahoo": "Yahoo Calendar",
       "apple": "Apple Calendar or Outlook (.ics)",
       "title": "The Incredible Tapestry — online A.A. workshop",
-      "details": "A free, 1-day online A.A. workshop: a series of presentations on how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions. Spanish and ASL interpretation. No pre-registration is required."
+      "details": "A free, 1-day online A.A. workshop: a series of presentations on how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions. Spanish and ASL interpretation. No pre-registration is required.",
+      "questionsLabel": "Questions",
+      "detailsLabel": "Details and updates",
+      "alarmTomorrow": "%title is tomorrow",
+      "alarmSoon": "%title starts in 30 minutes: %url"
     },
     "countdown": {
       "days": "%n days to go",
       "tomorrow": "Tomorrow",
       "today": "Today — starts at %start",
       "startsIn": "Starts in %h h %m min",
+      "startsInMin": "Starts in %m min",
       "live": "Happening now — the room is open",
       "ended": "This workshop has ended. Thank you for weaving with us."
     },
@@ -85,14 +86,13 @@
     },
     "notice": {
       "label": "Zoom link updated",
-      "text": "The Zoom link shown on this site before October 25 has changed. If you saved it, or added the workshop to your calendar before then, please use the new details on this site and add the workshop to your calendar again."
+      "text": "The link changed on October 25. If you saved it or added the workshop to your calendar before then, use the details below and add the workshop to your calendar again."
     },
     "contact": {
       "heading": "Questions?",
       "body": "For questions, please email:",
       "subject": "Question: The Incredible Tapestry workshop (Dec 12)",
       "subjectContribution": "Contributions for interpretation: The Incredible Tapestry",
-      "subjectProgram": "Question about the program: The Incredible Tapestry",
       "subjectAccessibility": "Accessibility question: The Incredible Tapestry",
       "copyAddress": "Copy email address",
       "linkText": "Email the planning committee"
@@ -105,7 +105,7 @@
       "text": "Text message"
     },
     "footer": {
-      "blurb": "Made by A.A. members for A.A. members, in the spirit of Tradition Five.",
+      "blurb": "Made by A.A. members as a service, in the spirit of Tradition Five.",
       "workshop": "The workshop",
       "resources": "Resources",
       "disclaimer": "This website is maintained by A.A. members as a service for an A.A. workshop. It is not affiliated with, nor endorsed by, Alcoholics Anonymous World Services, Inc., the General Service Office, or any A.A. area or district, unless stated otherwise.",
@@ -115,7 +115,6 @@
     "a11y": {
       "openInNewTab": "(opens in a new tab)",
       "menu": "Menu",
-      "close": "Close menu",
       "languageMenu": "Language"
     }
   },
@@ -123,6 +122,7 @@
     "langName": "Español",
     "switchLabel": "English",
     "switchLabelLong": "View in English",
+    "switchLabelHome": "English home page",
     "nav": {
       "home": "Inicio",
       "program": "Programa",
@@ -143,25 +143,20 @@
       "meetingId": "ID de reunión",
       "passcode": "Código de acceso",
       "joinZoom": "Unirse por Zoom",
-      "zoomLink": "Enlace de Zoom",
       "copy": "Copiar",
       "copied": "Copiado",
       "copyLink": "Copiar enlace",
       "addToCalendar": "Agregar al calendario",
-      "downloadIcs": "Descargar archivo de calendario (.ics, en inglés)",
       "yourLocalTime": "En su zona horaria",
       "online": "En línea por Zoom",
       "free": "Gratuito",
       "noRegistration": "Sin inscripción previa",
       "interpretationValue": "Español · ASL",
       "interpretationBadge": "Interpretación en español y en ASL",
-      "presentations": "Presentaciones · Compartir · Preguntas y más",
       "presentationsBurst": "Presentaciones · Compartir · ¡Preguntas y más!",
       "share": "Compartir",
       "dialIn": "Por teléfono",
       "comingSoon": "Próximamente",
-      "updated": "Actualizado",
-      "learnMore": "Más información",
       "englishOnly": "en inglés"
     },
     "calendar": {
@@ -171,13 +166,18 @@
       "yahoo": "Yahoo Calendar",
       "apple": "Apple Calendar u Outlook (.ics)",
       "title": "The Incredible Tapestry — taller de A.A. en línea",
-      "details": "Un taller de A.A. gratuito, en línea y de un día: una serie de presentaciones sobre cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz, con bastante tiempo para compartir y hacer preguntas. Interpretación en español y en ASL. No se requiere inscripción previa."
+      "details": "Un taller de A.A. gratuito, en línea y de un día: una serie de presentaciones sobre cómo los Pasos, las Tradiciones y los Conceptos entretejen este increíble tapiz, con bastante tiempo para compartir y hacer preguntas. Interpretación en español y en ASL. No se requiere inscripción previa.",
+      "questionsLabel": "Preguntas",
+      "detailsLabel": "Detalles y novedades",
+      "alarmTomorrow": "%title: es mañana",
+      "alarmSoon": "%title comienza en 30 minutos: %url"
     },
     "countdown": {
       "days": "Faltan %n días",
       "tomorrow": "Es mañana",
       "today": "Es hoy — comienza a las %start",
       "startsIn": "Comienza en %h h %m min",
+      "startsInMin": "Comienza en %m min",
       "live": "Está en marcha — la sala está abierta",
       "ended": "El taller ha concluido. Gracias por tejer con nosotros."
     },
@@ -204,14 +204,13 @@
     },
     "notice": {
       "label": "Enlace de Zoom actualizado",
-      "text": "El enlace de Zoom que aparecía en este sitio antes del 25 de octubre cambió. Si lo guardó, o si agregó el taller a su calendario antes de esa fecha, use los datos nuevos de este sitio y vuelva a agregar el taller a su calendario."
+      "text": "El enlace cambió el 25 de octubre. Si lo guardó o agregó el taller a su calendario antes de esa fecha, use los datos de abajo y vuelva a agregar el taller a su calendario."
     },
     "contact": {
       "heading": "¿Preguntas?",
       "body": "Para preguntas, escriba a:",
       "subject": "Pregunta sobre el taller The Incredible Tapestry (12 de diciembre)",
       "subjectContribution": "Contribuciones para la interpretación: The Incredible Tapestry",
-      "subjectProgram": "Pregunta sobre el programa: The Incredible Tapestry",
       "subjectAccessibility": "Pregunta sobre accesibilidad: The Incredible Tapestry",
       "copyAddress": "Copiar la dirección de correo",
       "linkText": "Escribir al comité organizador"
@@ -224,7 +223,7 @@
       "text": "Mensaje de texto"
     },
     "footer": {
-      "blurb": "Hecho por miembros de A.A. para miembros de A.A., en el espíritu de la Quinta Tradición.",
+      "blurb": "Hecho por miembros de A.A. como un servicio, en el espíritu de la Quinta Tradición.",
       "workshop": "El taller",
       "resources": "Recursos",
       "disclaimer": "Este sitio web lo mantienen miembros de A.A. como un servicio para un taller de A.A. No está afiliado a Alcoholics Anonymous World Services, Inc., a la Oficina de Servicios Generales ni a ningún área o distrito de A.A., ni cuenta con su respaldo, salvo que se indique lo contrario.",
@@ -234,7 +233,6 @@
     "a11y": {
       "openInNewTab": "(se abre en una pestaña nueva)",
       "menu": "Menú",
-      "close": "Cerrar menú",
       "languageMenu": "Idioma"
     }
   }

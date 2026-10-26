@@ -3,14 +3,19 @@
     legal notes. Labels from i18n (t.footer, t.nav, t.contact). -#}
 {%- set links = nav[lang] -%}
 {%- set email = site.contact.email -%}
+{#- The language switch, as in header.njk: on the English-only pages it goes to the Spanish home page and says so. -#}
+{%- set switchHref = page.url | langUrl(otherLang) -%}
+{%- set switchToHome = otherLang == "es" and switchHref == "/es/" and page.url != "/" -%}
 <footer>
   {% if email %}
   <section class="questions-band" aria-labelledby="questions-band-label">
     <div class="container-page questions-band-inner">
       {% icon "mail", "icon icon-lg" %}
       <h2 class="questions-band-label" id="questions-band-label">{{ t.contact.body }}</h2>
-      <a class="email-link" href="{{ email | mailto(t.contact.subject | tokens) }}">{{ email }}</a>
-      <button type="button" class="copy-btn" data-copy="{{ email }}" data-copied="{{ t.labels.copied }}" aria-label="{{ t.contact.copyAddress }}">{% icon "copy", "icon icon-sm" %}<span>{{ t.labels.copy }}</span></button>
+      <span class="questions-band-address">
+        <a class="email-link" href="{{ email | mailto(t.contact.subject | tokens) }}">{{ email }}</a>
+        <button type="button" class="copy-btn" data-copy="{{ email }}" data-copied="{{ t.labels.copied }}" aria-label="{{ t.contact.copyAddress }}">{% icon "copy", "icon icon-sm" %}<span>{{ t.labels.copy }}</span></button>
+      </span>
     </div>
   </section>
   {% endif %}
@@ -23,7 +28,8 @@
             <span class="brand-name">{{ site.name }}</span>
           </a>
           <p class="mt-4 max-w-sm">{{ t.footer.blurb }}</p>
-          <p class="mt-2 max-w-sm">{{ (when.date.longEs | capitalize) if lang == 'es' else when.date.long }} · {{ t.labels.online }}</p>
+          {#- The line breaks at the "·" (the "·" stays with the date, "Online on Zoom" stays whole). -#}
+          <p class="mt-2 max-w-sm">{{ (when.date.longEs | capitalize) if lang == 'es' else when.date.long }}&nbsp;· <span class="whitespace-nowrap">{{ t.labels.online }}</span></p>
         </div>
         <nav aria-label="{{ t.nav.footer }}">
           <h2 class="footer-heading">{{ t.footer.workshop }}</h2>
@@ -36,7 +42,7 @@
           <h2 class="footer-heading">{{ t.footer.resources }}</h2>
           <ul class="footer-links">
             {% for item in links.resources %}<li><a href="{{ item.href }}"{% if item.download %} download{% endif %}{% if item.lang %} hreflang="{{ item.lang }}"{% endif %}>{{ t.nav[item.key] }}{% if item.lang and item.lang != lang %} <span class="opacity-70">({{ t.labels.englishOnly }})</span>{% endif %}</a></li>{% endfor %}
-            <li><a href="{{ page.url | langUrl(otherLang) }}" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon icon-sm" %}<span>{{ t.switchLabelLong }}</span></a></li>
+            <li><a href="{{ switchHref }}" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon icon-sm" %}<span>{{ t.switchLabelHome if switchToHome else t.switchLabelLong }}</span></a></li>
           </ul>
         </div>
       </div>
