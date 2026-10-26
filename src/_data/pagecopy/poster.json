@@ -1,9 +1,9 @@
 {
-  "_readme": "The printable poster pages (/poster/ and /es/poster/; the Spanish poster is the only Spanish printable). en and es must have the same keys. Plain text. 'hero' and 'panel' are the screen page around the poster; 'poster' is printed on the poster itself (with i18n landing.eyebrow, landing.subline, landing.gloss, legacies.*, labels.* and contact.body). The date, times, Zoom ID, passcode, QR codes, domain and questions address come from site.json, when.js and brand/qr/; write any of them in this file only as tokens ({date}, {dateEs}…). scripts/pdf.mjs renders the #poster element to brand/poster/ (Letter and A4 PDF, 300-dpi PNG).",
+  "_readme": "The printable poster pages (/poster/ and /es/poster/; the Spanish poster is the only Spanish printable). en and es must have the same keys. Plain text; keep meta.description to about 160 characters after tokens. 'hero' and 'panel' are the screen page around the poster; 'poster' is printed on the poster itself (with i18n landing.eyebrow, landing.subline, landing.gloss, legacies.*, labels.* and contact.body). The date, times, Zoom ID, passcode, QR codes, domain and questions address come from site.json, when.js and brand/qr/; write any of them in this file only as tokens ({date}, {dateEs}…). scripts/pdf.mjs renders the #poster element to brand/poster/ (Letter and A4 PDF, 300-dpi PNG).",
   "en": {
     "meta": {
       "title": "Printable poster",
-      "description": "A printer-friendly one-page poster for The Incredible Tapestry, {date}: Letter or A4, light background, with QR codes for Zoom and this website. Download it as a PDF or PNG, or print it."
+      "description": "Printable one-page poster for The Incredible Tapestry, {date}, with QR codes for Zoom and this website. Letter or A4 PDF, or PNG."
     },
     "hero": {
       "eyebrow": "Print & share",
@@ -41,7 +41,7 @@
   "es": {
     "meta": {
       "title": "Póster imprimible",
-      "description": "Póster imprimible de una página del taller The Incredible Tapestry, {dateEs}: tamaño carta o A4, fondo claro, con códigos QR para Zoom y para este sitio web. Se puede descargar en PDF o PNG, o imprimir."
+      "description": "Póster imprimible de The Incredible Tapestry, {dateEs}, con códigos QR para Zoom y este sitio web. En PDF (carta o A4) o PNG."
     },
     "hero": {
       "eyebrow": "Imprimir y compartir",

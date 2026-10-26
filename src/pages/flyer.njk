@@ -14,11 +14,14 @@ eleventyComputed:
   description: "{{ pagecopy.flyer[plang].meta.description | tokens }}"
 ---
 {#- The official flyer, /flyer/ and /es/flyer/ (the flyer itself is in English): the image, large; beside it
-    (after it on phones) the downloads, the printable poster and the share buttons; and the flyer's full text,
-    built from site.json + when.js so it never disagrees with How to join, in a collapsed <details> (under
-    the image on wide screens, last on phones).
-    Files and sizes: site.json → flyer. When the Zoom details the flyer prints (flyer.zoomMeetingId /
-    zoomPasscode / zoomJoinUrl) differ from event.zoom, a warning sends people to How to join.
+    (after it on phones) the flyer's downloads, a card that sends people to the printable poster (its files,
+    preview and print tips live only on /poster/) and the share buttons; and the flyer's full text, built from
+    site.json + when.js so it never disagrees with How to join, in a collapsed <details> (under the image on
+    wide screens, last on phones). Printed (Ctrl+P), the page is just the flyer on one sheet (flyer.css).
+    Files and sizes: site.json → flyer; on /es/flyer/ the sizes get a decimal comma ("1,4 MB"), as the
+    Spanish poster page writes "8,5 × 11 pulgadas".
+    When the Zoom details the flyer prints (flyer.zoomMeetingId / zoomPasscode / zoomJoinUrl) differ from
+    event.zoom, a warning sends people to How to join.
     The questions address is never printed here (the footer prints it); the flyer's text links to it.
     Copy: src/_data/pagecopy/flyer.json (c) and i18n (t). Styles: src/assets/css/pages/flyer.css. -#}
 {% set c = pagecopy.flyer[lang] %}
@@ -30,7 +33,8 @@ eleventyComputed:
 {% set webp = [] %}{% set jpg = [] %}
 {% for w in fl.widths or [600, 1000, 1600] %}{% set _ = webp.push(fl.base + "-" + w + ".webp " + w + "w") %}{% set _ = jpg.push(fl.base + "-" + w + ".jpg " + w + "w") %}{% endfor %}
 {% set sizes = "(min-width: 74rem) 38rem, (min-width: 60rem) calc(100vw - 30rem), (min-width: 38rem) 36rem, calc(100vw - 2rem)" %}
-{% set ps = "-es" if es else "" %}
+{% set pdfMeta = c.downloads.pdfMeta | tokens %}{% set jpgMeta = c.downloads.jpgMeta | tokens %}
+{% if es %}{% set pdfMeta = pdfMeta | replace(r/(\d)\.(\d)/g, "$1,$2") %}{% set jpgMeta = jpgMeta | replace(r/(\d)\.(\d)/g, "$1,$2") %}{% endif %}
 
 {% set hero = { eyebrow: c.hero.eyebrow, title: c.hero.title, lead: c.hero.lead | tokens, crumbLabel: c.hero.crumb } %}
 {% include "partials/page-hero.njk" %}
@@ -69,34 +73,21 @@ eleventyComputed:
         <ul class="dl-list">
           <li><a class="dl-item dl-item--primary" href="{{ fl.pdf }}" download type="application/pdf">
             <span class="dl-icon">{% icon "file-down", "icon" %}</span>
-            <span class="dl-text"><span class="dl-title">{{ c.downloads.pdf }}</span><span class="dl-meta">{{ c.downloads.pdfMeta | tokens }}</span></span>
+            <span class="dl-text"><span class="dl-title">{{ c.downloads.pdf }}</span><span class="dl-meta">{{ pdfMeta }}</span></span>
             {% icon "download", "icon dl-go" %}</a></li>
           {% if fl.jpg %}<li><a class="dl-item" href="{{ fl.jpg }}" download type="image/jpeg">
             <span class="dl-icon">{% icon "image", "icon" %}</span>
-            <span class="dl-text"><span class="dl-title">{{ c.downloads.jpg }}</span><span class="dl-meta">{{ c.downloads.jpgMeta | tokens }}</span></span>
+            <span class="dl-text"><span class="dl-title">{{ c.downloads.jpg }}</span><span class="dl-meta">{{ jpgMeta }}</span></span>
             {% icon "download", "icon dl-go" %}</a></li>{% endif %}
         </ul>
       </section>
 
+      {#- The poster's files, preview and print tips live on /poster/ only; this card points there. #}
       <section class="card flyer-card flyer-card--poster" aria-labelledby="flyer-poster-title">
         <h2 class="h-card" id="flyer-poster-title">{{ c.posters.heading }}</h2>
         <p class="flyer-card-body">{{ c.posters.body | tokens }}</p>
-        <ul class="dl-list">
-          <li><a class="dl-item" href="/brand/poster/aatapestry-poster{{ ps }}-letter.pdf" download type="application/pdf">
-            <span class="dl-icon">{% icon "file-down", "icon" %}</span>
-            <span class="dl-text"><span class="dl-title">{{ c.posters.letter }}</span><span class="dl-meta">{{ c.posters.letterMeta }}</span></span>
-            {% icon "download", "icon dl-go" %}</a></li>
-          <li><a class="dl-item" href="/brand/poster/aatapestry-poster{{ ps }}-a4.pdf" download type="application/pdf">
-            <span class="dl-icon">{% icon "file-down", "icon" %}</span>
-            <span class="dl-text"><span class="dl-title">{{ c.posters.a4 }}</span><span class="dl-meta">{{ c.posters.a4Meta }}</span></span>
-            {% icon "download", "icon dl-go" %}</a></li>
-          <li><a class="dl-item" href="/brand/poster/aatapestry-poster{{ ps }}.png" download type="image/png">
-            <span class="dl-icon">{% icon "image", "icon" %}</span>
-            <span class="dl-text"><span class="dl-title">{{ c.posters.png }}</span><span class="dl-meta">{{ c.posters.pngMeta }}</span></span>
-            {% icon "download", "icon dl-go" %}</a></li>
-        </ul>
+        <a href="{{ p }}/poster/" class="btn btn-outline btn-block flyer-card-cta">{% icon "printer", "icon" %}<span>{{ c.posters.view }}</span></a>
         <ul class="flyer-card-links">
-          <li><a href="{{ p }}/poster/" class="link-arrow">{% icon "printer", "icon icon-sm" %}<span>{{ c.posters.view }}</span></a></li>
           <li><a href="{{ '/poster/' if es else '/es/poster/' }}" class="link-arrow" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon icon-sm" %}<span>{{ c.posters.other }}</span></a></li>
         </ul>
       </section>
