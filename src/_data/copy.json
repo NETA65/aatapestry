@@ -1,31 +1,54 @@
 {
   "_readme": "English-only copy: the study pages (/principles/ and /principles/N/: intro, legacies, thirtySix, logoStory), the 404 page (notFound) and the one-paragraph event summary used by the JSON-LD and the calendar file (jsonld.eventSummary). The workshop pages have their own bilingual files in src/_data/pagecopy/. Write the email, date, times and Zoom numbers only as tokens ({email}, {date}, {time}…). Fields read through | md accept simple Markdown.",
   "intro": {
+    "_readme": "/principles/: the heading and the two short paragraphs above the twelve number tiles (body accepts simple Markdown).",
     "heading": "Pull one thread and the whole cloth moves",
     "body": [
-      "Most of us met the Steps first, in a church basement or on a screen, from someone who had been where we were. The Traditions came later, usually when a group business meeting got lively. The Concepts, if we met them at all, arrived with a service job we did not quite ask for. We tend to keep the three in separate drawers. This workshop takes them out and looks at how they weave together.",
-      "No homework is needed, and nobody expects you to know the Concepts by heart. Bring your coffee and your home group’s questions."
+      "Most of us met the Steps first, from someone who had been where we were. The Traditions came later, usually when a group business meeting got lively. The Concepts, if we met them at all, arrived with a service job we did not quite ask for. We tend to keep the three in separate drawers.",
+      "Look at number **one**. Step One admits powerlessness, Tradition One puts our common welfare first, and Concept I places final authority in the conscience of the whole Fellowship. Written years apart, the three say the same thing: none of us gets well alone. Choose a number to follow its thread."
     ]
   },
   "legacies": {
+    "_readme": "/principles/: the three legacy cards. Each card's name, blurb and literature come from site.json → legacies, and its aa.org link from principles.json → sources.",
     "heading": "Three legacies, one Fellowship",
-    "lead": "At the St. Louis convention in 1955, Bill W. handed A.A. to its members in the form of three legacies: Recovery, Unity and Service. They were never meant to be studied apart. Recovery is how the alcoholic gets well, Unity is how the group stays well, and Service is how the Fellowship as a whole keeps the hand of A.A. there for the next person who reaches for it.",
-    "closing": "Each legacy has twelve principles, and the twelve line up more closely than most of us ever noticed."
+    "lead": "At the St. Louis convention in 1955, Bill W. handed A.A. to its members in the form of three legacies: Recovery, Unity and Service. They were never meant to be studied apart.",
+    "literature": "In the literature"
   },
   "thirtySix": {
-    "heading": "36 threads, one tapestry",
-    "lead": "Take any number from one to twelve. The Step, the Tradition and the Concept that carry that number are three expressions of one idea, seen from the chair, from the group and from the Fellowship as a whole.",
-    "body": [
-      "Look at the number **one**. Step One admits that we were powerless over alcohol and that our lives had become unmanageable. Tradition One says our common welfare comes first, because personal recovery depends on A.A. unity. Concept One places the final responsibility and ultimate authority for world services in the collective conscience of the whole Fellowship. Three sentences written years apart, and the same thread runs through all of them: none of us gets well alone, and the whole only works when each part admits it needs the others. Try it with **two** (a Power greater than ourselves, a loving God as expressed in our group conscience, the Conference as the active voice and effective conscience of the whole Fellowship) and the pattern shows up again.",
-      "The [study pages](/principles/) lay out all 36 side by side, with the Step, the Tradition and the Concept of each number together. They are a companion to the workshop: something to read before the day, and a way to keep weaving after it is over."
-    ],
-    "cta": "Explore all 36"
+    "_readme": "/principles/ (page title, hero lead, meta description, the tiles legend, the side-by-side table and the one link back to the workshop) and, under numberPage, the headings and labels of /principles/1/ … /principles/12/. The 36 principles themselves are in principles.json.",
+    "title": "The 36 Principles",
+    "lead": "Take any number from one to twelve. The Step, the Tradition and the Concept that carry it are three expressions of one idea, seen from the chair, from the group and from the Fellowship as a whole.",
+    "description": "All 36 principles of A.A. side by side: the Twelve Steps, Twelve Traditions and Twelve Concepts for World Service, with the thread that runs through each number.",
+    "legend": "Principle words:",
+    "tableHeading": "Side by side",
+    "tableLead": "All 36 in one table, each with its principle word and a one-line summary. To read one legacy straight through, show it on its own.",
+    "tableCaption": "The 36 principles: for each number, the Step, the Tradition and the Concept, each with a principle word and a one-line summary.",
+    "threadColumn": "Number and thread",
+    "filterLabel": "Show",
+    "filterAll": "All three",
+    "companion": "These study pages are a companion to The Incredible Tapestry, a free 1-day online A.A. workshop on {date}.",
+    "companionLink": "About the workshop",
+    "numberPage": {
+      "threadHeading": "The thread",
+      "weaveHeading": "How it weaves",
+      "questionsHeading": "Questions for a meeting or a sponsor conversation",
+      "questionsNote": "In a group, read the Step, the Tradition and the Concept aloud, then share on the thread that connects them.",
+      "keywords": "Keywords",
+      "readPrefix": "Read",
+      "readSuffix": "at aa.org",
+      "pagerLabel": "More principles",
+      "previous": "Previous",
+      "next": "Next",
+      "all": "All 36 principles"
+    }
   },
   "logoStory": {
+    "_readme": "/principles/: the closing section beside the logo (body accepts simple Markdown).",
     "heading": "About the mark",
+    "alt": "The Incredible Tapestry logo",
     "body": [
       "The circle and triangle have stood for A.A. since the 1950s: the circle is the whole world of A.A., and the three sides of the triangle are our Three Legacies, named here the way they appear on a medallion: Unity, Service, Recovery.",
-      "Inside the triangle, three circles overlap like a Venn diagram, one for each legacy in its own color. Where two meet, a Step and a Tradition, or a Tradition and a Concept, share a principle; the small shape where all three meet is the tapestry itself: the Fellowship, held together by all 36 threads."
+      "Inside, three circles overlap, one for each legacy in its own color: blue for Recovery, green for Unity and gold for Service. The small shape where all three meet is the tapestry itself: the Fellowship, held together by all 36 threads."
     ]
   },
   "notFound": {
