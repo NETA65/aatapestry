@@ -216,3 +216,17 @@
     .zones-tag--you { background: none; color: var(--c-recovery-text); box-shadow: inset 0 0 0 1px currentColor; }
   }
 }
+
+/* ---------- On paper: where the sheets may break ----------
+   Unlayered on purpose: it must beat main.css's unlayered print rule `h2, h3 { break-after: avoid }`,
+   which a rule inside @layer components cannot do whatever its specificity.
+   A timeline title that ends its item ("Workshop begins", "Workshop ends", a session with no tags or
+   summary) has nothing to keep with inside the item, and its break-after: avoid carried over to the
+   gaps between items and on to the sidebar's first card (.card avoids breaking inside). That left no
+   break allowed from "The day at a glance" to the end of the time-zone table, so sheet 1 printed the
+   page hero alone. A title followed by its tags or summary still keeps with them, and an item (time,
+   knot, title, card) stays whole on one sheet. */
+@media print {
+  .tl-title:last-child { break-after: auto; }
+  .tl-item { break-inside: avoid; }
+}
