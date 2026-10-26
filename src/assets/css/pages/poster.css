@@ -5,6 +5,7 @@
    (1cqw = 1% of the poster's width), so the screen preview, the PDFs and the 300-dpi PNG are one design.
    It stays light (paper) in dark mode too, and redefines the colour tokens it uses to their light values.
    scripts/pdf.mjs: at a 900 px-wide screen #poster is 816 px (8.5 in) wide; :root[data-size="a4"] = A4.
+   On screen the sheet may grow taller (never wider) when a reader's text-spacing styles need room.
    The sheet is full: Letter leaves only a few cqw to spare in Spanish, so measure after any change. */
 @layer components {
   /* ---------- The screen page around the poster ---------- */
@@ -54,6 +55,16 @@
     padding: 4.2cqw 6.2cqw 4cqw; font-size: 2cqw;
   }
   .poster-inner > * { flex-shrink: 0; }
+  /* On screen the sheet keeps its Letter shape but grows taller when a reader's text-spacing or other user
+     styles need more room (WCAG 1.4.12), instead of clipping the Zoom details. Normally the content fits, so
+     the preview and pdf.mjs's PNG are unchanged (100cqw × 11 / 8.5 = 1056 px at 816 px wide). On paper the
+     print block below fixes the sheet at 8.5 × 11 in (or A4) as before. overflow stays hidden on .poster,
+     so the no-wrap lines can never cause sideways scrolling. */
+  @media screen {
+    .poster, :root[data-size="a4"] .poster { aspect-ratio: auto; }
+    .poster-inner { position: relative; min-height: calc(100cqw * 11 / 8.5); }
+    :root[data-size="a4"] .poster-inner { min-height: calc(100cqw * 297 / 210); }
+  }
   .poster p, .poster dl, .poster ul, .poster figure { margin: 0; }
 
   /* Logo + the flyer's title in print colours: gold "THE INCREDIBLE" over a navy script "Tapestry" */
@@ -66,6 +77,13 @@
   .poster-gold {
     background: linear-gradient(180deg, #e8b850 0%, #cf952f 40%, #a06a18 78%, #b98226 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  /* Forced colours (Windows contrast themes): each line's backplate would paint over the overlapping
+     lockup lines ("THE", the top of "INCREDIBLE"). Keep the lockup out of forced colours, drawn in the
+     theme's text colour on the theme's page colour, so all three lines stay whole and readable. */
+  @media (forced-colors: active) {
+    .poster-title .lockup { forced-color-adjust: none; color: CanvasText; }
+    .poster-title .lockup > span { color: CanvasText; background: none; text-shadow: none; filter: none; }
   }
   .poster-braid { display: block; width: 100%; height: auto; margin-top: 1.2cqw; }
   /* The braid's dark outlines become paper-coloured gaps, so the threads read as woven on a light page. */

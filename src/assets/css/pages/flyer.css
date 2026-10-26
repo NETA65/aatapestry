@@ -2,23 +2,25 @@
    The download list (.dl-list / .dl-item) is shared with the poster page (src/pages/poster.njk). */
 @layer components {
   /* ---------- Layout ----------
-     Phones: the flyer, then the downloads, the poster, sharing, and the flyer's text last.
-     Tablets: the cards in two columns under the flyer.
-     Wide screens: the flyer with its text below it | the cards beside them. */
+     Phones: the flyer, then the downloads, the poster card, sharing, and the flyer's text last.
+     Tablets: the downloads and the poster card side by side under the flyer, sharing across both.
+     Wide screens: the flyer with its text below it | the cards beside them, flush with the page's
+     edges like the header and hero (the flyer column stops at 38rem, which the img `sizes` in flyer.njk assumes;
+     the cards take the rest, never under 23rem). */
   .flyer-layout { display: grid; gap: clamp(1.5rem, 4vw, 2.5rem); }
   .flyer-top, .flyer-aside, .flyer-text { min-width: 0; width: 100%; max-width: 36rem; margin-inline: auto; }
   .flyer-top { display: grid; gap: 1.25rem; align-content: start; }
   .flyer-aside { display: grid; gap: clamp(1rem, 2.5vw, 1.5rem); align-content: start; }
   @media (min-width: 44rem) and (max-width: 59.99rem) {
-    .flyer-aside { max-width: none; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "dl poster" "share poster"; }
+    .flyer-aside { max-width: none; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "dl poster" "share share"; }
     .flyer-card--dl { grid-area: dl; }
     .flyer-card--poster { grid-area: poster; }
     .flyer-card--share { grid-area: share; }
   }
   @media (min-width: 60rem) {
     .flyer-layout {
-      grid-template-columns: minmax(0, 38rem) minmax(19rem, 23rem); grid-template-rows: auto 1fr;
-      grid-template-areas: "top aside" "text aside"; justify-content: center; align-items: start; column-gap: 3rem; row-gap: 1.25rem;
+      grid-template-columns: minmax(0, 38rem) minmax(23rem, 1fr); grid-template-rows: auto 1fr;
+      grid-template-areas: "top aside" "text aside"; align-items: start; column-gap: 3rem; row-gap: 1.25rem;
     }
     .flyer-top { grid-area: top; }
     .flyer-aside { grid-area: aside; }
@@ -88,7 +90,9 @@
   /* ---------- Side cards ---------- */
   .flyer-card { display: flex; flex-direction: column; }
   .flyer-card-body { margin-top: 0.5rem; font-size: 0.9375rem; line-height: 1.55; color: var(--muted); }
+  .flyer-card-cta { margin-top: 1rem; }
   .flyer-card-links { display: grid; gap: 0.125rem; margin-top: 0.875rem; }
+  .flyer-card-cta + .flyer-card-links { margin-top: 0.5rem; }
   .flyer-card-links .link-arrow { min-height: 2.75rem; }
   /* Full-size (44 px) touch targets for the share buttons in this card */
   .flyer-card--share .share-row .btn { min-height: 2.75rem; }
@@ -113,4 +117,27 @@
   .dl-meta { margin-top: 0.125rem; font-size: 0.8125rem; line-height: 1.35; color: var(--muted); }
   .dl-go { flex: none; color: var(--muted); transition: color 0.15s, transform 0.15s; }
   .dl-item:hover .dl-go { color: var(--fg); transform: translateY(1px); }
+
+  /* ---------- Print (Ctrl+P): the flyer alone, as large as fits one sheet, Letter or A4 ----------
+     main.css imports this file for every page, so the margins go on a named page and every selector here
+     only matches the flyer page. The printed flyer carries the questions address itself, so the footer
+     (with its questions band) is left off this page. */
+  @media print {
+    @page flyer { margin: 0.25in; }
+    body:has(.flyer-section) { page: flyer; }
+    body:has(.flyer-section) > footer, main:has(.flyer-section) > .page-hero,
+    .flyer-aside, .flyer-text, .flyer-caption, .flyer-zoom,
+    .flyer-top > .notice:not(.flyer-stale) { display: none !important; }
+    /* (Specific enough to beat .section-tight and .container-page, which main.css declares after this file.) */
+    section.flyer-section, .flyer-section > .container-page { padding: 0; margin: 0; max-width: none; }
+    .flyer-layout, .flyer-top { display: block; max-width: none; }
+    .flyer-top > .flyer-stale { margin-bottom: 0.15in; }
+    .flyer-frame { box-shadow: none; border-radius: 0; background: none; }
+    .flyer-frame:hover img { transform: none; }
+    /* Not width:auto, which keeps the width srcset/sizes picked on screen. The flyer is 1000 × 1343, so
+       74vh wide is 99.4vh tall (in print, vh is the printed page area). */
+    .flyer-frame img { width: min(100%, 74vh); height: auto; margin-inline: auto; }
+    /* With the out-of-date Zoom warning above it, the flyer shrinks so both stay on the one sheet. */
+    .flyer-top:has(.flyer-stale) .flyer-frame img { width: min(100%, 64vh); }
+  }
 }
