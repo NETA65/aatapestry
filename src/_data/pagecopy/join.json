@@ -1,5 +1,5 @@
 {
-  "_readme": "How to join (/join/ and /es/join/), the ONE page with the Zoom details, the joining steps, Spanish/ASL interpretation and captions (#interpretation), Zoom etiquette and online anonymity (#etiquette) and website accessibility (#accessibility). en and es must have the same keys. Plain text unless marked: steps.items[].body, steps.tip and interpretation.cards[].computer/phone/note accept simple Markdown (bold, italics, links). In the Spanish half, *italics* mark Zoom's English button names (the page adds lang=\"en\" to them), so use italics for nothing else there. Never write the Zoom numbers, date, times or email here: the Zoom card shows them from site.json and when.js, and the questions address is printed once, in the footer. The Spanish and ASL cards are shown only while site.json → event.interpretation lists their key (es, asl); the English page adds the Spanish card’s Spanish name from there (labelEs). The captions card is always shown.",
+  "_readme": "How to join (/join/ and /es/join/), the ONE page with the Zoom details, the joining steps, Spanish/ASL interpretation and captions (#interpretation), Zoom etiquette and online anonymity (#etiquette) and website accessibility (#accessibility). en and es must have the same keys. Plain text unless marked: steps.items[].body, steps.tip, interpretation.cards[].computer/phone/note and accessibility.body accept simple Markdown (bold, italics, links). In the Spanish half, *italics* mark Zoom's English button names (the page adds lang=\"en\" to them), so use italics for nothing else there. Never write the Zoom numbers, date, times or email address here: the Zoom card shows them from site.json and when.js, and the questions address is printed once, in the footer. To point to it, link words to it, [email the planning committee](mailto:{email}) (the page adds a subject), never a bare {email}. The Spanish and ASL cards are shown only while site.json → event.interpretation lists their key (es, asl); the English page adds the Spanish card’s Spanish name from there (labelEs). The captions card is always shown.",
   "en": {
     "meta": {
       "description": "How to join The Incredible Tapestry on Zoom: the link, meeting ID and passcode, step-by-step help, and how to use the Spanish and ASL interpretation."
@@ -10,7 +10,7 @@
     },
     "zoom": {
       "heading": "Zoom details",
-      "programLink": "See the time where you are and add it to your calendar",
+      "programLink": "See the time where you are and add the workshop to your calendar",
       "qrLabel": "QR code that opens the workshop’s Zoom meeting",
       "qrCaption": "On a computer? Scan this with your phone’s camera to join from your phone."
     },
@@ -20,11 +20,11 @@
       "items": [
         {
           "title": "Open the Zoom meeting",
-          "body": "On the day, use **Join on Zoom** above, or open the Zoom app, choose **Join** and type in the meeting ID and passcode. No pre-registration is required. **No Zoom app yet?** On a phone or tablet, install the free Zoom app first. On a computer, the link offers to download it, or to join from your browser instead."
+          "body": "On the day, use **Join on Zoom** above, or open the Zoom app, choose **Join** and type in the meeting ID and passcode. No pre-registration is required. **No Zoom app yet?** On a phone or tablet, install the free Zoom app first. On a computer, the link offers to download it, or to join from your browser instead. **No computer, smartphone or tablet?** [Email the planning committee](mailto:{email}) to ask about joining by telephone (audio only, without interpretation or captions)."
         },
         {
           "title": "Choose your display name",
-          "body": "If Zoom asks for a name, use your **first name and last initial**, the way you would introduce yourself at a meeting."
+          "body": "If Zoom asks for a name, use your **first name and last initial**, like Maria G., rather than your full name: everyone in the meeting can see it."
         },
         {
           "title": "Turn on interpretation, if you need it",
@@ -98,7 +98,7 @@
     },
     "accessibility": {
       "heading": "Accessibility",
-      "body": "This website is built to work with screen readers and keyboard navigation. If you have a question about accessibility, or if anything would make it easier for you to take part, please let the planning committee know."
+      "body": "This website is built to work with screen readers and keyboard navigation. If you have a question about accessibility, or if anything would make it easier for you to take part, please [let the planning committee know](mailto:{email})."
     }
   },
   "es": {
@@ -111,7 +111,7 @@
     },
     "zoom": {
       "heading": "Datos de Zoom",
-      "programLink": "Vea la hora en su zona horaria y agréguela a su calendario",
+      "programLink": "Vea la hora donde usted esté y agregue el taller a su calendario",
       "qrLabel": "Código QR que abre la reunión de Zoom del taller",
       "qrCaption": "¿Está en la computadora? Escanee este código con la cámara del teléfono para unirse desde el teléfono."
     },
@@ -121,11 +121,11 @@
       "items": [
         {
           "title": "Abra la reunión de Zoom",
-          "body": "El día del taller, use **Unirse por Zoom**, aquí arriba, o abra la aplicación de Zoom, elija **Entrar** (*Join*) y escriba el ID de reunión y el código de acceso. No se requiere inscripción previa. **¿Aún no tiene Zoom?** En el teléfono o la tableta, instale primero la aplicación gratuita de Zoom. En la computadora, el enlace le ofrece descargarla o unirse desde el navegador (*Join from your browser*)."
+          "body": "El día del taller, use **Unirse por Zoom**, aquí arriba, o abra la aplicación de Zoom, elija **Entrar** (*Join*) y escriba el ID de reunión y el código de acceso. No se requiere inscripción previa. **¿Aún no tiene Zoom?** En el teléfono o la tableta, instale primero la aplicación gratuita de Zoom. En la computadora, el enlace le ofrece descargarla o unirse desde el navegador (*Join from your browser*). **¿No tiene computadora, teléfono inteligente ni tableta?** [Escriba al comité organizador](mailto:{email}) para preguntar cómo unirse por teléfono (solo audio, sin interpretación ni subtítulos)."
         },
         {
           "title": "Elija su nombre en pantalla",
-          "body": "Si Zoom le pide un nombre, use su **nombre de pila y la inicial del apellido**, tal como se presenta en una reunión."
+          "body": "Si Zoom le pide un nombre, use su **nombre de pila y la inicial del apellido**, por ejemplo, María G., y no su nombre completo: todos los participantes lo pueden ver."
         },
         {
           "title": "Active la interpretación, si la necesita",
@@ -199,7 +199,7 @@
     },
     "accessibility": {
       "heading": "Accesibilidad",
-      "body": "Este sitio web está hecho para funcionar con lectores de pantalla y con el teclado. Si tiene alguna pregunta sobre accesibilidad, o si hay algo que le facilitaría participar, avísele al comité organizador."
+      "body": "Este sitio web está hecho para funcionar con lectores de pantalla y con el teclado. Si tiene alguna pregunta sobre accesibilidad, o si hay algo que le facilitaría participar, [avísele al comité organizador](mailto:{email})."
     }
   }
 }
