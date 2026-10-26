@@ -1,3 +1,197 @@
-/* program page — rules used only by src/pages/program.njk (and its partials). Imported by ../main.css. */
+/* Program page (/program/ and /es/program/) — src/pages/program.njk. Imported by ../main.css.
+   Layout: the day's timeline | a sidebar with the time-zone table and Add to calendar (stacked below 64rem).
+   The timeline is a thread in the legacy colours: each item's knot (.tl-node) takes its data-legacy colour,
+   and the thread between two knots blends from one colour into the next. */
 @layer components {
+  /* ---------- Page grid ---------- */
+  .program-grid { display: grid; gap: clamp(2.75rem, 6vw, 3.5rem); }
+  .program-grid > * { min-width: 0; }
+  @media (min-width: 64rem) {
+    .program-grid { grid-template-columns: minmax(0, 1fr) 23rem; align-items: start; column-gap: clamp(3rem, 5vw, 4.5rem); }
+  }
+  /* Until the program is published the timeline is short: it stays in view beside the longer sidebar
+     (only on screens tall enough to show all of it below the sticky header). */
+  @media (min-width: 64rem) and (min-height: 48rem) {
+    .program-grid--pending .program-main { position: sticky; top: 6rem; }
+  }
+  @media (min-width: 80rem) { .program-grid { grid-template-columns: minmax(0, 1fr) 25rem; } }
+  .program-main { container-type: inline-size; }
+
+  .program-head { margin-bottom: clamp(1.75rem, 4vw, 2.5rem); }
+  .program-tz { display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 0.75rem; font-size: 0.9375rem; color: var(--muted); }
+  .program-tz > .icon { margin-top: 0.25rem; color: var(--c-recovery-text); }
+  /* "Find your time zone ↓": only while the table is below the timeline */
+  .program-tz-jump { margin-top: 0.25rem; }
+  .program-tz-jump .link-arrow { min-height: 2.75rem; }
+  @media (min-width: 64rem) { .program-tz-jump { display: none; } }
+
+  /* ---------- The timeline ---------- */
+  .tl {
+    --node: 2.75rem;
+    --tl-gap: clamp(1.5rem, 3.5vw, 2rem);
+    --time-w: 8rem;
+    display: grid; gap: var(--tl-gap);
+  }
+  .tl:lang(es) { --time-w: 9.25rem; }
+  .tl [data-legacy="all"], .tl[data-legacy="all"] { --legacy: var(--accent); --legacy-text: var(--accent); --legacy-soft: var(--accent-soft); }
+
+  /* Narrow: knot | time over the text. */
+  .tl-item {
+    --rail-x: calc(var(--node) / 2);
+    position: relative; display: grid; align-items: start;
+    grid-template-columns: var(--node) minmax(0, 1fr);
+    grid-template-areas: "node time" "node body";
+    column-gap: 1rem;
+  }
+  /* The thread from this knot down to the next one, blending into the next item's colour. */
+  .tl-item:not(:last-child)::before {
+    content: ""; position: absolute; z-index: 0;
+    left: var(--rail-x); top: calc(var(--node) / 2); bottom: calc(-1 * (var(--tl-gap) + var(--node) / 2));
+    width: 4px; margin-left: -2px; border-radius: 4px;
+    background: linear-gradient(180deg, var(--legacy, var(--line-strong)), var(--next, var(--legacy, var(--line-strong))));
+  }
+  .tl-item:has(+ [data-legacy="recovery"]) { --next: var(--c-recovery); }
+  .tl-item:has(+ [data-legacy="unity"]) { --next: var(--c-unity); }
+  .tl-item:has(+ [data-legacy="service"]) { --next: var(--c-service); }
+  .tl-item:has(+ [data-legacy="all"]) { --next: var(--accent); }
+  .tl-item:has(+ .tl-item:not([data-legacy])) { --next: var(--line-strong); }
+
+  .tl-node {
+    grid-area: node; position: relative; z-index: 1;
+    display: grid; place-items: center; width: var(--node); height: var(--node); border-radius: 999px;
+    background: var(--legacy-soft, var(--bg-alt)); color: var(--legacy-text, var(--muted));
+    border: 3px solid var(--legacy, var(--line-strong));
+    /* a small gap in the thread around each knot */
+    box-shadow: 0 0 0 5px var(--bg);
+  }
+  .tl-node .icon { width: 1.25rem; height: 1.25rem; }
+
+  .tl-time {
+    grid-area: time; min-height: var(--node);
+    display: flex; flex-wrap: wrap; align-items: baseline; align-content: center; gap: 0 0.375rem;
+    font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; line-height: 1.25; color: var(--fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .tl-zone { font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.08em; color: var(--legacy-text, var(--muted)); }
+  .tl-end { font-family: var(--font-sans); font-size: 0.875rem; font-weight: 500; color: var(--muted); }
+  .tl-time--span { font-family: var(--font-sans); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+  .tl-body { grid-area: body; min-width: 0; padding-top: 0.125rem; }
+  .tl-title { font-size: clamp(1.1875rem, 2.4vw, 1.375rem); line-height: 1.3; }
+  .tl-text { margin-top: 0.375rem; font-size: 0.9375rem; color: var(--muted); }
+
+  /* The part of the day still being woven: a dashed card with a faint weave. */
+  .tl-card {
+    margin-top: 0.375rem; padding: 1.125rem 1.25rem 1.25rem; border-radius: var(--radius-card);
+    border: 1.5px dashed color-mix(in srgb, var(--legacy, var(--line-strong)) 60%, var(--line));
+    background:
+      repeating-linear-gradient(-45deg, color-mix(in srgb, var(--legacy, var(--fg)) 5%, transparent) 0 2px, transparent 2px 12px),
+      var(--surface);
+  }
+  .tl-soon {
+    display: inline-flex; align-items: center; gap: 0.375rem; margin-top: 0.75rem;
+    padding: 0.3rem 0.75rem; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent);
+    font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.3;
+  }
+  .tl-card .tl-text { margin-top: 0.625rem; color: var(--fg); }
+  .tl-threads { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-top: 1.125rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+  .tl-threads-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+  /* Tags: the kind of session, and its legacy (Steps · Traditions · Concepts) in the legacy colour. */
+  .tl-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .tl-body > .tl-tags { margin-top: 0.625rem; }
+  .tl-tag {
+    display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.75rem; border-radius: 999px;
+    font-size: 0.8125rem; font-weight: 600; line-height: 1.35;
+    background: color-mix(in srgb, var(--fg) 6%, transparent); color: var(--fg);
+  }
+  .tl-tag--legacy { background: var(--legacy-soft); color: var(--legacy-text); }
+  .tl-tag--legacy::before { content: ""; flex: none; width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--legacy); }
+
+  /* A break: quieter, on a plain knot. */
+  .tl-item--break .tl-node { width: var(--node); background: var(--bg-alt); }
+  .tl-item--break .tl-title { font-family: var(--font-sans); font-size: 1.0625rem; font-weight: 600; color: var(--muted); }
+
+  /* Wide: time | knot | text, the time right-aligned against the thread. */
+  @container (min-width: 30rem) {
+    .tl-item {
+      --rail-x: calc(var(--time-w) + 1.25rem + var(--node) / 2);
+      grid-template-columns: var(--time-w) var(--node) minmax(0, 1fr);
+      grid-template-areas: "time node body";
+      column-gap: 1.25rem;
+    }
+    .tl-time { justify-content: flex-end; text-align: right; }
+    .tl-end { flex-basis: 100%; }
+    .tl-time--span { line-height: 1.35; }
+    .tl-body { padding-top: 0.5rem; }
+    /* The card's title lines up with its knot. */
+    .tl-item--pending .tl-node, .tl-item--pending .tl-time { margin-top: 0.75rem; }
+    .tl-card { margin-top: 0; padding: 1.25rem 1.5rem 1.375rem; }
+  }
+
+  /* ---------- Sidebar: time zones, Add to calendar ---------- */
+  .program-aside { display: grid; gap: clamp(1.25rem, 3vw, 1.5rem); }
+  @media (min-width: 48rem) and (max-width: 63.99rem) {
+    .program-aside { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; }
+  }
+  .program-card { container-type: inline-size; }
+  .program-card-head { display: flex; align-items: center; gap: 0.875rem; }
+  .program-card .card-icon { width: 2.75rem; height: 2.75rem; }
+  .program-card .card-icon .icon { width: 1.375rem; height: 1.375rem; }
+  .program-card-text { margin-top: 0.875rem; font-size: 0.9375rem; color: var(--muted); }
+
+  /* The visitor's own time, when it differs from Eastern (app.js) */
+  .zones-local {
+    display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 1.125rem;
+    padding: 0.75rem 0.875rem; border-radius: 0.75rem;
+    background: var(--info-bg); border: 1px solid var(--info-line); color: var(--fg); font-size: 0.9375rem; line-height: 1.5;
+  }
+  .zones-local .icon { margin-top: 0.2rem; color: var(--c-recovery-text); }
+  .zones-local strong { font-weight: 700; }
+
+  .zones { width: calc(100% + 1.25rem); margin: 1rem -0.625rem 0; border-collapse: collapse; font-size: 0.9375rem; line-height: 1.4; }
+  .zones thead th {
+    padding: 0 0.625rem 0.5rem; border-bottom: 1px solid var(--line-strong);
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: left;
+  }
+  .zones thead th:last-child, .zones td { text-align: right; }
+  .zones tbody th, .zones td { padding: 0.5625rem 0.625rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .zones tbody tr:last-child > * { border-bottom: 0; }
+  .zones tbody th { text-align: left; font-weight: 500; }
+  .zones td { font-variant-numeric: tabular-nums; }
+  /* The range breaks after its dash only where the card is too narrow to keep it on one line. */
+  @container (min-width: 16.5rem) { .zones:not(:lang(es)) td { white-space: nowrap; } }
+  @container (min-width: 19rem) { .zones:lang(es) td { white-space: nowrap; } }
+  .zones-abbr { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; color: var(--muted); }
+  .zones-next { display: block; font-size: 0.75rem; color: var(--muted); }
+  .zones-tag {
+    display: inline-flex; margin: 0.125rem 0 0 0.25rem; padding: 0.0625rem 0.5rem; border-radius: 999px;
+    font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.5; white-space: nowrap;
+  }
+  .zones-tag--event { background: var(--c-service-soft); color: var(--c-service-text); }
+  .zones-tag--you { display: none; background: var(--c-recovery); color: var(--surface); }
+  .zones .is-event > * { font-weight: 700; }
+  .zones .is-local > * { background: var(--info-bg); }
+  .zones .is-local > th { box-shadow: inset 4px 0 0 var(--c-recovery); }
+  .zones .is-local .zones-tag--you { display: inline-flex; }
+
+  .program-cal .cal-menu { display: block; margin-top: 1.25rem; }
+  .program-cal .cal-menu > summary { width: 100%; }
+  /* The menu opens as wide as its full-width button, so it never runs off a phone screen. */
+  .program-cal .cal-menu-panel { width: 100%; min-width: 0; }
+  .program-cal-note { display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 1.25rem; font-size: 0.875rem; line-height: 1.55; color: var(--muted); }
+  .program-cal-note .icon { margin-top: 0.2rem; }
+  /* A row link to How to join (which owns the Zoom details) */
+  .program-join {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .program-join-label { display: grid; gap: 0.125rem; }
+  .program-join-title { font-weight: 600; }
+  .program-join-text { font-size: 0.875rem; color: var(--muted); }
+  .program-join > .icon { color: var(--link); transition: transform 0.15s; }
+  .program-join:hover .program-join-title { text-decoration: underline; }
+  .program-join:hover > .icon { transform: translateX(2px); }
 }

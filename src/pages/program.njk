@@ -1,0 +1,156 @@
+---
+pagination:
+  data: programLangs
+  size: 1
+  alias: plang
+  addAllPagesToCollections: true
+programLangs: ["en", "es"]
+permalink: "{% if plang == 'es' %}/es{% endif %}/program/"
+translated: true
+bodyClass: program
+eleventyComputed:
+  lang: "{{ plang }}"
+  title: "{{ pagecopy.program[plang].meta.title }}"
+  description: "{{ pagecopy.program[plang].meta.description }}"
+---
+{#- The Program page, /program/ and /es/program/: the day's timeline (main column), then the time in
+    every zone and Add to calendar (sidebar on wide screens, below on narrow ones).
+    Until schedule.json has status "published" AND sessions, the timeline shows only what is announced:
+    the start (ET, then PT · MT · CT), "presentations, sharing and questions — coming soon", the end.
+    Once published it lists each session (start–end in ET, title/titleEs, summary/summaryEs, kind, and
+    the legacy colour via data-legacy: recovery | unity | service | all).
+    This page owns the times and the calendar; the Zoom details live on /join/ (one link here).
+    Copy: src/_data/pagecopy/program.json (c) and i18n (t); times from when.js. -#}
+{% set c = pagecopy.program[lang] %}
+{% set es = lang == "es" %}
+{% set p = "/es" if es else "" %}
+{% set tLocale = "es" if es else "en" %}
+{% set published = schedule.status == "published" and schedule.sessions and schedule.sessions.length %}
+{# Each legacy's thread (the flyer's Steps · Traditions · Concepts) and an icon per kind of session. #}
+{% set threadKeys = { "recovery": "steps", "unity": "traditions", "service": "concepts" } %}
+{% set kindIcons = { "opening": "door-open", "talk": "presentation", "session": "messages-square", "break": "coffee", "closing": "flag" } %}
+
+{% set heroDate = (when.date.longEs | capitalize) if es else when.date.long %}
+{% set hero = { eyebrow: heroDate, title: c.hero.title, lead: c.hero.lead | tokens } %}
+{% include "partials/page-hero.njk" %}
+
+<section class="section" aria-labelledby="day-title">
+  <div class="container-page program-grid{% if not published %} program-grid--pending{% endif %}">
+
+    {# ============ THE DAY: a timeline on a thread in the legacy colours ============ #}
+    <div class="program-main">
+      <div class="program-head">
+        <h2 class="h-section" id="day-title">{{ c.timeline.heading }}</h2>
+        <p class="program-tz">{% icon "clock", "icon icon-sm" %}<span>{{ c.timeline.allTimes }}</span></p>
+        <p class="program-tz-jump"><a href="#time-zones" class="link-arrow">{{ c.timeline.zonesLink }}{% icon "arrow-down", "icon icon-sm" %}</a></p>
+      </div>
+
+      <ol class="tl" role="list">
+      {% if published %}
+        {% for s in schedule.sessions %}
+        {% set isBreak = s.kind == "break" %}
+        {# Spanish pages fall back to the English title/summary (marked lang="en") until titleEs/summaryEs are filled in. #}
+        {% set titleEn = es and not s.titleEs %}
+        {% set summaryEn = es and not s.summaryEs %}
+        {% set sTitle = (s.titleEs if (es and s.titleEs) else s.title) | tokens %}
+        {% set sSummary = (s.summaryEs if (es and s.summaryEs) else s.summary) | tokens %}
+        {# A kind tag only where it adds something: opening, closing and breaks already say what they are. #}
+        {% set kindLabel = c.timeline.kinds[s.kind] if (s.kind == "talk" or s.kind == "session") else "" %}
+        {% if isBreak %}{% set legacyLabel = "" %}{% elif s.legacy == "all" %}{% set legacyLabel = c.timeline.allLegacies %}{% elif threadKeys[s.legacy] %}{% set legacyLabel = t.legacies[threadKeys[s.legacy] + "Short"] %}{% else %}{% set legacyLabel = "" %}{% endif %}
+        <li class="tl-item{% if isBreak %} tl-item--break{% endif %}"{% if legacyLabel %} data-legacy="{{ s.legacy }}"{% endif %}>
+          <span class="tl-node" aria-hidden="true">{% icon kindIcons[s.kind] or "circle", "icon" %}</span>
+          <div class="tl-body">
+            <h3 class="tl-title"{% if titleEn %} lang="en"{% endif %}>{{ sTitle }}</h3>
+            {% if kindLabel or legacyLabel %}
+            <ul class="tl-tags" role="list">
+              {% if kindLabel %}<li class="tl-tag">{{ kindLabel }}</li>{% endif %}
+              {% if legacyLabel %}<li class="tl-tag tl-tag--legacy">{{ legacyLabel }}</li>{% endif %}
+            </ul>
+            {% endif %}
+            {% if sSummary %}<p class="tl-text"{% if summaryEn %} lang="en"{% endif %}>{{ sSummary }}</p>{% endif %}
+          </div>
+          <p class="tl-time">
+            <time datetime="{{ when.date.iso }}T{{ s.start }}{{ when.offset }}">{{ s.start | time12(tLocale) }}</time>
+            {% if s.end %}<span class="tl-end"><span aria-hidden="true">–&nbsp;</span><span class="sr-only">{{ c.timeline.to }} </span><time datetime="{{ when.date.iso }}T{{ s.end }}{{ when.offset }}">{{ s.end | time12(tLocale) }}</time></span>{% endif %}
+          </p>
+        </li>
+        {% endfor %}
+      {% else %}
+        <li class="tl-item tl-item--edge" data-legacy="recovery">
+          <span class="tl-node" aria-hidden="true">{% icon "door-open", "icon" %}</span>
+          <div class="tl-body">
+            <h3 class="tl-title">{{ c.timeline.begins }}</h3>
+            <p class="tl-text">{{ when.time.startsAlsoEs if es else when.time.startsAlso }}</p>
+          </div>
+          <p class="tl-time"><time datetime="{{ when.startISO }}">{{ when.time.startEs if es else when.time.start }}</time> <span class="tl-zone">{{ when.tzShort }}</span></p>
+        </li>
+        <li class="tl-item tl-item--pending" data-legacy="unity">
+          <span class="tl-node" aria-hidden="true">{% icon "messages-square", "icon" %}</span>
+          <div class="tl-body tl-card">
+            <h3 class="tl-title">{{ c.timeline.middle }}</h3>
+            <p class="tl-soon">{% icon "hourglass", "icon icon-sm" %}<span>{{ t.labels.comingSoon }}</span></p>
+            <p class="tl-text">{{ c.timeline.pendingNote | tokens }}</p>
+            <div class="tl-threads">
+              <p class="tl-threads-label" id="threads-label">{{ c.timeline.threadsLabel }}</p>
+              <ul class="tl-tags" role="list" aria-labelledby="threads-label">
+                {% for l in site.legacies %}<li class="tl-tag tl-tag--legacy" data-legacy="{{ l.key }}">{{ t.legacies[threadKeys[l.key] + "Short"] }}</li>{% endfor %}
+              </ul>
+            </div>
+          </div>
+          <p class="tl-time tl-time--span">{{ c.timeline.middleTime }}</p>
+        </li>
+        <li class="tl-item tl-item--edge" data-legacy="service">
+          <span class="tl-node" aria-hidden="true">{% icon "flag", "icon" %}</span>
+          <div class="tl-body">
+            <h3 class="tl-title">{{ c.timeline.ends }}</h3>
+            <p class="tl-text">{{ when.time.endsAlsoEs if es else when.time.endsAlso }}</p>
+          </div>
+          <p class="tl-time"><time datetime="{{ when.endISO }}">{{ when.time.endEs if es else when.time.end }}</time> <span class="tl-zone">{{ when.tzShort }}</span></p>
+        </li>
+      {% endif %}
+      </ol>
+    </div>
+
+    <div class="program-aside">
+      {# ============ IN YOUR TIME ZONE (app.js marks the visitor's row .is-local and fills in the local time) ============ #}
+      <section class="card program-card" id="time-zones" aria-labelledby="zones-title">
+        <div class="program-card-head">
+          <span class="card-icon">{% icon "globe", "icon" %}</span>
+          <h2 class="h-card" id="zones-title">{{ c.zones.heading }}</h2>
+        </div>
+        <p class="zones-local" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" hidden>{% icon "map-pin", "icon icon-sm" %}<span>{{ c.zones.localLabel }}: <strong data-local-value></strong></span></p>
+        <table class="zones">
+          <caption class="sr-only">{{ c.zones.caption }}</caption>
+          <thead>
+            <tr><th scope="col">{{ c.zones.zone }}</th><th scope="col">{{ c.zones.time }}</th></tr>
+          </thead>
+          <tbody>
+            {% for z in when.zones %}
+            <tr data-zone="{{ z.id }}"{% if z.isEvent %} class="is-event"{% endif %}>
+              <th scope="row">
+                <span class="zones-name">{{ z.labelEs if es else z.label }}</span>{% if z.abbr != z.label %} <span class="zones-abbr">{{ z.abbr }}</span>{% endif %}
+                {% if z.isEvent %}<span class="zones-tag zones-tag--event">{{ c.zones.eventTag }}</span>{% endif %}
+                <span class="zones-tag zones-tag--you">{{ c.zones.youTag }}</span>
+              </th>
+              <td>{{ z.startEs if es else z.start }}&nbsp;– {{ z.endEs if es else z.end }}{% if z.nextDay %} <span class="zones-next">({{ c.zones.endsNextDay }})</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+
+      {# ============ ADD TO CALENDAR ============ #}
+      <section class="card program-card program-cal" aria-labelledby="cal-title">
+        <div class="program-card-head">
+          <span class="card-icon">{% icon "calendar-plus", "icon" %}</span>
+          <h2 class="h-card" id="cal-title">{{ t.labels.addToCalendar }}</h2>
+        </div>
+        <p class="program-card-text">{{ c.calendar.body | tokens }}</p>
+        {% set calClass = "btn btn-primary" %}{% include "partials/calendar-menu.njk" %}
+        <p class="program-cal-note">{% icon "info", "icon icon-sm" %}<span>{{ c.calendar.note | tokens }}</span></p>
+        <a href="{{ p }}/join/" class="program-join"><span class="program-join-label"><span class="program-join-title">{{ t.nav.join }}</span><span class="program-join-text">{{ c.calendar.joinLink }}</span></span>{% icon "arrow-right", "icon" %}</a>
+      </section>
+    </div>
+
+  </div>
+</section>
