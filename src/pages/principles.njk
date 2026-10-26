@@ -5,7 +5,8 @@ eleventyComputed:
   title: "{{ copy.thirtySix.title | safe }}"
   description: "{{ copy.thirtySix.description | safe }}"
 ---
-{#- /principles/ (English only), top to bottom: the twelve numbers as a compact picker right under the hero,
+{#- /principles/ (English only), top to bottom: the twelve numbers as a compact picker right under the hero
+    (the twelve tiles come first, so they start on the first screen; the two intro paragraphs follow them),
     the three legacies, all 36 side by side (with a Steps / Traditions / Concepts filter), and the story of
     the mark. Each number has its own page, /principles/N/ (principle.njk). The tiles carry only the number
     and its thread; the principle words live once, in the side-by-side table. Words: copy.json → intro,
@@ -22,12 +23,13 @@ eleventyComputed:
   <div class="pp-hero-deco" aria-hidden="true"><div class="container-page"><span class="pp-hero-num">{{ principles.items.length * 3 }}</span></div></div>
 </div>
 
-{# ============ THE TWELVE THREADS (one tile per number: the picker the hero invites) ============ #}
+{# ============ THE TWELVE THREADS (one tile per number: the picker the hero invites) ============
+   The heading, then the tiles, then the intro text that explains them (below the grid, so the picker
+   is on the first screen at laptop and phone sizes). #}
 <section class="section" id="threads" aria-labelledby="threads-title">
   <div class="container-page">
     <div class="section-head">
       <h2 class="h-section" id="threads-title">{{ copy.intro.heading | tokens }}</h2>
-      <div class="prose pp-intro">{% for p in copy.intro.body %}{{ p | tokens | md | safe }}{% endfor %}</div>
     </div>
     <ol class="pp-tiles">
       {% for item in principles.items %}
@@ -40,6 +42,7 @@ eleventyComputed:
       </li>
       {% endfor %}
     </ol>
+    <div class="prose pp-intro">{% for p in copy.intro.body %}{{ p | tokens | md | safe }}{% endfor %}</div>
   </div>
 </section>
 

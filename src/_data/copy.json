@@ -1,11 +1,11 @@
 {
   "_readme": "English-only copy: the study pages (/principles/ and /principles/N/: intro, legacies, thirtySix, logoStory), the 404 page (notFound) and the one-paragraph event summary used by the JSON-LD and the calendar file (jsonld.eventSummary). The workshop pages have their own bilingual files in src/_data/pagecopy/. Write the email, date, times and Zoom numbers only as tokens ({email}, {date}, {time}…). Fields read through | md accept simple Markdown.",
   "intro": {
-    "_readme": "/principles/: the heading and the two short paragraphs above the twelve number tiles, the first section after the hero (body accepts simple Markdown).",
+    "_readme": "/principles/: the heading and the two short paragraphs below the twelve number tiles, the first section after the hero (body accepts simple Markdown).",
     "heading": "Pull one thread and the whole cloth moves",
     "body": [
       "Most of us met the Steps first, from someone who had been where we were. The Traditions came later, usually when a group business meeting got lively. The Concepts, if we met them at all, arrived with a service job we did not quite ask for. We tend to keep the three in separate drawers.",
-      "Look at number **one**. Step One admits powerlessness, Tradition One puts our common welfare first, and Concept I places final authority in the conscience of the whole Fellowship. Written years apart, the three say the same thing: none of us gets well alone. Choose a number to follow its thread."
+      "Look at number **one**. Step One admits powerlessness, Tradition One puts our common welfare first, and Concept I places final authority in the conscience of the whole Fellowship. Written years apart, the three say the same thing: none of us gets well alone."
     ]
   },
   "legacies": {

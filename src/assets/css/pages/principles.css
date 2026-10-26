@@ -30,7 +30,8 @@
   .pp-legacy-link { margin-top: auto; }
 
   /* ---------- The twelve threads: a compact picker (number + thread; the words are in the table) ---------- */
-  .pp-intro { max-width: none; }
+  /* The intro text sits under the tiles (same gap as .section-head's margin-bottom; default prose measure) */
+  .pp-intro { margin-top: clamp(1.75rem, 3.5vw, 2.5rem); }
   .pp-tiles { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.25rem), 1fr)); }
   @media (min-width: 48rem) { .pp-tiles { gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr)); } }
   .pp-tiles > li { display: flex; min-width: 0; }
@@ -257,4 +258,10 @@
   .pp-table thead th { position: static; }
   .pp-tile, .pp-strand, .pp-legacy, .pp-questions, .pp-table tbody tr { box-shadow: none; break-inside: avoid; }
   .pp-questions { position: static; }
+  /* Study pages: stack the three cards as plain blocks, and drop main.css's print `h2 { break-after: avoid }`
+     on the card titles. Otherwise it passes up through each card's two-column grid to the whole section, and
+     the only break Chrome can still take is before the cards: sheet 1 prints blank under the title. */
+  .pp-strands { display: block; }
+  .pp-strand + .pp-strand { margin-top: 1rem; }
+  .pp-strand-title { break-after: auto; }
 }
