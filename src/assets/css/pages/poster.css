@@ -12,10 +12,17 @@
   .poster-stage { background: var(--bg-alt); }
   .poster-layout { display: grid; gap: clamp(1.75rem, 4vw, 2.5rem); }
   .poster-layout > * { min-width: 0; }
-  .poster-panel { display: grid; gap: 1rem; align-content: start; width: 100%; max-width: 36rem; margin-inline: auto; }
+  /* Below 64rem the panel shares the poster's 8.5in column, so the card, the links and the sheet line up. */
+  .poster-panel { display: grid; gap: 1rem; align-content: start; width: 100%; max-width: 8.5in; margin-inline: auto; }
   @media (min-width: 64rem) {
     .poster-layout { grid-template-columns: minmax(17rem, 20rem) minmax(0, 1fr); align-items: start; }
-    .poster-panel { position: sticky; top: 5.5rem; max-width: none; }
+    .poster-panel { max-width: none; }
+  }
+  /* The panel (548 px tall in EN and ES) stays in view beside the long preview only where all of it fits
+     below the sticky header (top 5.5rem = 88 px), with room for the focus ring. On shorter windows a stuck
+     panel hides its last links, even while they have keyboard focus. Re-measure if the panel's copy changes. */
+  @media (min-width: 64rem) and (min-height: 42rem) {
+    .poster-panel { position: sticky; top: 5.5rem; }
   }
   .poster-panel .dl-list { margin-top: 1rem; }
   .poster-tip { display: flex; gap: 0.5rem; align-items: flex-start; margin-top: 1rem; font-size: 0.875rem; line-height: 1.5; color: var(--muted); }
@@ -146,6 +153,12 @@
   .poster-ids dd { margin: 0.2cqw 0 0; font-family: var(--font-mono); font-size: 3.4cqw; font-weight: 700; line-height: 1.15; letter-spacing: 0.02em; white-space: nowrap; color: var(--ink); }
   .poster-qr { text-align: center; }
   .poster-qr-code { display: block; width: 13cqw; height: auto; margin-inline: auto; }
+  /* Forced colours (dark contrast themes) turn the white Zoom box into Canvas (black), but the QR stroke
+     (#1F2233) is not forced. Give each code its own white tile with a quiet zone so it stays visible and
+     scannable; content-box keeps the code 13cqw (the tile is 15cqw, inside the 17.5cqw column). */
+  @media (forced-colors: active) {
+    .poster-qr-code { forced-color-adjust: none; background: #fff; box-sizing: content-box; padding: 1cqw; border-radius: 0.6cqw; }
+  }
   .poster-qr figcaption { margin-top: 0.9cqw; font-size: 1.45cqw; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; color: var(--ink); text-wrap: balance; }
 
   /* Free · no pre-registration · interpretation */

@@ -17,7 +17,7 @@ eleventyComputed:
     (after it on phones) the flyer's downloads, a card that sends people to the printable poster (its files,
     preview and print tips live only on /poster/) and the share buttons; and the flyer's full text, built from
     site.json + when.js so it never disagrees with How to join, in a collapsed <details> (under the image on
-    wide screens, last on phones). Printed (Ctrl+P), the page is just the flyer on one sheet (flyer.css).
+    wide screens, last on phones) that a link to #flyer-text opens. Printed (Ctrl+P), the page is just the flyer on one sheet (flyer.css).
     Files and sizes: site.json → flyer; on /es/flyer/ the sizes get a decimal comma ("1,4 MB"), as the
     Spanish poster page writes "8,5 × 11 pulgadas".
     When the Zoom details the flyer prints (flyer.zoomMeetingId / zoomPasscode / zoomJoinUrl) differ from
@@ -127,5 +127,30 @@ eleventyComputed:
         {% if site.contact.email %}<p>{{ c.text.questions }} <a href="{{ site.contact.email | mailto(t.contact.subject | tokens) }}">{{ t.contact.linkText }}</a></p>{% endif %}
       </div>
     </details>
+    {#- Opens the flyer's text when a link points to it (#flyer-text: the Spanish note above, or a shared link),
+        as faq.njk does for its questions. The click handler opens the box before the browser scrolls to it
+        (and covers a repeat click while the hash is already #flyer-text, which fires no hashchange), so the
+        visitor lands on its top with the text below. Arriving with the hash, the browser has already jumped
+        to the box; once app.js has run (it can unhide the Share button above, pushing the box down on a slow
+        connection) the box is put back under the header, instantly, as it is a correction of a few pixels.
+        Without JavaScript the box simply opens when tapped. #}
+    <script>
+    (() => {
+      const d = document.getElementById("flyer-text");
+      if (!d) return;
+      const here = () => location.hash === "#flyer-text";
+      if (here()) {
+        d.open = true;
+        document.addEventListener("DOMContentLoaded", () => requestAnimationFrame(() => {
+          if (!here()) return;
+          try { d.scrollIntoView({ block: "start", behavior: "instant" }); } catch (_) { d.scrollIntoView(true); }
+        }));
+      }
+      addEventListener("hashchange", () => { if (here()) d.open = true; });
+      document.addEventListener("click", (e) => {
+        if (e.target.closest && e.target.closest('a[href="#flyer-text"]')) d.open = true;
+      });
+    })();
+    </script>
   </div>
 </section>
