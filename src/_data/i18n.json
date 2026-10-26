@@ -9,10 +9,10 @@
       "home": "Home",
       "program": "Program",
       "join": "How to join",
-      "flyer": "Flyer",
+      "flyer": "Flyer & poster",
+      "flyerShort": "Flyer",
       "faq": "FAQ",
       "principles": "36 Principles",
-      "poster": "Printable poster",
       "calendarFile": "Calendar file (.ics)",
       "feed": "Updates (RSS)",
       "contact": "Contact",
@@ -88,8 +88,8 @@
       "pageTitle": "The Incredible Tapestry — online A.A. workshop, Dec. 12, 2026"
     },
     "notice": {
-      "label": "Zoom link updated",
-      "text": "The link changed on October 25. If you saved it or added the workshop to your calendar before then, use the details below and add the workshop to your calendar again."
+      "label": "",
+      "text": ""
     },
     "contact": {
       "heading": "Questions?",
@@ -117,6 +117,7 @@
     },
     "a11y": {
       "openInNewTab": "(opens in a new tab)",
+      "lighterBackground": "Lighter background",
       "menu": "Menu",
       "languageMenu": "Language"
     }
@@ -130,10 +131,10 @@
       "home": "Inicio",
       "program": "Programa",
       "join": "Cómo unirse",
-      "flyer": "Volante",
+      "flyer": "Volante y póster",
+      "flyerShort": "Volante",
       "faq": "Preguntas",
       "principles": "36 principios",
-      "poster": "Póster imprimible",
       "calendarFile": "Archivo de calendario (.ics)",
       "feed": "Novedades (RSS)",
       "contact": "Contacto",
@@ -209,8 +210,8 @@
       "pageTitle": "The Incredible Tapestry — taller de A.A. en línea, 12 dic. 2026"
     },
     "notice": {
-      "label": "Enlace de Zoom actualizado",
-      "text": "El enlace cambió el 25 de octubre. Si lo guardó o agregó el taller a su calendario antes de esa fecha, use los datos de abajo y vuelva a agregar el taller a su calendario."
+      "label": "",
+      "text": ""
     },
     "contact": {
       "heading": "¿Preguntas?",
@@ -238,6 +239,7 @@
     },
     "a11y": {
       "openInNewTab": "(se abre en una pestaña nueva)",
+      "lighterBackground": "Fondo más claro",
       "menu": "Menú",
       "languageMenu": "Idioma"
     }

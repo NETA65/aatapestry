@@ -1,8 +1,10 @@
 /* How to join (/join/ and /es/join/) — src/pages/join.njk. Imported by ../main.css. */
 @layer components {
   /* ---------- The Zoom card: a dark, flyer-style panel (like the flyer's Zoom box) ---------- */
+  /* No top margin: the space under a notice is the notice's own (noticeClass in join.njk), so with no
+     notice the card starts where every page's content does. */
   .join-zoom {
-    display: grid; gap: 2rem; margin-top: 1.5rem;
+    display: grid; gap: 2rem;
     padding: clamp(1.25rem, 4vw, 2.5rem);
     border-radius: 1.25rem;
     border: 1.5px solid rgb(226 169 59 / 0.55);

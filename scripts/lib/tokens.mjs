@@ -20,8 +20,9 @@
 // pages; plain-text outputs (the .ics file, the social cards, Add to calendar, share messages, meta tags,
 // JSON-LD) pass through plain() below, which turns them back into ordinary spaces.
 //
-// {email}: every page prints the address itself at most ONCE (questions card, flyer text or poster
-// line). In prose, link to it — [email the planning committee](mailto:{email}) — instead of a bare {email}.
+// {email}: every page prints the address itself ONCE, in the footer's questions band (on /flyer/ the
+// printable poster's line prints it too). In prose, link to it — [email the planning committee](mailto:{email})
+// — instead of a bare {email}.
 
 export function tokenMap({ site = {}, when = {} } = {}) {
   const t = when.time || {};

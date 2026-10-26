@@ -14,8 +14,8 @@ no pre-registration. Questions: a44p69delegate@gmail.com. The site always leads 
 | --- | --- |
 | the date, times, Zoom details, email, interpretation, legacies | `src/_data/site.json` (the facts — see below) |
 | the program | `src/_data/schedule.json` |
-| words on one page | that page's file in `src/_data/pagecopy/` (`home.json`, `program.json`, `join.json`, `flyer.json`, `poster.json`, `faq.json`) — each has an `en` and an `es` half |
-| menu labels, buttons, footer, the notice about the Zoom link, other shared words | `src/_data/i18n.json` (`en` and `es`) |
+| words on one page | that page's file in `src/_data/pagecopy/` (`home.json`, `program.json`, `join.json`, `flyer.json` (the flyer and the poster), `faq.json`) — each has an `en` and an `es` half |
+| menu labels, buttons, footer, the notice for an important update (none now), other shared words | `src/_data/i18n.json` (`en` and `es`) |
 | the questions and answers | `src/_data/faq.json` |
 | the study pages (/principles/) | `src/_data/principles.json` and `src/_data/copy.json` |
 | the menu itself (which pages, in which order) | `src/_data/nav.js` |
@@ -26,7 +26,7 @@ language needs no text). Spanish is natural Latin-American Spanish, *usted* form
 
 **One fact, one page.** The site was designed so each piece of information lives on one page and the
 others link to it: the Zoom details and how-to on *How to join*, the times in every zone and *Add to
-calendar* on *Program*, the flyer and posters on *Flyer*, cost and contributions in the *FAQ*. Please
+calendar* on *Program*, the flyer and the printable poster on *Flyer & poster*, cost and contributions in the *FAQ*. Please
 keep it that way: if a page needs to mention something another page owns, write one short line and
 link to it.
 
@@ -99,10 +99,13 @@ Entries live in `site.json → updates.items`, newest first, each with `id` (per
 Feed readers notify their subscribers of every new item, so add one only for real news (the program is
 posted, the Zoom details change).
 
-## The notice about the Zoom link
+## A notice for an important update
 
-`i18n.json → en/es.notice` is the short notice shown on the home page and on *How to join* (now: the
-Zoom link changed on October 25). Set both `text` values to `""` to remove it.
+`i18n.json → en/es.notice` is a short notice shown on the home page and on *How to join*, just above
+the Zoom details. There is none now: both `label` and `text` are `""`, so nothing is shown. To post
+one (for example, if the Zoom link changes), fill in `text` and, if you like, a `label` (a few words
+shown in bold before it) in **both** `en` and `es`; set both `text` values back to `""` to take it
+down. It also goes away by itself in the first build after the workshop.
 
 ## The questions and answers: `faq.json`
 
@@ -176,11 +179,16 @@ for w in (600, 1000, 1600):
     print(w, "x", img.height)   # the 1000 line gives flyer.width / flyer.height
 ```
 
-## The printable poster: `/poster/`, `/es/poster/`
+## The printable poster: `/flyer/#printable-poster`, `/es/flyer/#printable-poster`
 
 A light-background, printer-friendly poster (Letter and A4) built from the data, with QR codes for
-Zoom and the website. `npm run pdf` (and CI on every deploy) renders both to `brand/poster/` as PDF and
-PNG; it relies on the `#poster` element on those pages, so keep it when editing the template.
+Zoom and the website, in English and Spanish. It is the second part of the *Flyer & poster* page
+(`src/pages/flyer.njk`, words in `pagecopy/flyer.json → poster`), and it is all that page prints: Ctrl+P
+or *Print the poster* gives one Letter sheet (the flyer prints from its PDF). The old `/poster/` and
+`/es/poster/` addresses forward there. `npm run pdf` (and CI on every deploy) renders both languages to
+`brand/poster/` as PDF and PNG; it relies on the `#poster` element on the flyer pages, so keep it when
+editing the template. Every size inside the poster is in `cqw` and the sheet is full (Spanish has only a
+few `cqw` to spare on Letter), so check the preview, both PDFs and the PNG after any change.
 
 ## The logo and brand files
 
@@ -197,7 +205,10 @@ navy, gold, cream, and the legacy colours (Recovery blue, Unity green, Service g
 lettering uses Playfair Display (*THE INCREDIBLE*) and Great Vibes (*Tapestry* — shipped as a subset with
 only the letters of that word, `src/assets/fonts/great-vibes-tapestry.woff2`; any other text set in the
 script font needs the subset regenerated, see the comment in `eleventy.config.js`); headings use
-Fraunces and text uses Inter. Dark mode follows the visitor's system setting.
+Fraunces and text uses Inter. Dark mode follows the visitor's system setting. The sun button in the
+header ("Lighter background") overrides it: the whole site turns light, the navy header, heroes and
+footer included, in the printable poster's colours (`src/assets/css/theme-light.css`); the visitor's
+browser remembers the choice.
 
 ## Checking your work
 
@@ -206,7 +217,7 @@ Fraunces and text uses Inter. Dark mode follows the visitor's system setting.
 ```bash
 npm run build
 npm test           # HTML validation + every internal link
-npm run test:ui    # every page at 320–1440 px, light and dark: no overflow, no accessibility violations
+npm run test:ui    # every page at 320–1440 px, light, dark and lighter background: no overflow, no accessibility violations
 ```
 
 The *Build & Deploy* run on GitHub runs the same checks.

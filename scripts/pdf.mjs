@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-// Render the poster pages of the BUILT site (_site/poster/ and _site/es/poster/) to
-// print-ready PDF (Letter + A4) and 300-dpi PNG with headless Chrome (Puppeteer), into
-// brand/poster/. Run after `npm run build`; CI runs it on every deploy. If Chrome cannot
-// start (rare), the site still deploys with the previously committed files.
+// Render the printable poster of the BUILT site to print-ready PDF (Letter + A4) and 300-dpi PNG with
+// headless Chrome (Puppeteer), into brand/poster/. The poster is #poster on the flyer & poster pages
+// (_site/flyer/ and _site/es/flyer/, src/pages/flyer.njk), which print as the poster alone. Run after
+// `npm run build`; CI runs it on every deploy. If Chrome cannot start (rare), the site still deploys with
+// the previously committed files.
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
@@ -13,7 +14,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const siteDir = path.join(root, "_site");
 const outDir = path.join(root, "brand", "poster");
 fs.mkdirSync(outDir, { recursive: true });
-for (const rel of [["poster", "index.html"], ["es", "poster", "index.html"]]) {
+for (const rel of [["flyer", "index.html"], ["es", "flyer", "index.html"]]) {
   if (!fs.existsSync(path.join(siteDir, ...rel))) {
     console.error(`_site/${rel.join("/")} not found — run \`npm run build\` first.`);
     process.exit(1);
@@ -41,14 +42,14 @@ const files = [];
 try {
   for (const lang of ["en", "es"]) {
     const suffix = lang === "es" ? "-es" : "";
-    const url = `http://127.0.0.1:${port}${lang === "es" ? "/es" : ""}/poster/`;
+    const url = `http://127.0.0.1:${port}${lang === "es" ? "/es" : ""}/flyer/`;
     const page = await browser.newPage();
     await page.emulateMediaType("print");
     await page.setViewport({ width: 900, height: 1300, deviceScaleFactor: 1 });
     const res = await page.goto(url, { waitUntil: "networkidle0" });
     if (!res || !res.ok()) throw new Error(`${url} answered ${res ? res.status() : "nothing"} — is _site built?`);
-    // The poster element is the contract with src/pages/poster.njk; stop before writing anything without it.
-    if (!(await page.$("#poster"))) throw new Error(`#poster not found on ${url} — keep id="poster" in src/pages/poster.njk.`);
+    // The poster element is the contract with src/pages/flyer.njk; stop before writing anything without it.
+    if (!(await page.$("#poster"))) throw new Error(`#poster not found on ${url} — keep id="poster" in src/pages/flyer.njk.`);
     await page.evaluate(() => document.fonts.ready);
 
     const letter = path.join(outDir, `aatapestry-poster${suffix}-letter.pdf`);
@@ -72,9 +73,16 @@ try {
     await page.evaluate(() => { delete document.documentElement.dataset.size; document.getElementById("pdf-a4-page")?.remove(); });
     await page.emulateMediaType("screen");
     await page.setViewport({ width: 900, height: 1300, deviceScaleFactor: 2550 / 816 });
+    // On the flyer & poster page the sheet sits far down, at a fractional y (2502.78 px in English); at this
+    // scale the element clip then cuts the sheet's top rows and picks up the stage's background and the
+    // sheet's shadow below it. Lay the page out as on paper (the sheet alone at y = 0, as the print rules
+    // in poster.css do) for the capture.
+    await page.addStyleTag({ content: "body > :not(main), main > :not(.poster-stage), .poster-stage-head, .poster-panel, .poster-preview-label { display: none !important; } main, .poster-stage, .poster-layout, .poster-preview { display: block !important; margin: 0 !important; padding: 0 !important; }" });
     await page.evaluate(() => document.fonts.ready);
     const el = await page.$("#poster");
     if (!el) throw new Error(`#poster not found on ${url} (screen media).`);
+    const box = await el.boundingBox();
+    if (!box || box.y !== 0 || box.width !== 816) throw new Error(`#poster on ${url} is at y=${box && box.y}, ${box && box.width} px wide; the PNG needs it at y=0, 816 px wide.`);
     const pngFile = path.join(outDir, `aatapestry-poster${suffix}.png`);
     await el.screenshot({ path: pngFile, type: "png", omitBackground: false });
     files.push(pngFile);

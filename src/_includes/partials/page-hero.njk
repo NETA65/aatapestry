@@ -1,7 +1,9 @@
 {#- The dark, flyer-style band at the top of every inner page.
-    Set `hero` before including: { eyebrow, title, lead, crumbs: [{ label, href }], crumbLabel }.
+    Set `hero` before including: { eyebrow, title, lead, crumbs: [{ label, href }], crumbLabel, after }.
     title defaults to the page title; crumbs are the pages between Home and this one (Home and this
-    page are added here); crumbLabel is this page's short name in the breadcrumb (default: the title). -#}
+    page are added here); crumbLabel is this page's short name in the breadcrumb (default: the title);
+    after (optional) is markup put under the lead, made with {% set x %}…{% endset %} (flyer.njk: the
+    links into the page). -#}
 {%- set h = hero or {} -%}
 <section class="page-hero thread-bg on-dark">
   <div class="container-page">
@@ -15,5 +17,6 @@
     {% if h.eyebrow %}<p class="eyebrow">{{ h.eyebrow }}</p>{% endif %}
     <h1 class="h-display">{{ h.title or title }}</h1>
     {% if h.lead %}<p class="lead">{{ h.lead }}</p>{% endif %}
+    {% if h.after %}{{ h.after | safe }}{% endif %}
   </div>
 </section>

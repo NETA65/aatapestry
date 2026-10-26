@@ -19,7 +19,9 @@
 <link rel="alternate" hreflang="es" href="{{ page.url | langUrl('es') | absUrl }}">
 <link rel="alternate" hreflang="x-default" href="{{ page.url | langUrl('en') | absUrl }}">
 {% endif %}
-<meta name="theme-color" content="{{ site.themeColor }}">
+{#- The browser bar's colour follows the header: the flyer's navy, or with the lighter background on the
+    header's paper (data-light, theme-light.css); the inline script below and app.js switch them. -#}
+<meta name="theme-color" content="{{ site.themeColor }}" data-dark="{{ site.themeColor }}" data-light="#fffdf8">
 <meta name="color-scheme" content="light dark">
 <meta name="author" content="{{ site.contact.committee }}">
 <meta name="format-detection" content="telephone=no">
@@ -65,10 +67,13 @@
 <link rel="preload" href="/assets/fonts/playfair-display-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/great-vibes-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 {% endif %}
-{#- Before the first paint: the "js" class (copy buttons show only with JavaScript) and the workshop's
-    phase on <html data-phase> (upcoming, live, ended: the Join and Add to calendar buttons hide once it
-    has ended; app.js keeps it current on a page left open). -#}
-<script>(function(d){d.classList.add("js");var n=Date.now(),s=Date.parse("{{ when.startISO }}"),e=Date.parse("{{ when.endISO }}");d.dataset.phase=n>=e?"ended":n>=s?"live":"upcoming"})(document.documentElement)</script>
+{#- Before the first paint: the "js" class (copy buttons and the lighter-background button show only with
+    JavaScript), the visitor's lighter background (localStorage "aat-theme" = "light", saved by app.js; then
+    <html data-theme="light">, the browser bar's light colour and color-scheme "light", so a dark device
+    never flashes navy first; storage may be blocked, hence the try) and the workshop's phase on
+    <html data-phase> (upcoming, live, ended: the Join and Add to calendar buttons hide once it has ended;
+    app.js keeps it current on a page left open). -#}
+<script>(function(d){d.classList.add("js");try{if(localStorage.getItem("aat-theme")==="light"){d.dataset.theme="light";var m=d.querySelector('meta[name="theme-color"]'),c=d.querySelector('meta[name="color-scheme"]');if(m)m.content=m.dataset.light;if(c)c.content="light"}}catch(x){}var n=Date.now(),s=Date.parse("{{ when.startISO }}"),e=Date.parse("{{ when.endISO }}");d.dataset.phase=n>=e?"ended":n>=s?"live":"upcoming"})(document.documentElement)</script>
 {#- ?v=<hash> (the `v` filter, eleventy.config.js): a new stylesheet is never mixed with cached HTML. -#}
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | v }}">
 {% include "partials/jsonld.njk" %}

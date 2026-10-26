@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 // Responsive + accessibility check of the BUILT site (_site/). Run after `npm run build` (or `npx eleventy`):
 //
-//   npm run test:ui                      every page, widths 320 390 540 768 1024 1440, light and dark
+//   npm run test:ui                      every page (not the redirect stubs), widths 320 390 540 768 1024 1440, light, dark and lightbg
 //   node scripts/ui-test.mjs /join/ /es/join/      only these pages
 //   WIDTHS=320,1920 SCHEMES=dark node scripts/ui-test.mjs
 //
+// The colour schemes: "light" and "dark" are the device's setting; "lightbg" is a device in dark mode with
+// the visitor's Lighter background option on (localStorage "aat-theme", theme-light.css), so the light
+// flyer surfaces are checked too. Every view starts with the option as its scheme says (storage is shared
+// by the pages of one browser).
 // For each page × width × colour scheme it checks:
 //   · no horizontal scrolling (the page is never wider than the screen)
 //   · the header: the site name never runs under the menu or the buttons, the Join button stays on one
@@ -16,7 +20,10 @@
 // readable on the panel (computed contrast: axe cannot tell over the hero's texture), and Tab out closes it.
 // Then, per page: the Add to calendar items open fully on screen on real phone and laptop screens
 // (390×844, 1366×768, 360×640), with the button where it is on load and near the bottom edge; without
-// JavaScript the header still has a Menu link to the footer's page list; and with big text (a browser
+// JavaScript the header still has a Menu link to the footer's page list (and no Lighter background
+// button); the Lighter background button is reached with Tab, Enter and Space toggle <html data-theme>
+// and aria-pressed, and the choice survives a reload, applied before the body is parsed (no flash of
+// the navy look); and with big text (a browser
 // minimum font size of 24 px, or a root font of 24 px) at 1024 and 1280 the header stays one bar (the
 // site name never breaks inside a word, nothing scrolls sideways). Once: /feed.xml is well-formed Atom
 // and keeps the ids its subscribers already have.
@@ -39,7 +46,10 @@ if (!fs.existsSync(path.join(siteDir, "index.html"))) {
   process.exit(2);
 }
 
-// Every HTML page except the redirect stubs (meta refresh) and the poster's print-only views.
+// A redirect stub (src/pages/redirects.njk: /schedule/, /poster/ …) only forwards with a meta refresh.
+const isStub = (file) => /http-equiv="refresh"/i.test(fs.readFileSync(file, "utf8"));
+
+// Every HTML page except the redirect stubs.
 function allPages() {
   const out = [];
   const walk = (dir) => {
@@ -47,8 +57,7 @@ function allPages() {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) { if (e.name !== "assets" && e.name !== "brand") walk(p); continue; }
       if (!e.name.endsWith(".html")) continue;
-      const html = fs.readFileSync(p, "utf8");
-      if (/http-equiv="refresh"/i.test(html)) continue;
+      if (isStub(p)) continue;
       const rel = "/" + path.relative(siteDir, p).replace(/\\/g, "/");
       out.push(rel.endsWith("index.html") ? rel.slice(0, -"index.html".length) : rel);
     }
@@ -57,9 +66,22 @@ function allPages() {
   return out.sort();
 }
 
-const pages = process.argv.slice(2).length ? process.argv.slice(2) : allPages();
+// Pages named on the command line skip the stubs too (they would navigate away mid-check); say so.
+const pages = process.argv.slice(2).length
+  ? process.argv.slice(2).filter((u) => {
+      const f = path.join(siteDir, u.split("#")[0], u.endsWith("/") ? "index.html" : "");
+      if (fs.existsSync(f) && fs.statSync(f).isFile() && isStub(f)) { console.log(`(skipped ${u}: a redirect stub)`); return false; }
+      return true;
+    })
+  : allPages();
 const widths = (process.env.WIDTHS || "320,390,540,768,1024,1440").split(",").map(Number);
-const schemes = (process.env.SCHEMES || "light,dark").split(",");
+const schemes = (process.env.SCHEMES || "light,dark,lightbg").split(",");
+// The Lighter background option: the key app.js saves and the inline script in partials/head.njk reads.
+const THEME_KEY = "aat-theme";
+// Before any of the page's own scripts: the option on (lightbg) or off (every other view).
+const setLightBg = (page, on) => page.evaluateOnNewDocument((key, on) => {
+  try { if (on) localStorage.setItem(key, "light"); else localStorage.removeItem(key); } catch { /* about:blank */ }
+}, THEME_KEY, on);
 
 const types = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp", ".woff2": "font/woff2", ".json": "application/json", ".ico": "image/x-icon", ".pdf": "application/pdf", ".ics": "text/calendar", ".webmanifest": "application/manifest+json", ".xml": "application/xml" };
 const server = http.createServer((req, res) => {
@@ -105,7 +127,8 @@ for (const url of pages) {
       const errors = [];
       page.on("pageerror", (e) => errors.push(e.message));
       page.on("console", (m) => { if (m.type() === "error" && !/Permissions-Policy/.test(m.text())) errors.push(m.text()); });
-      await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: scheme }, { name: "prefers-reduced-motion", value: "reduce" }]);
+      await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: scheme === "lightbg" ? "dark" : scheme }, { name: "prefers-reduced-motion", value: "reduce" }]);
+      await setLightBg(page, scheme === "lightbg");
       await page.emulateTimezone("America/Chicago");
       await page.setViewport({ width, height: 900 });
       const res = await page.goto(base + url, { waitUntil: "networkidle0" });
@@ -164,7 +187,7 @@ for (const url of pages) {
         if (hdr.ctaHeight > 44) fail(where, `header: the Join button wraps (${hdr.ctaHeight}px tall)`);
         if (hdr.barHeight > 65) fail(where, `header: the bar grew to ${hdr.barHeight}px (want 64)`);
       }
-      if (facts.h1 !== 1 && !url.includes("poster")) fail(where, `${facts.h1} <h1> elements (want exactly 1)`);
+      if (facts.h1 !== 1) fail(where, `${facts.h1} <h1> elements (want exactly 1)`);
       for (const src of facts.brokenImages) fail(where, `image failed to load: ${src}`);
       for (const e of errors) fail(where, `JS error: ${e}`);
 
@@ -265,10 +288,12 @@ for (const url of pages) {
   process.stdout.write(".");
 }
 
-// Opens a page for the extra checks below (light scheme, reduced motion, the fonts and images in).
+// Opens a page for the extra checks below (light scheme, the Lighter background off, reduced motion, the
+// fonts and images in). b: a browser or a browser context.
 async function openPage(b, url, width, height, { js = true } = {}) {
   const page = await b.newPage();
   await page.setJavaScriptEnabled(js);
+  if (js) await setLightBg(page, false);
   await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: "light" }, { name: "prefers-reduced-motion", value: "reduce" }]);
   await page.emulateTimezone("America/Chicago");
   await page.setViewport({ width, height });
@@ -320,12 +345,68 @@ for (const url of pages) {
       const a = document.querySelector(".site-header [data-menu-fallback]");
       const btn = document.querySelector(".site-header [data-menu-toggle]");
       const target = a && document.getElementById((a.getAttribute("href") || "").slice(1));
-      return { link: !!a && a.getBoundingClientRect().width > 0, target: !!target && target.tagName === "NAV", button: !!btn && btn.getBoundingClientRect().width > 0 };
+      const theme = document.querySelector("[data-theme-toggle]");
+      return { link: !!a && a.getBoundingClientRect().width > 0, target: !!target && target.tagName === "NAV", button: !!btn && btn.getBoundingClientRect().width > 0, theme: !!theme && theme.getBoundingClientRect().width > 0 };
     });
     if (!r.link) fail(where(390, 844, ", no JavaScript"), "the header has no visible Menu link");
     else if (!r.target) fail(where(390, 844, ", no JavaScript"), "the header's Menu link does not lead to the footer's page list");
     if (r.button) fail(where(390, 844, ", no JavaScript"), "the header shows the Menu button, which needs JavaScript");
+    if (r.theme) fail(where(390, 844, ", no JavaScript"), "the header shows the Lighter background button, which needs JavaScript");
     await page.close();
+  }
+
+  // The Lighter background button, from the keyboard (Tab to it from the site name, Enter, Space) and the
+  // mouse, at the narrowest width; then a reload keeps the choice. In a context of its own, so what it
+  // stores reaches no other check. The option must be on before the <body> is parsed (the inline script
+  // in head.njk), not only once app.js runs, or the navy look would flash first.
+  {
+    const here = where(320, 700, ", Lighter background");
+    const ctx = await browser.createBrowserContext();
+    const page = await ctx.newPage();
+    await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: "dark" }, { name: "prefers-reduced-motion", value: "reduce" }]);
+    await page.setViewport({ width: 320, height: 700 });
+    await page.evaluateOnNewDocument(() => {
+      new MutationObserver((recs, obs) => {
+        if (!document.body) return;
+        window.__themeAtBody = document.documentElement.dataset.theme || "";
+        obs.disconnect();
+      }).observe(document, { childList: true, subtree: true });
+    });
+    await page.goto(base + url, { waitUntil: "networkidle0" });
+    const state = () => page.evaluate((key) => {
+      const b = document.querySelector("[data-theme-toggle]");
+      let stored = null;
+      try { stored = localStorage.getItem(key); } catch { stored = "(blocked)"; }
+      return {
+        theme: document.documentElement.dataset.theme || "", pressed: b ? b.getAttribute("aria-pressed") : null,
+        focused: !!b && document.activeElement === b, stored, atBody: window.__themeAtBody,
+        meta: (document.querySelector('meta[name="theme-color"]') || {}).content || "",
+      };
+    }, THEME_KEY);
+    const visible = await page.$eval("[data-theme-toggle]", (b) => b.getBoundingClientRect().width >= 44 && b.getBoundingClientRect().height >= 44).catch(() => false);
+    if (!visible) fail(here, "no Lighter background button of at least 44×44 px in the header");
+    else {
+      let s = await state();
+      if (s.theme || s.pressed !== "false") fail(here, `starts on (data-theme "${s.theme}", aria-pressed ${s.pressed}); want off`);
+      await page.focus(".site-header .brand");
+      await page.keyboard.press("Tab");
+      s = await state();
+      if (!s.focused) fail(here, "Tab from the site name does not reach the button");
+      await page.focus("[data-theme-toggle]");
+      await page.keyboard.press("Enter");
+      s = await state();
+      if (s.theme !== "light" || s.pressed !== "true" || s.stored !== "light") fail(here, `Enter: data-theme "${s.theme}", aria-pressed ${s.pressed}, stored ${s.stored}; want light, true, light`);
+      if (s.meta.toLowerCase() !== "#fffdf8") fail(here, `Enter: theme-color is ${s.meta}, want the header's paper #fffdf8`);
+      await page.keyboard.press("Space");
+      s = await state();
+      if (s.theme || s.pressed !== "false" || s.stored !== null) fail(here, `Space: data-theme "${s.theme}", aria-pressed ${s.pressed}, stored ${s.stored}; want off, false, nothing stored`);
+      await page.click("[data-theme-toggle]");
+      await page.reload({ waitUntil: "networkidle0" });
+      s = await state();
+      if (s.theme !== "light" || s.pressed !== "true") fail(here, `after a reload: data-theme "${s.theme}", aria-pressed ${s.pressed}; want light, true`);
+      if (s.atBody !== "light") fail(here, "after a reload the option is applied only after the body is parsed (a flash of the navy look)");
+    }
+    await ctx.close();
   }
   process.stdout.write(":");
 }

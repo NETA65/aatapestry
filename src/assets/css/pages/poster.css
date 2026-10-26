@@ -1,4 +1,5 @@
-/* Printable poster (/poster/ and /es/poster/) — src/pages/poster.njk + src/_includes/layouts/poster.njk.
+/* Printable poster: part 2 of the flyer & poster page (/flyer/#printable-poster, /es/flyer/#printable-poster),
+   src/pages/flyer.njk + src/_includes/layouts/poster.njk, and that page on paper (the poster alone).
    Imported by ../main.css. The download list (.dl-list) comes from ./flyer.css.
 
    THE POSTER is a Letter sheet (8.5 × 11 in) that scales with its width: every size inside is in cqw
@@ -12,15 +13,20 @@
   .poster-stage { background: var(--bg-alt); }
   .poster-layout { display: grid; gap: clamp(1.75rem, 4vw, 2.5rem); }
   .poster-layout > * { min-width: 0; }
-  /* Below 64rem the panel shares the poster's 8.5in column, so the card, the links and the sheet line up. */
-  .poster-panel { display: grid; gap: 1rem; align-content: start; width: 100%; max-width: 8.5in; margin-inline: auto; }
+  /* Below 64rem the heading and the panel share the poster's 8.5in column, so the heading, the card, the
+     link and the sheet line up. From 64rem the heading runs across the top, over the panel | the preview.
+     The grid's gap spaces the heading, so .section-head's own bottom margin is dropped here. */
+  .poster-stage-head, .poster-panel { width: 100%; max-width: 8.5in; margin-inline: auto; }
+  .poster-stage-head { margin-bottom: 0; }
+  .poster-panel { display: grid; gap: 1rem; align-content: start; }
   @media (min-width: 64rem) {
     .poster-layout { grid-template-columns: minmax(17rem, 20rem) minmax(0, 1fr); align-items: start; }
+    .poster-stage-head { grid-column: 1 / -1; max-width: 46rem; margin-inline: 0; }
     .poster-panel { max-width: none; }
   }
-  /* The panel (548 px tall in EN and ES) stays in view beside the long preview only where all of it fits
-     below the sticky header (top 5.5rem = 88 px), with room for the focus ring. On shorter windows a stuck
-     panel hides its last links, even while they have keyboard focus. Re-measure if the panel's copy changes. */
+  /* The panel (544 px tall in English, 565 in Spanish) stays in view beside the long preview only where all
+     of it fits below the sticky header (top 5.5rem = 88 px), with room for the focus ring. On shorter windows a
+     stuck panel hides its last link, even while it has keyboard focus. Re-measure if the panel's copy changes. */
   @media (min-width: 64rem) and (min-height: 42rem) {
     .poster-panel { position: sticky; top: 5.5rem; }
   }
@@ -81,6 +87,10 @@
   .poster-title { margin: 0; font-size: 7.9cqw; line-height: 1; letter-spacing: 0; text-wrap: nowrap; }
   .poster-title .lockup-the { letter-spacing: 0.3em; }
   .poster-title .lockup-tapestry { margin-top: -0.1em; color: var(--navy); text-shadow: none; }
+  /* THE and INCREDIBLE sit 2cqw (about 0.25em of the title) higher than the shared lockup puts them, so the
+     swash of Tapestry's T only meets the foot of INCREDIBLE instead of running into C-R-E. A transform moves
+     the drawing, not the layout, so the full sheet keeps its height (and THE stays clear of the frame). */
+  .poster-title .lockup-the, .poster-title .lockup-incredible { transform: translateY(-2cqw); }
   .poster-gold {
     background: linear-gradient(180deg, #e8b850 0%, #cf952f 40%, #a06a18 78%, #b98226 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -186,8 +196,10 @@
 /* ---------- On paper: the poster alone, exactly one page (the @page rule is in layouts/poster.njk) ---------- */
 @media print {
   html.poster-page, .poster-page body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
-  .poster-page body > :not(main), .poster-page main > :not(.poster-stage), .poster-panel, .poster-preview-label { display: none !important; }
+  .poster-page body > :not(main), .poster-page main > :not(.poster-stage), .poster-stage-head, .poster-panel, .poster-preview-label { display: none !important; }
   .poster-page main, .poster-stage, .poster-layout, .poster-preview { display: block !important; margin: 0 !important; padding: 0 !important; max-width: none !important; background: none !important; }
   .poster { width: 8.5in !important; height: 11in !important; aspect-ratio: auto; box-shadow: none !important; break-inside: avoid; }
   :root[data-size="a4"] .poster { width: 210mm !important; height: 297mm !important; }
+  /* main.css prints the site's cream "Tapestry" in black; the poster's is navy on paper too, as in the PNG. */
+  .poster .lockup-tapestry { color: var(--navy); }
 }

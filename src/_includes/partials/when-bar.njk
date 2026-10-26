@@ -11,4 +11,4 @@
     </div>
   </div>
 </div>
-<p class="local-time mt-3" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" hidden>{{ t.labels.yourLocalTime }}: <strong data-local-value></strong></p>
+<p class="local-time mt-3" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" data-abbrs="{{ when.localAbbrs | dump }}" hidden>{{ t.labels.yourLocalTime }}: <strong data-local-value></strong></p>

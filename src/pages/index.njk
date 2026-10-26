@@ -73,7 +73,7 @@ eleventyComputed:
 {# ============ ESSENTIALS: Zoom · interpretation · cost ============ #}
 <section class="section" aria-labelledby="essentials-title">
   <div class="container-page">
-    <div class="mb-8">{% include "partials/notice.njk" %}</div>
+    {% set noticeClass = "mb-8" %}{% include "partials/notice.njk" %}
     <h2 class="h-section mb-8" id="essentials-title">{{ c.essentials.heading }}</h2>
     <div class="essentials-grid">
       <article class="card essential essential--zoom" data-legacy="recovery">

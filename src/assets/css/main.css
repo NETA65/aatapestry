@@ -9,7 +9,8 @@
    Cascade layers: theme → base → components → utilities. This file's shared components sit in the
    sub-layer components.shared, so a page stylesheet's rule (plain @layer components) always overrides
    the shared component it restyles, whatever the specificity; Tailwind utilities override both.
-   Light by default; follows the visitor's dark-mode setting automatically.
+   Light by default; follows the visitor's dark-mode setting automatically, unless the visitor turns on
+   the lighter background (the header's sun button, <html data-theme="light">: ./theme-light.css).
    ===================================================================== */
 @layer theme, base, components, components.shared, utilities;
 @import "tailwindcss" source(none);
@@ -21,6 +22,7 @@
 @import "./pages/principles.css";
 @import "./pages/poster.css";
 @import "./pages/misc.css";
+@import "./theme-light.css";
 @source "../../_includes";
 @source "../../pages";
 @source "../js";
@@ -96,8 +98,11 @@
   --c-service-soft: #fbefd6;
   color-scheme: light;
 }
+/* Not with the lighter background on (<html data-theme="light">, ./theme-light.css): the light values
+   above then stay, whatever the device. :where() keeps this block's specificity that of :root, so the
+   print block's :root (later in this file) still wins on paper. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:where(:not([data-theme="light"])) {
     --bg: #0b0f1e;
     --bg-alt: #10162b;
     --surface: #141b33;
@@ -395,7 +400,7 @@
   [data-legacy="service"] { --legacy: var(--c-service); --legacy-text: var(--c-service-text); --legacy-soft: var(--c-service-soft); }
   [data-legacy="all"] { --legacy: var(--accent); --legacy-text: var(--accent); --legacy-soft: var(--accent-soft); }
 
-  /* ---------- Dark "flyer" surfaces: header, page heroes, footer ---------- */
+  /* ---------- Dark "flyer" surfaces: header, page heroes, footer (light ones with the lighter background: theme-light.css) ---------- */
   .on-dark { color: var(--color-cream); }
   .on-dark a:not(.btn) { color: var(--color-gold-300); }
   .on-dark a:not(.btn):hover { color: var(--color-gold-200); }
@@ -447,9 +452,16 @@
   /* (Lining figures, like the flyer's: set once on body, see @layer base.) */
   .lockup-the { font-size: 0.3em; letter-spacing: 0.2em; margin-bottom: 0.06em; padding-left: 0.2em; }
   .lockup-incredible { font-size: 1em; letter-spacing: 0; line-height: 0.92; }
+  /* As on the flyer, the top of Tapestry's T just touches the foot of INCREDIBLE (margin-top measured on
+     the rendered glyphs, 320 to 1920 px wide: at -0.2em the T ran half-way up the letters; the home hero
+     takes the extra height back above THE, pages/home.css). Tapestry is also drawn above the gold lines:
+     .gold-text's filter makes each gold line a stacking context, which paints after ordinary text, so
+     without position + z-index a swash that reaches INCREDIBLE would go under it. The printable poster
+     sets its own margin (poster.css). */
   .lockup-tapestry {
+    position: relative; z-index: 1;
     font-family: var(--font-script); font-weight: 400; font-size: 1.38em; line-height: 0.8;
-    color: var(--color-cream); margin-top: -0.2em; padding-inline: 0.15em;
+    color: var(--color-cream); margin-top: 0.1em; padding-inline: 0.15em;
     text-shadow: 0 0.04em 0.12em rgb(0 0 0 / 0.55);
   }
   .gold-text {
@@ -652,8 +664,9 @@
   .footer-heading { font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-gold-300); margin-bottom: 0.875rem; }
   .footer-links { display: grid; gap: 0.25rem; }
   .footer-links a { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.25rem; }
+  /* The legal lines run the full width of the page column, so both their edges line up with the footer
+     grid above and with the content of the page (.container-page). */
   .footer-legal { border-top: 1px solid rgb(251 245 233 / 0.1); padding-block: 1.5rem 2rem; font-size: 0.8125rem; line-height: 1.6; color: rgb(251 245 233 / 0.6); display: grid; gap: 0.75rem; }
-  .footer-legal p { max-width: 80ch; }
 }
 
 /* ---------- Print ---------- */
@@ -690,7 +703,5 @@
   .questions-band .email-link { text-decoration-color: currentColor !important; }
   .footer-grid { display: none !important; }
   .footer-legal { border-top: 0 !important; padding-block: 0.5rem 0 !important; font-size: 8pt !important; gap: 0.3rem; line-height: 1.4; break-inside: avoid; break-before: avoid; }
-  /* On paper the screen's 80ch cap at 8pt only wraps each paragraph into extra lines */
-  .footer-legal p { max-width: none; }
   a[href^="http"]:not(.btn)::after { content: " (" attr(href) ")"; font-size: 0.85em; word-break: break-all; }
 }

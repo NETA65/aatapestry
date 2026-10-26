@@ -1,11 +1,11 @@
 /* The Incredible Tapestry — small, dependency-free enhancements.
    Every page works without this file (links, the calendar file, and a Menu link to the footer's list
    of pages in place of the menu button); it adds: the mobile menu (and the compact header when the full
-   menu does not fit) · the language switch keeping the section · copy buttons · native share · the
-   visitor's local time · the countdown · the Add to calendar menu's placement and its keyboard and
-   outside-click behaviour.
-   (The "js" class and <html data-phase> are set earlier, by an inline script in partials/head.njk,
-   so the page is styled right from the first paint.) */
+   menu does not fit) · the lighter-background button · the language switch keeping the section · copy
+   buttons · native share · the visitor's local time · the countdown · the Add to calendar menu's
+   placement and its keyboard and outside-click behaviour.
+   (The "js" class, a stored lighter background and <html data-phase> are set earlier, by an inline
+   script in partials/head.njk, so the page is styled right from the first paint.) */
 (() => {
   "use strict";
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -65,6 +65,32 @@
       fit();
     }
   }
+
+  /* ---------- Lighter background (the header's sun button) ---------- */
+  // On: <html data-theme="light"> (theme-light.css), remembered in localStorage under the same key the
+  // inline script in partials/head.njk reads before the first paint, for both languages. Off removes the
+  // key, so the site is back to following the device. The button's name stays the same; aria-pressed
+  // says whether the option is on. The browser bar's colour and color-scheme follow (head.njk's metas).
+  // Another tab changing it (the storage event) is followed here too. Storage can be blocked (a private
+  // window, blocked site data): the choice then holds for this page only.
+  const THEME_KEY = "aat-theme";
+  const themeButtons = $$("[data-theme-toggle]");
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  const schemeMeta = document.querySelector('meta[name="color-scheme"]');
+  const setLight = (on) => {
+    const d = document.documentElement;
+    if (on) d.dataset.theme = "light"; else delete d.dataset.theme;
+    themeButtons.forEach((b) => b.setAttribute("aria-pressed", String(on)));
+    if (themeMeta && themeMeta.dataset.light) themeMeta.content = on ? themeMeta.dataset.light : themeMeta.dataset.dark;
+    if (schemeMeta) schemeMeta.content = on ? "light" : "light dark";
+  };
+  setLight(document.documentElement.dataset.theme === "light");
+  themeButtons.forEach((b) => b.addEventListener("click", () => {
+    const on = document.documentElement.dataset.theme !== "light";
+    setLight(on);
+    try { if (on) localStorage.setItem(THEME_KEY, "light"); else localStorage.removeItem(THEME_KEY); } catch { /* this page only */ }
+  }));
+  window.addEventListener("storage", (e) => { if (e.key === THEME_KEY || e.key === null) setLight(e.newValue === "light"); });
 
   /* ---------- The language switch keeps the section ---------- */
   // Both languages use the same section ids (interpretation, etiquette, time-zones, faq-* …), so
@@ -144,7 +170,12 @@
     if (evOffset !== null && -start.getTimezoneOffset() === evOffset && -end.getTimezoneOffset() === evOffset) return;
     const zoneFmt = new Intl.DateTimeFormat(loc, { timeZoneName: "short" });
     const dateFmt = new Intl.DateTimeFormat(loc, { weekday: "long", month: "long", day: "numeric" });
-    const zone = (zoneFmt.formatToParts(start).find((p) => p.type === "timeZoneName") || {}).value || tz;
+    const intlZone = (zoneFmt.formatToParts(start).find((p) => p.type === "timeZoneName") || {}).value || tz;
+    // Where the browser has only an offset ("GMT+5:30", "GMT+11"), the time-zone table's name for the
+    // zone (data-abbrs, when.js → localAbbrs: IST, AEDT), so this line and the Program table agree.
+    let abbrs = {};
+    try { abbrs = JSON.parse(el.dataset.abbrs || "{}"); } catch { /* keep the browser's name */ }
+    const zone = (/^GMT[+-−]/.test(intlZone) && Object.prototype.hasOwnProperty.call(abbrs, tz) && abbrs[tz]) || intlZone;
     const sameDay = start.toDateString() === end.toDateString();
     const localDay = start.toLocaleDateString("en-CA");
     const eventDay = String(el.dataset.start).slice(0, 10);
@@ -155,8 +186,14 @@
     (el.querySelector("[data-local-value]") || el).textContent = text;
     el.hidden = false;
   });
-  // Highlight the visitor's zone in a time-zone table.
-  if (tz) $$("[data-zone]").forEach((row) => { if (row.dataset.zone === tz) row.classList.add("is-local"); });
+  // Highlight the visitor's zone in a time-zone table: the row with their exact IANA id, else the row
+  // listing it in data-zone-aliases (when.js: Chrome reports India as "Asia/Calcutta"; Melbourne keeps
+  // Sydney's time). One row at most, the exact id first, even if an alias list repeated another row's id.
+  if (tz) {
+    const rows = $$("[data-zone]");
+    const row = rows.find((r) => r.dataset.zone === tz) || rows.find((r) => (r.dataset.zoneAliases || "").split(" ").includes(tz));
+    if (row) row.classList.add("is-local");
+  }
 
   /* ---------- Countdown ("47 days to go" → "Starts in 2 h 10 min" → "Happening now") ---------- */
   // The pill is role="timer" (not announced as it changes). Only a change of phase while the page is

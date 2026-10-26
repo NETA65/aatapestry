@@ -1,9 +1,11 @@
-{#- The current notice (i18n → notice): the Zoom link changed on October 25. Shown on the home page
-    and on How to join, just above the Zoom details. Empty notice.text hides it everywhere; the first
-    build after the workshop has ended drops it too (when.status, worked out at build time). -#}
+{#- A short notice for an important update (i18n → notice: label + text, en and es), shown on the home page
+    and on How to join, just above the Zoom details. There is none now: notice.text is empty, so nothing
+    is rendered at all (the box carries its own spacing, noticeClass, so no empty wrapper is left behind).
+    Post one by filling in both languages (docs/EDITING.md); the first build after the workshop has ended
+    drops it (when.status, worked out at build time). -#}
 {% if t.notice and t.notice.text and not when.status.isPast %}
-<div class="notice" role="note">
+<div class="notice{% if noticeClass %} {{ noticeClass }}{% endif %}" role="note">
   {% icon "info", "icon" %}
-  <p><strong>{{ t.notice.label }}.</strong> {{ t.notice.text | tokens }}</p>
+  <p>{% if t.notice.label %}<strong>{{ t.notice.label }}.</strong> {% endif %}{{ t.notice.text | tokens }}</p>
 </div>
 {% endif %}

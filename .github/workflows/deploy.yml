@@ -84,14 +84,14 @@ jobs:
       - name: Warn when the committed poster files were published instead
         if: steps.pdf.outcome == 'failure'
         run: |
-          echo "::warning::npm run pdf failed; this deploy ships the committed brand/poster files. Check they still match /poster/ and /es/poster/."
+          echo "::warning::npm run pdf failed; this deploy ships the committed brand/poster files. Check they still match the poster on /flyer/ and /es/flyer/."
           echo "- ⚠️ Poster PDF/PNG step failed: the committed brand/poster files were published." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate HTML and internal links
         run: npm test
         continue-on-error: true
 
-      - name: Responsive + accessibility check (axe-core, light and dark)
+      - name: Responsive + accessibility check (axe-core, light, dark and lighter background)
         run: npm run test:ui
         continue-on-error: true
         env:

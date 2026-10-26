@@ -2,8 +2,9 @@
     Event description: copy.jsonld.eventSummary (EN) or t.landing.metaDescription (ES). FAQPage on "/faq/"
     (q/a) and "/es/faq/" (qEs/aEs), with absolute links. Text through | plain (no no-break spaces or word
     joiners in search-engine data). BreadcrumbList: Home › (36 Principles | the parent page) › this page,
-    like the visible breadcrumb; a page under another one names it in front matter (parentCrumb: flyer, a
-    pagecopy key); the printable poster sits under the flyer. None on noindex pages (the 404). -#}
+    like the visible breadcrumb; a page under another one names it in front matter (parentCrumb: the parent's
+    pagecopy key, e.g. join; no page needs it since the poster joined the flyer page). None on noindex pages
+    (the 404). -#}
 {%- set ev = site.event -%}
 {%- set evUrl = site.url + ("/es/" if lang == "es" else "/") -%}
 {%- set statusMap = { "scheduled": "https://schema.org/EventScheduled", "cancelled": "https://schema.org/EventCancelled", "postponed": "https://schema.org/EventPostponed", "rescheduled": "https://schema.org/EventRescheduled" } -%}
@@ -54,7 +55,7 @@
 {%- if page.url != "/principles/" and page.url.startsWith("/principles/") -%}
 {%- set _ = crumbs.push({ "@type": "ListItem", "position": 2, "name": t.nav.principles, "item": ("/principles/" | absUrl) }) -%}
 {%- endif -%}
-{%- set parentKey = parentCrumb or ("flyer" if page.url.endsWith("/poster/") else "") -%}
+{%- set parentKey = parentCrumb or "" -%}
 {%- if parentKey and pagecopy[parentKey] -%}
 {%- set _ = crumbs.push({ "@type": "ListItem", "position": crumbs.length + 1, "name": (pagecopy[parentKey][lang].hero.crumb | tokens | plain), "item": ((("/es" if lang == "es" else "") + "/" + parentKey + "/") | absUrl) }) -%}
 {%- endif -%}

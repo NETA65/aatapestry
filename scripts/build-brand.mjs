@@ -158,7 +158,7 @@ write(out("favicon/icon-512.png"), png(framed(iconMark, 0.88, PAPER), 512));
 write(out("favicon/maskable-512.png"), png(framed(iconMark, 0.62, PAPER), 512));
 
 // ---------- QR codes ----------
-// site-es → the Spanish home page, for the Spanish printable poster (/es/poster/).
+// site-es → the Spanish home page, for the Spanish printable poster (/es/flyer/#printable-poster).
 const qrTargets = { zoom: site.event.zoom.joinUrl, site: site.url, "site-es": `${site.url}/es/`, join: `${site.url}/join/` };
 for (const [key, text] of Object.entries(qrTargets)) {
   const svg = await QRCode.toString(text, { type: "svg", errorCorrectionLevel: "M", margin: 1, color: { dark: INK, light: "#0000" } });
@@ -322,7 +322,8 @@ time-zone table; never "EDT", since December is standard time); check a replacem
 
 ### poster/
 \`aatapestry-poster{,-es}-letter.pdf\`, \`…-a4.pdf\`, \`aatapestry-poster{,-es}.png\` (300 dpi) — the printer-friendly
-poster (light background, QR codes), made by \`npm run pdf\` from /poster/ and /es/poster/ after \`npm run build\`.
+poster (light background, QR codes), made by \`npm run pdf\` from /flyer/ and /es/flyer/ (their #printable-poster
+part) after \`npm run build\`.
 The Spanish one is the only Spanish printable; for English, the official flyer in \`flyer/\` comes first.
 
 ## Usage notes

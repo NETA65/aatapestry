@@ -10,6 +10,6 @@ export default {
     otherLang: (data) => (data.lang === "es" ? "en" : "es"),
     // The ?v= query makes Facebook, WhatsApp, Slack… fetch the flyer-style cards instead of a cached older one;
     // bump it whenever scripts/make-og.mjs output changes.
-    ogImage: (data) => data.ogImage || (data.lang === "es" ? "/assets/img/og-es.png?v=2" : "/assets/img/og.png?v=2"),
+    ogImage: (data) => data.ogImage || (data.lang === "es" ? "/assets/img/og-es.png?v=3" : "/assets/img/og.png?v=3"),
   },
 };

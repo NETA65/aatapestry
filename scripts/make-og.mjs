@@ -138,8 +138,11 @@ body { -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; 
 .the, .incredible { font-family: "Playfair Display", serif; font-weight: 900; text-transform: uppercase; font-variant-numeric: lining-nums; }
 .the { font-size: 0.31em; letter-spacing: 0.22em; padding-left: 0.22em; margin-bottom: 0.05em; }
 .incredible { font-size: 1em; line-height: 0.92; }
+/* As on the site (main.css .lockup-tapestry): the top of the T just touches the foot of INCREDIBLE, and the
+   script is drawn above the gold lines (.gold's filter makes each a stacking context, which would paint over it). */
 .tapestry {
-  font-family: "Great Vibes", cursive; font-size: 1.36em; line-height: 0.8; margin-top: -0.2em; padding-inline: 0.15em;
+  position: relative; z-index: 1;
+  font-family: "Great Vibes", cursive; font-size: 1.36em; line-height: 0.8; margin-top: 0.1em; padding-inline: 0.15em;
   color: var(--cream); text-shadow: 0 0.04em 0.12em rgb(0 0 0 / 0.6);
 }
 .gold {

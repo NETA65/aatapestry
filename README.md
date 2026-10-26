@@ -10,7 +10,8 @@ Tradition and Concept of each number, side by side).
 The design follows the committee's official flyer: the circle-and-triangle logo on a dark disc, the
 gold *THE INCREDIBLE* over a script *Tapestry*, deep navy with the bright thread colours of the three
 legacies. It works on every screen size from 320 px phones up, in light and dark mode, in English
-and Spanish.
+and Spanish. A sun button in the header gives the whole site a lighter background, the navy flyer
+surfaces included (styled like the printable poster); the browser remembers the choice.
 
 Everything on the site — every page, the printable poster, the QR codes, the calendar file, the
 social cards and the search-engine data — is generated from **one data file**,
@@ -30,26 +31,27 @@ Each piece of information lives on exactly one page; the others link to it.
 | English | Spanish | What it holds |
 | --- | --- | --- |
 | `/` | `/es/` | The flyer as a web page: logo, title, date, time bar (ET, then PT · MT · CT and the visitor's own time), *Join on Zoom*, *Add to calendar*, countdown; the three essentials (Zoom, interpretation, cost); what the day is; the flyer to share |
-| `/program/` | `/es/program/` | The day's timeline (the program once the committee publishes it), the time in every US zone, Puerto Rico, Mexico City and UTC, *Add to calendar* |
+| `/program/` | `/es/program/` | The day's timeline (the program once the committee publishes it), the time in every US zone, Puerto Rico, Mexico City, London, India, Sydney and UTC, *Add to calendar* |
 | `/join/` | `/es/join/` | Zoom link, meeting ID and passcode with copy buttons, QR code, step-by-step joining, Spanish/ASL interpretation and captions (`#interpretation`), Zoom etiquette and online anonymity (`#etiquette`), accessibility (`#accessibility`) |
-| `/flyer/` | `/es/flyer/` | The official flyer with PDF/JPG downloads, the printable posters, sharing, and the flyer's text |
+| `/flyer/` | `/es/flyer/` | *Flyer & poster*: the official flyer with PDF/JPG downloads, sharing and the flyer's text (`#official-flyer`, `#flyer-text`); the printer-friendly poster (light background, Letter and A4, QR codes) with print, PDF/PNG downloads and a preview (`#printable-poster`). Printed, the page is the poster alone |
 | `/faq/` | `/es/faq/` | Questions and answers, grouped, including cost and contributions (`#faq-cost`) |
-| `/poster/` | `/es/poster/` | Printer-friendly poster (light background, Letter and A4) with QR codes; PDF/PNG downloads |
 | `/principles/`, `/principles/1/` … `/12/` | — | The 36 principles side by side, one page per number (English only) |
 | `/aatapestry-workshop.ics` | `/es/aatapestry-workshop.ics` | Calendar file (same UID and SEQUENCE in both languages, so re-importing either updates one entry; SEQUENCE bumps when the Zoom details change) |
 
 Old addresses forward to their new home: `/schedule/` → `/program/`, `/accessibility/` →
-`/join/#interpretation`, `/meeting/` → `/principles/`, and links into sections of the old one-page home
+`/join/#interpretation`, `/meeting/` → `/principles/`, `/poster/` → `/flyer/#printable-poster` (and `/es/poster/` →
+`/es/flyer/#printable-poster`), and links into sections of the old one-page home
 (`/#join`, `/es/#unirse`, …) go to the page that now holds that section. Also generated: `/feed.xml` (the updates feed, Atom; entries in `site.json → updates`), `/sitemap.xml`, `/robots.txt`,
 `/manifest.webmanifest`, `/404.html`.
 
 The questions address is printed once on every page, in the purple band at the top of the footer
-(with a copy button); everywhere else it is a link labelled *Email the planning committee*.
+(with a copy button; the printable poster on `/flyer/` prints it too); everywhere else it is a link
+labelled *Email the planning committee*.
 
 **SEO & sharing:** canonical URLs, Open Graph and Twitter cards with flyer-style images, `hreflang`
 for the bilingual pages, schema.org JSON-LD (`Event` with `VirtualLocation`, `FAQPage`,
 `BreadcrumbList`, `Article`, `Organization`, `WebSite`).
-**Accessibility:** WCAG 2.2 AA colour contrast in light and dark mode, skip link, one `h1` per page,
+**Accessibility:** WCAG 2.2 AA colour contrast in light and dark mode and with the lighter background, skip link, one `h1` per page,
 keyboard-friendly menu and calendar menu, visible focus, 44 px touch targets, reduced-motion support,
 print styles. Checked with axe-core and html-validate.
 
@@ -78,7 +80,7 @@ npm start          # http://localhost:8080 with live reload
 npm run build      # brand assets + site logo + Tailwind + Eleventy → _site/
 npm run pdf        # printable poster PDFs/PNGs (EN + ES) from the built site (headless Chrome)
 npm test           # HTML validation + internal link check on _site/
-npm run test:ui    # responsive + accessibility check (axe-core) of every page in light and dark mode
+npm run test:ui    # responsive + accessibility check (axe-core) of every page in light and dark mode and with the lighter background
 ```
 
 Node 20 or newer (`.nvmrc` says 22). No global installs.
@@ -91,7 +93,7 @@ src/_data/        site.json (the facts) · schedule.json (program) · principles
                   copy.json (study pages, 404, event summary) · when.js (all date/time math) · calendar.js · nav.js · build.js
 src/pages/        one template per page; the bilingual pages render /x/ and /es/x/ from one file
 src/_includes/    layouts/ · partials/ (head, header, footer, page hero, Zoom details, calendar menu, time bar…) · macros/
-src/assets/       css/main.css (Tailwind v4 design system) + css/pages/*.css · js/app.js (no dependencies) · img/ · fonts (copied from @fontsource)
+src/assets/       css/main.css (Tailwind v4 design system) + css/pages/*.css + css/theme-light.css (the lighter background) · js/app.js (no dependencies) · img/ · fonts (copied from @fontsource)
 brand/            src/ (SVG masters) → generated logo/, alt-weave/, favicon/, qr/, social/, poster/, BRAND.md · flyer/ (official, not generated)
 scripts/          make-aa-mark.mjs · make-site-logo.mjs · build-brand.mjs · pdf.mjs · update-zoom.mjs · sync-zoom.mjs · lib/
 .github/workflows deploy.yml · update-zoom.yml · sync-zoom.yml

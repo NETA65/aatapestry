@@ -114,27 +114,29 @@ eleventyComputed:
     </div>
 
     <div class="program-aside">
-      {# ============ IN YOUR TIME ZONE (app.js marks the visitor's row .is-local and fills in the local time) ============ #}
+      {# ============ IN YOUR TIME ZONE (app.js marks the visitor's row .is-local, by data-zone or data-zone-aliases, and fills in the local time) ============ #}
       <section class="card program-card" id="time-zones" aria-labelledby="zones-title">
         <div class="program-card-head">
           <span class="card-icon">{% icon "globe", "icon" %}</span>
           <h2 class="h-card" id="zones-title">{{ c.zones.heading }}</h2>
         </div>
-        <p class="zones-local" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" hidden>{% icon "map-pin", "icon icon-sm" %}<span>{{ c.zones.localLabel }}: <strong data-local-value></strong></span></p>
+        <p class="zones-local" data-local-time data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-tz="{{ when.zone }}" data-abbrs="{{ when.localAbbrs | dump }}" hidden>{% icon "map-pin", "icon icon-sm" %}<span>{{ c.zones.localLabel }}: <strong data-local-value></strong></span></p>
         <table class="zones">
           <caption class="sr-only">{{ c.zones.caption }}</caption>
           <thead>
             <tr><th scope="col">{{ c.zones.zone }}</th><th scope="col">{{ c.zones.time }}</th></tr>
           </thead>
           <tbody>
+            {# Under the hours: the local day where it is not the event's (Sydney: "(Sunday, December 13)"),
+               and "(ends the next day)" where the hours run past midnight there (when.js). #}
             {% for z in when.zones %}
-            <tr data-zone="{{ z.id }}"{% if z.isEvent %} class="is-event"{% endif %}>
+            <tr data-zone="{{ z.id }}"{% if z.aliases %} data-zone-aliases="{{ z.aliases | join(' ') }}"{% endif %}{% if z.isEvent %} class="is-event"{% endif %}>
               <th scope="row">
                 <span class="zones-name">{{ z.labelEs if es else z.label }}</span>{% if z.abbr != z.label %} <span class="zones-abbr">{{ z.abbr }}</span>{% endif %}
                 {% if z.isEvent %}<span class="zones-tag zones-tag--event">{{ c.zones.eventTag }}</span>{% endif %}
                 <span class="zones-tag zones-tag--you">{{ c.zones.youTag }}</span>
               </th>
-              <td>{{ z.startEs if es else z.start }}&nbsp;– {{ z.endEs if es else z.end }}{% if z.nextDay %} <span class="zones-next">({{ c.zones.endsNextDay }})</span>{% endif %}</td>
+              <td>{{ z.startEs if es else z.start }}&nbsp;– {{ z.endEs if es else z.end }}{% if z.day %} <span class="zones-next">({{ z.dayEs if es else z.day }})</span>{% endif %}{% if z.nextDay %} <span class="zones-next">({{ c.zones.endsNextDay }})</span>{% endif %}</td>
             </tr>
             {% endfor %}
           </tbody>

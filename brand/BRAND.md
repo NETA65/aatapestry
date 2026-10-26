@@ -75,7 +75,8 @@ time-zone table; never "EDT", since December is standard time); check a replacem
 
 ### poster/
 `aatapestry-poster{,-es}-letter.pdf`, `…-a4.pdf`, `aatapestry-poster{,-es}.png` (300 dpi) — the printer-friendly
-poster (light background, QR codes), made by `npm run pdf` from /poster/ and /es/poster/ after `npm run build`.
+poster (light background, QR codes), made by `npm run pdf` from /flyer/ and /es/flyer/ (their #printable-poster
+part) after `npm run build`.
 The Spanish one is the only Spanish printable; for English, the official flyer in `flyer/` comes first.
 
 ## Usage notes

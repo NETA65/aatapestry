@@ -209,7 +209,7 @@ export default async function (eleventyConfig) {
     if (hits.length) console.warn(`[tokens] literal tokens in the output (fix the template or the data):\n  - ${hits.join("\n  - ")}`);
   });
   // After the build: the questions address is PRINTED once per page, in the questions band at the top of
-  // the footer (and on the printable poster); everywhere else it is a labelled link. Count it in the visible text.
+  // the footer (and on the printable poster, /flyer/); everywhere else it is a labelled link. Count it in the visible text.
   eleventyConfig.on("eleventy.after", ({ results }) => {
     const email = (freshSite().contact || {}).email;
     if (!email) return;
@@ -221,8 +221,9 @@ export default async function (eleventyConfig) {
         .replace(/<(script|style|template)[\s>][\s\S]*?<\/\1>/gi, " ")
         .replace(/<[^>]*>/g, " ");
       const n = text.split(email).length - 1;
-      // The printable poster is print media and prints the address itself, besides the footer band.
-      const allowed = /\/poster\/$/.test(String(r.url || "")) ? 2 : 1;
+      // The flyer & poster page holds the printable poster, which prints the address itself (it is what
+      // that page prints on paper), besides the footer band.
+      const allowed = /\/flyer\/$/.test(String(r.url || "")) ? 2 : 1;
       if (n > allowed) twice.push(`${r.url || r.outputPath}: ${n} times`);
     }
     if (twice.length) console.warn(`[email] the address is printed more than once on a page (link it with contact.linkText or [email the planning committee](mailto:{email}) instead):\n  - ${twice.join("\n  - ")}`);
@@ -305,7 +306,7 @@ export default async function (eleventyConfig) {
   // Spanish site paths: "/join/" → "/es/join/" when such a page exists (the workshop pages are all
   // translated; the study pages, /principles/…, are English only and fall back to /es/).
   // Add a path here when you add its /es/ twin.
-  const esPages = new Set(["/", "/program/", "/join/", "/flyer/", "/faq/", "/poster/"]);
+  const esPages = new Set(["/", "/program/", "/join/", "/flyer/", "/faq/"]);
   eleventyConfig.addFilter("langUrl", (url, lang) => {
     const clean = String(url || "/").replace(/^\/es(?=\/)/, "") || "/";
     if (lang === "es") return esPages.has(clean) ? `/es${clean === "/" ? "/" : clean}` : "/es/";

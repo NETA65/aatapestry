@@ -31,8 +31,17 @@ const rangeEs = (s, e) => `${esTime(s)}${DASH}${esTime(e)}`;
 const rangeShort = (s, e) => `${enTimeShort(s)}${DASH}${enTimeShort(e)}`;
 const rangeShortEs = (s, e) => `${esTimeShort(s)}${DASH}${esTimeShort(e)}`;
 
-// The time-zone table (/schedule/): the event's zone first, then the rest of the US, Puerto Rico
-// and Mexico City (for Spanish speakers), and UTC. `short` is the generic US label (ET/CT/MT/PT).
+// The time-zone table (/program/): the event's zone first, then the rest of the US, Puerto Rico
+// and Mexico City (for Spanish speakers), London, India and eastern Australia (west to east), and UTC.
+// `short` is the generic US label (ET/CT/MT/PT).
+// `abbrs` ([standard, summer]) is for zones whose abbreviation Luxon only gives as an offset in en-US
+// ("GMT+5:30", "GMT+11"); the one in effect on the event's date is shown.
+// `aliases` lists the other IANA ids a browser may report for the row's place (app.js marks the
+// visitor's row): older names (Asia/Calcutta, which Chrome reports for India) and the places that keep
+// its time all year and fit its label (Belfast, Jersey, Guernsey, the Isle of Man; Melbourne, Canberra,
+// Hobart). Not Brisbane (no summer time: an hour behind Sydney in December), nor Dublin or Lisbon
+// (London's clock, but not "London (UK)").
+// The no-break space in "(Reino Unido)" keeps the brackets on one line when the label wraps.
 const ZONES = [
   { id: "America/New_York", label: "Eastern", labelEs: "Este", short: "ET" },
   { id: "America/Chicago", label: "Central", labelEs: "Centro", short: "CT" },
@@ -42,21 +51,37 @@ const ZONES = [
   { id: "Pacific/Honolulu", label: "Hawaii", labelEs: "Hawái", short: "HT" },
   { id: "America/Puerto_Rico", label: "Puerto Rico", labelEs: "Puerto Rico", short: "AT" },
   { id: "America/Mexico_City", label: "Mexico City", labelEs: "Ciudad de México", short: "" },
+  { id: "Europe/London", label: "London (UK)", labelEs: `Londres (Reino${NB}Unido)`, short: "", abbrs: ["GMT", "BST"],
+    aliases: ["Europe/Belfast", "Europe/Guernsey", "Europe/Isle_of_Man", "Europe/Jersey", "GB"] },
+  { id: "Asia/Kolkata", label: "India", labelEs: "India", short: "", abbrs: ["IST"], aliases: ["Asia/Calcutta"] },
+  { id: "Australia/Sydney", label: "Australia (Sydney)", labelEs: "Australia (Sídney)", short: "", abbrs: ["AEST", "AEDT"],
+    aliases: ["Australia/Melbourne", "Australia/Canberra", "Australia/Hobart", "Australia/ACT", "Australia/NSW", "Australia/Victoria", "Australia/Tasmania", "Australia/Currie"] },
   { id: "UTC", label: "UTC", labelEs: "UTC", short: "UTC" },
 ];
+// The local day, shown in the table only where it is not the event's own day (Sydney's Sunday).
+const enDay = (dt) => dt.setLocale("en").toFormat("cccc, LLLL d"); // Sunday, December 13
+const esDay = (dt) => dt.setLocale("es").toFormat("cccc d 'de' LLLL"); // domingo 13 de diciembre
 const inZone = (z) => {
   const s = start.setZone(z.id), e = end.setZone(z.id);
+  const otherDay = s.toISODate() !== start.toISODate();
   return {
     ...z,
-    abbr: s.toFormat("ZZZZ"), // "EST", "PST", "AST", "CST", "UTC"
+    abbr: z.abbrs ? z.abbrs[s.isInDST ? 1 : 0] || z.abbrs[0] : s.toFormat("ZZZZ"), // "EST", "PST", "AST", "CST", "UTC"; "GMT", "IST", "AEDT"
     start: enTime(s), startEs: esTime(s), end: enTime(e), endEs: esTime(e),
     range: range(s, e), rangeEs: rangeEs(s, e),
-    nextDay: e.toISODate() !== start.toISODate(),
+    // Where the workshop falls on another day (Sydney: all of it on Sunday), that day; and where it ends
+    // on a later day than it starts there (London, India, UTC: at or after midnight), "ends the next day".
+    day: otherDay ? enDay(s) : "", dayEs: otherDay ? esDay(s) : "",
+    nextDay: e.toISODate() !== s.toISODate(),
     startISO: s.toISO(), endISO: e.toISO(),
     isEvent: z.id === zone,
   };
 };
 const zones = ZONES.map(inZone);
+// The same abbreviations for the visitor's own time (app.js, [data-local-time] on every page): their
+// browser names these zones only by offset ("GMT+5:30", "GMT+11"), so the box would disagree with the
+// table's IST / AEDT. Keyed by every id the browser may report (the row's id and its aliases).
+const localAbbrs = Object.fromEntries(zones.filter((z) => z.abbrs).flatMap((z) => [z.id, ...(z.aliases || [])].map((id) => [id, z.abbr])));
 
 // The flyer's second line: the other continental US zones, west to east (PT, MT, CT), never the event's own zone.
 const ALSO = ["America/Los_Angeles", "America/Denver", "America/Chicago"].filter((id) => id !== zone);
@@ -131,6 +156,7 @@ export default {
   },
   also,
   zones,
+  localAbbrs, // { "Asia/Kolkata": "IST", "Asia/Calcutta": "IST", "Australia/Sydney": "AEDT", … }
   status: { phase, daysUntil, isToday: now.toISODate() === ev.date, isPast: phase === "past", isLive: phase === "live" },
   zoomMeetingIdDigits: String(ev.zoom.meetingId || "").replace(/\D/g, ""),
   builtAt: now.toISO(),

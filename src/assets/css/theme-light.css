@@ -1,0 +1,166 @@
+/* =====================================================================
+   The lighter background: a visitor's option (the sun button in the header, partials/header.njk).
+   ON: <html data-theme="light">, set before the first paint by the inline script in partials/head.njk
+   from localStorage "aat-theme" (both languages), and by app.js when the button is pressed. Then:
+   · the light colour tokens apply even when the device is in dark mode (main.css: its dark-mode token
+     block skips [data-theme="light"]), so every light/dark-aware component is light;
+   · the flyer's navy surfaces (.on-dark, .thread-bg: the header, the home hero, the inner-page heroes,
+     the 404 hero, the Zoom card on /join/, the footer) turn into the printable poster's light, low-ink
+     version of the brand (pages/poster.css): paper with the faint navy weave instead of the navy glows,
+     navy text, the darker print gold, the braid's outlines in the paper colour, a white time bar.
+   The purple questions band, the poster sheet (#poster) and the official flyer image keep their look.
+   OFF (the default, and when nothing is stored): the site follows the device as before; only the
+   button (and the room the bar makes for it, below) comes from this file.
+   Screen only: on paper the print block in main.css applies as before, option on or off.
+   Imported by ../main.css. The button itself sits with the header in @layer components.shared. The
+   light overrides are in @layer components, which beats every shared rule they restyle whatever its
+   specificity; the :root[data-theme="light"] prefix beats the page stylesheets' own rules (the same
+   layer, higher specificity). Keep the colours at WCAG 2.2 AA (4.5:1 text, 3:1 focus rings and icons):
+   scripts/ui-test.mjs checks every page in this mode too (its "lightbg" scheme).
+   ===================================================================== */
+
+/* ---------- The button ---------- */
+@layer components.shared {
+  /* 44 px, icon only (Lucide "sun"): its name is a visually hidden span, and the same words show as a
+     tooltip (title). aria-pressed says whether the option is on (app.js); the pressed look follows
+     <html data-theme>, so it is right from the first paint. It needs app.js, so without JavaScript it is
+     hidden, like the copy buttons (the "js" class comes from the inline script in partials/head.njk). */
+  .theme-toggle {
+    display: inline-grid; place-items: center; flex: none; width: 2.75rem; height: 2.75rem; padding: 0;
+    border-radius: 999px; border: 1px solid rgb(251 245 233 / 0.25); background: transparent; color: var(--color-cream);
+    cursor: pointer; transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .theme-toggle:hover { border-color: rgb(251 245 233 / 0.5); background: rgb(251 245 233 / 0.06); }
+  html:not(.js) .theme-toggle { display: none !important; }
+  /* Room for it in the bar. From 30rem the header adds Join (main.css), and until 34rem the site name
+     would then wrap to three lines, or in Spanish break inside "Incredible". In that band the name and
+     the logo take their small-phone size (as below 22.5rem, main.css), Join drops its icon and the
+     buttons sit a little closer, so the name keeps two lines. (.site-header: not the footer's name.) */
+  @media (min-width: 30rem) and (max-width: 33.99rem) {
+    .site-header .brand-name { font-size: 1rem; }
+    .site-header .brand-mark { width: 2.25rem; height: 2.25rem; }
+    .site-header .nav-actions { gap: 0.375rem; }
+    .site-header .header-cta { padding-inline: 0.875rem; }
+    .site-header .header-cta .icon { display: none; }
+  }
+}
+
+@media screen {
+  /* Paper, navy and the print gold, as on the poster (pages/poster.css: .poster, .poster-gold, .poster-time). */
+  :root[data-theme="light"] {
+    --lt-paper: #fffdf8;   /* the poster's sheet: the heroes and the header */
+    --lt-navy: #1b2447;    /* titles, the script "Tapestry", the time bar's frame */
+    --lt-gold: #8a5a0b;    /* small gold text on paper (5.8:1): overlines, the PT/MT/CT labels, footer headings */
+    --lt-gold-line: #a06a18; /* the current page's underline (4.5:1 on paper) */
+    --lt-subtle: rgb(27 36 71 / 0.12); /* hairlines on paper */
+  }
+
+  @layer components {
+    /* ---------- The button, pressed ---------- */
+    :root[data-theme="light"] .theme-toggle { background: var(--c-service-soft); border-color: var(--color-gold-600); color: var(--lt-gold); }
+    :root[data-theme="light"] .theme-toggle:hover { background: #f8e3b8; border-color: var(--lt-gold); }
+    /* Forced colours drop the fill: mark the pressed state in the system's highlight colours instead. */
+    @media (forced-colors: active) {
+      :root[data-theme="light"] .theme-toggle { forced-color-adjust: none; background: Highlight; border-color: Highlight; color: HighlightText; }
+    }
+
+    /* ---------- Flyer surfaces: paper with the faint navy weave ---------- */
+    :root[data-theme="light"] .on-dark { color: var(--fg); }
+    :root[data-theme="light"] .on-dark a:not(.btn) { color: var(--link); }
+    :root[data-theme="light"] .on-dark a:not(.btn):hover { color: var(--link-hover); }
+    :root[data-theme="light"] .on-dark :focus-visible { outline-color: var(--focus); }
+    :root[data-theme="light"] .on-dark .eyebrow { color: var(--lt-gold); }
+    :root[data-theme="light"] .on-dark .lead { color: var(--muted); }
+    :root[data-theme="light"] .thread-bg { background: var(--lt-paper); }
+    :root[data-theme="light"] .thread-bg::before {
+      background:
+        repeating-linear-gradient(45deg, rgb(27 36 71 / 0.035) 0 2px, transparent 2px 14px),
+        repeating-linear-gradient(-45deg, rgb(27 36 71 / 0.03) 0 2px, transparent 2px 14px);
+    }
+    /* The heroes' lower edge (in dark mode main.css draws it in cream): a hairline above the page's body. */
+    :root[data-theme="light"] :is(.page-hero, .home-hero, .nf-hero) { border-bottom: 1px solid var(--line); }
+    :root[data-theme="light"] :is(.page-hero .h-display, .nf-title, .join-zoom-title) { color: var(--lt-navy); }
+    :root[data-theme="light"] :is(.home-gloss, .nf-other, .local-time) { color: var(--muted); }
+    :root[data-theme="light"] .local-time strong { color: var(--fg); }
+    /* The logo keeps its dark disc (the brand mark); softer shadows on paper, for it and for the study
+       pages' big thread-coloured number (pages/principles.css) */
+    :root[data-theme="light"] :is(.home-hero-logo, .nf-logo) { filter: drop-shadow(0 10px 24px rgb(27 36 71 / 0.22)); }
+    :root[data-theme="light"] .pp-hero-num { filter: drop-shadow(0 0.03em 0.08em rgb(27 36 71 / 0.2)); }
+    @media (forced-colors: active) { :root[data-theme="light"] .pp-hero-num { filter: none; } }
+
+    /* Chips, outline buttons and the Add to calendar items: back to the light site's own colours */
+    :root[data-theme="light"] .on-dark .chip { background: color-mix(in srgb, var(--fg) 6%, transparent); color: var(--fg); }
+    :root[data-theme="light"] .home-hero-lang .chip:hover { background: color-mix(in srgb, var(--fg) 11%, transparent); color: var(--link-hover); }
+    :root[data-theme="light"] .on-dark .btn-outline { border-color: var(--line-strong); color: var(--fg); }
+    :root[data-theme="light"] .on-dark .btn-outline:hover { border-color: var(--fg); background: color-mix(in srgb, var(--fg) 5%, transparent); color: var(--fg); }
+    :root[data-theme="light"] .on-dark .cal-menu-panel a:not(.btn),
+    :root[data-theme="light"] .on-dark .cal-menu-panel a:not(.btn):hover { color: var(--fg); }
+
+    /* Breadcrumb: blue links, the current page and the slashes in the muted text colour */
+    :root[data-theme="light"] .breadcrumb { color: var(--muted); }
+    :root[data-theme="light"] .breadcrumb a { color: var(--link); }
+    :root[data-theme="light"] .breadcrumb a:hover { color: var(--link-hover); }
+
+    /* ---------- The title lockup and the braid (home) ---------- */
+    /* The poster's darker print gold (.poster-gold), without the drop shadow that lifts it off the navy;
+       "Tapestry" in navy without its shadow. (A logotype: no contrast minimum, but it reads like the poster.) */
+    :root[data-theme="light"] .gold-text {
+      background: linear-gradient(180deg, #e8b850 0%, #cf952f 40%, #a06a18 78%, #b98226 100%);
+      -webkit-background-clip: text; background-clip: text; filter: none;
+    }
+    @media (forced-colors: active) { :root[data-theme="light"] .gold-text { background: none; } }
+    :root[data-theme="light"] .lockup-tapestry { color: var(--lt-navy); text-shadow: none; }
+    :root[data-theme="light"] .home-overline { color: var(--lt-navy); }
+    :root[data-theme="light"] .home-subline { color: #3d4463; }
+    /* The braid's dark outlines become paper-coloured gaps, as on the poster (.poster-braid). */
+    :root[data-theme="light"] .on-dark .braid path[stroke="#070A14"] { stroke: var(--lt-paper); stroke-opacity: 1; }
+
+    /* ---------- The time bar: white, framed in navy, like the poster's (.poster-time) ---------- */
+    :root[data-theme="light"] .when-bar { background: #fff; border-color: var(--lt-navy); box-shadow: 0 1px 2px rgb(16 22 43 / 0.06); color: var(--fg); }
+    :root[data-theme="light"] .when-bar-zones { border-color: var(--line); }
+    :root[data-theme="light"] .when-bar-zone { border-top-color: var(--line); color: var(--lt-navy); }
+    :root[data-theme="light"] .when-bar-zone small { color: var(--lt-gold); }
+
+    /* ---------- The countdown pill ---------- */
+    :root[data-theme="light"] .countdown { background: rgb(27 36 71 / 0.05); border-color: rgb(27 36 71 / 0.2); color: var(--lt-navy); }
+    :root[data-theme="light"] .countdown[data-phase="live"] { background: rgb(47 191 119 / 0.14); border-color: rgb(27 138 107 / 0.6); }
+    :root[data-theme="light"] .countdown-dot { background: var(--color-gold-500); }
+
+    /* ---------- Header ---------- */
+    :root[data-theme="light"] .site-header { background: rgb(255 253 248 / 0.94); border-bottom-color: var(--lt-subtle); }
+    :root[data-theme="light"] .on-dark a.brand,
+    :root[data-theme="light"] .on-dark a.brand:hover { color: var(--lt-navy); }
+    :root[data-theme="light"] .on-dark a.nav-link { color: var(--color-navy-600); }
+    :root[data-theme="light"] .on-dark a.nav-link:hover { color: var(--lt-navy); background: rgb(27 36 71 / 0.06); }
+    :root[data-theme="light"] .on-dark a.nav-link[aria-current] { color: var(--lt-navy); }
+    :root[data-theme="light"] .nav-link[aria-current]::after { background: var(--lt-gold-line); }
+    :root[data-theme="light"] .menu-toggle { border-color: rgb(27 36 71 / 0.3); color: var(--lt-navy); }
+    :root[data-theme="light"] .menu-toggle:hover { border-color: rgb(27 36 71 / 0.55); }
+    :root[data-theme="light"] .on-dark a.menu-toggle,
+    :root[data-theme="light"] .on-dark a.menu-toggle:hover { color: var(--lt-navy); }
+    :root[data-theme="light"] :is(.mobile-menu, .mobile-menu .mobile-menu-extra) { border-top-color: var(--lt-subtle); }
+
+    /* ---------- Footer (the purple questions band above it keeps its look) ---------- */
+    :root[data-theme="light"] .site-footer { background: var(--bg-alt); color: var(--muted); }
+    :root[data-theme="light"] .site-footer.on-dark a:not(.btn) { color: var(--fg); }
+    :root[data-theme="light"] .site-footer.on-dark a:not(.btn):hover { color: var(--link); }
+    :root[data-theme="light"] .footer-heading { color: var(--lt-gold); }
+    :root[data-theme="light"] .footer-legal { border-top-color: var(--line-strong); color: var(--muted); }
+
+    /* ---------- The Zoom card on /join/ (pages/join.css): like the poster's white Zoom box ---------- */
+    :root[data-theme="light"] .join-zoom { border-color: #d9cdb4; box-shadow: var(--shadow-card); }
+    :root[data-theme="light"] .join-zoom-when { color: #3d4463; }
+    :root[data-theme="light"] .join-zoom-sep { color: var(--color-gold-600); }
+    :root[data-theme="light"] .join-zoom-details { border-top-color: var(--line); }
+    :root[data-theme="light"] .join-zoom .kv-row { background: var(--surface); border-color: var(--line); }
+    :root[data-theme="light"] .join-zoom .kv-row dt { color: var(--lt-gold); }
+    :root[data-theme="light"] .join-zoom .kv-value { color: var(--fg); }
+    :root[data-theme="light"] .join-zoom .copy-btn { background: var(--surface); border-color: var(--line-strong); color: var(--fg); }
+    :root[data-theme="light"] .join-zoom .copy-btn:hover { border-color: var(--fg); }
+    :root[data-theme="light"] .join-zoom .copy-btn.is-copied { border-color: var(--c-unity); color: var(--c-unity-text); }
+    :root[data-theme="light"] .join-qr { border-left-color: var(--line); }
+    :root[data-theme="light"] .join-qr-code { box-shadow: 0 10px 30px -14px rgb(27 36 71 / 0.35); }
+    :root[data-theme="light"] .join-qr-caption { color: var(--muted); }
+    :root[data-theme="light"] .join-qr-caption .icon { color: var(--lt-gold); }
+  }
+}

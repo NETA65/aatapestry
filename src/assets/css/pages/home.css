@@ -24,7 +24,13 @@
   /* The title never wraps, so its floor is capped by the screen width (min(…, 13vw)): with a large default
      font size or a zoomed phone it still fits. At the default 16 px, 13vw = 2.6rem at 320 px, so nothing
      changes there. */
-  .home-title { font-size: clamp(min(2.6rem, 13vw), 10.5vw, 6.25rem); font-weight: 400; letter-spacing: 0; text-wrap: nowrap; }
+  .home-title { font-size: clamp(min(2.6rem, 13vw), 10.5vw, 6.25rem); font-weight: 400; letter-spacing: 0; text-wrap: nowrap; padding-top: 0.25em; }
+  /* The lockup hangs from the top of the title's line instead of sitting on its baseline, which left
+     about 0.66em of empty line above THE. The padding above keeps 0.25em of it; the other 0.41em went to
+     Tapestry, lowered to clear INCREDIBLE (main.css: 0.3 × 1.38em). So the title is as tall as before
+     (within a pixel or two, at every size) and nothing under it moves: the first-screen fits below still
+     hold, in both languages. */
+  .home-title .lockup { vertical-align: top; }
   .home-gloss { margin-top: 0.25rem; font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: clamp(1.125rem, 2.6vw, 1.5rem); color: rgb(251 245 233 / 0.85); }
   .home-braid { margin-top: clamp(0.5rem, 2vw, 1rem); width: min(100%, 40rem); }
   .home-overline {

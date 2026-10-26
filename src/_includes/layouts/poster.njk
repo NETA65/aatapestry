@@ -1,7 +1,8 @@
 <!doctype html>
-{#- The printable poster's layout (/poster/ and /es/poster/): the same page as layouts/base.njk (keep the two
-    in step), plus a print page of Letter size with no margins. On paper only #poster prints, as exactly one
-    page (src/assets/css/pages/poster.css hides the header, the footer and the screen panel).
+{#- The layout of the page that holds the printable poster (/flyer/ and /es/flyer/, src/pages/flyer.njk): the
+    same page as layouts/base.njk (keep the two in step), plus a print page of Letter size with no margins.
+    On paper only #poster prints, as exactly one page (src/assets/css/pages/poster.css hides the header, the
+    footer, the hero, the flyer and the poster's screen panel).
     scripts/pdf.mjs declares an A4 @page of its own for the A4 PDF; a later @page rule wins, so keep this one
     an unnamed @page. -#}
 <html lang="{{ lang }}" class="poster-page">
