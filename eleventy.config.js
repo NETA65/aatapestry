@@ -56,7 +56,7 @@ const PROSE_DATA = new Set(["copy.json", "i18n.json", "faq.json", "schedule.json
 const isProse = (filePath) => {
   const p = String(filePath || "").replace(/\\/g, "/");
   if (!p.includes("/_data/")) return false;
-  return PROSE_DATA.has(path.basename(p)) || /\/_data\/content\/[^/]+\.json$/.test(p);
+  return PROSE_DATA.has(path.basename(p)) || /\/_data\/pagecopy\/[^/]+\.json$/.test(p);
 };
 // Every bilingual dictionary: i18n.json and each src/_data/pagecopy/*.json.
 const bilingualFiles = () => {
@@ -162,7 +162,9 @@ export default async function (eleventyConfig) {
         .replace(/<(script|style|template)[\s>][\s\S]*?<\/\1>/gi, " ")
         .replace(/<[^>]*>/g, " ");
       const n = text.split(email).length - 1;
-      if (n > 1) twice.push(`${r.url || r.outputPath}: ${n} times`);
+      // The printable poster is print media and prints the address itself, besides the footer band.
+      const allowed = /\/poster\/$/.test(String(r.url || "")) ? 2 : 1;
+      if (n > allowed) twice.push(`${r.url || r.outputPath}: ${n} times`);
     }
     if (twice.length) console.warn(`[email] the address is printed more than once on a page (link it with contact.linkText or [email the planning committee](mailto:{email}) instead):\n  - ${twice.join("\n  - ")}`);
   });

@@ -3,7 +3,9 @@
     (app.js; without JavaScript the menu button is hidden and the footer carries every link). -#}
 {%- set items = nav[lang].main -%}
 {%- set homeHref = "/es/" if lang == "es" else "/" -%}
-{%- macro current(href) -%}{% if page.url == href %} aria-current="page"{% elif href != homeHref and page.url.startsWith(href) %} aria-current="true"{% endif %}{%- endmacro -%}
+{#- aria-current: "page" on the page itself, "true" on its section (the study pages under 36 Principles,
+    the printable poster under Flyer). -#}
+{%- macro current(href) -%}{% if page.url == href %} aria-current="page"{% elif href != homeHref and page.url.startsWith(href) %} aria-current="true"{% elif href.endsWith("/flyer/") and page.url.endsWith("/poster/") %} aria-current="true"{% endif %}{%- endmacro -%}
 <header class="site-header on-dark">
   <div class="container-page site-header-bar">
     <a href="{{ homeHref }}" class="brand"{% if page.url == homeHref %} aria-current="page"{% endif %}>
