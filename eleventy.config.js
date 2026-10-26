@@ -9,6 +9,7 @@ import markdownIt from "markdown-it";
 import { DateTime } from "luxon";
 import { minify } from "html-minifier-terser";
 import { execFileSync } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -85,6 +86,39 @@ function i18nKeyDiff(dict) {
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
+// Cache-busting: the stylesheet and the script are linked as "/assets/css/main.css?v=<hash>" (the `v`
+// filter), so right after a deploy a returning visitor never pairs the new HTML with a cached old file.
+// The hashes are taken before every build (the Tailwind hook below), before any template renders.
+const assetVer = {};
+const hash8 = (file) => crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex").slice(0, 8);
+
+// The updates feed (/feed.xml, Atom, English). Entries: site.json → updates.items, newest first; each id
+// is permanent (feed readers use it to tell new items from ones they have shown). The feed's <updated>
+// is the newest item's date, so a rebuild never looks like news.
+const FEED_TEMPLATE = `<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ site.name }} — updates</title>
+  <subtitle>{{ site.tagline }}</subtitle>
+  <link href="{{ '/feed.xml' | absUrl }}" rel="self"/>
+  <link href="{{ '/' | absUrl }}"/>
+  <updated>{{ site.updates.items[0].date }}T12:00:00Z</updated>
+  <id>{{ site.url }}/</id>
+  <author><name>{{ site.contact.committee }}</name>{% if site.contact.email %}<email>{{ site.contact.email }}</email>{% endif %}</author>
+  <icon>{{ "/brand/favicon/icon-192.png" | absUrl }}</icon>
+  <logo>{{ "/brand/favicon/icon-512.png" | absUrl }}</logo>
+  {% for u in site.updates.items %}
+  <entry>
+    <title>{{ u.title | tokens | plain }}</title>
+    <link href="{{ (u.link or '/') | absUrl }}"/>
+    <updated>{{ u.date }}T12:00:00Z</updated>
+    <id>{{ u.id }}</id>
+    {#- Feed readers do not all resolve site-relative links ("/flyer/"): make them absolute. #}
+    <content type="html">{{ u.body | tokens | md | plain | replace('href="/', 'href="' + site.url + '/') | escape }}</content>
+  </entry>
+  {% endfor %}
+</feed>
+`;
+
 export default async function (eleventyConfig) {
   eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
 
@@ -98,13 +132,25 @@ export default async function (eleventyConfig) {
   for (const f of ["CNAME", ".nojekyll", "favicon.ico", "humans.txt"]) eleventyConfig.addPassthroughCopy(`src/${f}`);
   // Self-hosted fonts (SIL Open Font License) from @fontsource: Inter (text), Fraunces (headings), and
   // the flyer's title lettering, Playfair Display Black ("THE INCREDIBLE") and Great Vibes ("Tapestry").
+  // Great Vibes draws one word, so the site ships it subset to the letters of "Tapestry" when
+  // src/assets/fonts/great-vibes-tapestry.woff2 exists (about 5 KB instead of 43 KB; made with fontTools:
+  // pyftsubset node_modules/@fontsource/great-vibes/files/great-vibes-latin-400-normal.woff2
+  // --text="Tapestry" --layout-features='*' --flavor=woff2 --output-file=src/assets/fonts/great-vibes-tapestry.woff2).
+  // Any other text set in --font-script needs the subset made again with its letters, or it falls back to
+  // Snell Roundhand / Segoe Script. The output name stays the same (main.css @font-face, the preload in head.njk).
   const fonts = {};
   for (const w of [400, 500, 600, 700]) fonts[`node_modules/@fontsource/inter/files/inter-latin-${w}-normal.woff2`] = `assets/fonts/inter-latin-${w}-normal.woff2`;
   for (const w of [500, 600, 700]) fonts[`node_modules/@fontsource/fraunces/files/fraunces-latin-${w}-normal.woff2`] = `assets/fonts/fraunces-latin-${w}-normal.woff2`;
   fonts["node_modules/@fontsource/fraunces/files/fraunces-latin-500-italic.woff2"] = "assets/fonts/fraunces-latin-500-italic.woff2";
   fonts["node_modules/@fontsource/playfair-display/files/playfair-display-latin-900-normal.woff2"] = "assets/fonts/playfair-display-latin-900-normal.woff2";
-  fonts["node_modules/@fontsource/great-vibes/files/great-vibes-latin-400-normal.woff2"] = "assets/fonts/great-vibes-latin-400-normal.woff2";
+  const scriptSubset = "src/assets/fonts/great-vibes-tapestry.woff2";
+  fonts[fs.existsSync(path.join(__dirname, scriptSubset)) ? scriptSubset : "node_modules/@fontsource/great-vibes/files/great-vibes-latin-400-normal.woff2"] = "assets/fonts/great-vibes-latin-400-normal.woff2";
   eleventyConfig.addPassthroughCopy(fonts);
+
+  // ---------- The updates feed (/feed.xml) ----------
+  // A virtual template (no file in src/pages): FEED_TEMPLATE above, entries from site.json → updates.
+  // Every page's <head> advertises it (partials/head.njk) and the footer links it (nav.js → resources).
+  eleventyConfig.addTemplate("feed.njk", FEED_TEMPLATE, { permalink: "/feed.xml", layout: false, eleventyExcludeFromCollections: true });
 
   // ---------- Tailwind CSS, compiled before every build ----------
   // Into the real output folder: `directories.output` follows --output (the legacy `dir.output` stays
@@ -116,7 +162,13 @@ export default async function (eleventyConfig) {
     const output = cssOut(directories);
     fs.mkdirSync(path.dirname(output), { recursive: true });
     execFileSync(process.execPath, [cli, "-i", input, "-o", output, ...(isProd ? ["--minify"] : [])], { stdio: "inherit" });
+    // Here, not in eleventy.after: the pages are rendered with these versions.
+    assetVer["/assets/css/main.css"] = hash8(output);
+    assetVer["/assets/js/app.js"] = hash8(path.join(__dirname, "src/assets/js/app.js"));
   });
+  // "/assets/css/main.css" → "/assets/css/main.css?v=1a2b3c4d" (see assetVer above). Not for fonts: the
+  // @font-face src and its preload must stay the same URL, or the preload is wasted.
+  eleventyConfig.addFilter("v", (url) => (assetVer[url] ? `${url}?v=${assetVer[url]}` : url));
   // A missing stylesheet fails loudly instead of leaving an unstyled site.
   eleventyConfig.on("eleventy.after", ({ directories }) => {
     if (!fs.existsSync(cssOut(directories))) throw new Error(`[css] ${cssOut(directories)} was not written`);

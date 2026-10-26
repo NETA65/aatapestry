@@ -3,7 +3,8 @@
     legal notes. Labels from i18n (t.footer, t.nav, t.contact). -#}
 {%- set links = nav[lang] -%}
 {%- set email = site.contact.email -%}
-{#- The language switch, as in header.njk: on the English-only pages it goes to the Spanish home page and says so. -#}
+{#- The language switch, as in header.njk: on the English-only pages it goes to the Spanish home page and
+    says so; a link to the page's twin carries data-lang-switch (app.js adds the current #section). -#}
 {%- set switchHref = page.url | langUrl(otherLang) -%}
 {%- set switchToHome = otherLang == "es" and switchHref == "/es/" and page.url != "/" -%}
 <footer>
@@ -31,7 +32,8 @@
           {#- The line breaks at the "·" (the "·" stays with the date, "Online on Zoom" stays whole). -#}
           <p class="mt-2 max-w-sm">{{ (when.date.longEs | capitalize) if lang == 'es' else when.date.long }}&nbsp;· <span class="whitespace-nowrap">{{ t.labels.online }}</span></p>
         </div>
-        <nav aria-label="{{ t.nav.footer }}">
+        {#- id: the header's Menu link jumps here when JavaScript is off. -#}
+        <nav id="site-nav-footer" aria-label="{{ t.nav.footer }}">
           <h2 class="footer-heading">{{ t.footer.workshop }}</h2>
           <ul class="footer-links">
             <li><a href="{{ '/es/' if lang == 'es' else '/' }}">{{ t.nav.home }}</a></li>
@@ -41,8 +43,8 @@
         <div>
           <h2 class="footer-heading">{{ t.footer.resources }}</h2>
           <ul class="footer-links">
-            {% for item in links.resources %}<li><a href="{{ item.href }}"{% if item.download %} download{% endif %}{% if item.lang %} hreflang="{{ item.lang }}"{% endif %}>{{ t.nav[item.key] }}{% if item.lang and item.lang != lang %} <span class="opacity-70">({{ t.labels.englishOnly }})</span>{% endif %}</a></li>{% endfor %}
-            <li><a href="{{ switchHref }}" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon icon-sm" %}<span>{{ t.switchLabelHome if switchToHome else t.switchLabelLong }}</span></a></li>
+            {% for item in links.resources %}<li><a href="{{ item.href }}"{% if item.download %} download{% endif %}{% if item.type %} type="{{ item.type }}"{% endif %}{% if item.lang %} hreflang="{{ item.lang }}"{% endif %}>{{ t.nav[item.key] }}{% if item.lang and item.lang != lang %} <span class="opacity-70">({{ t.labels.englishOnly }})</span>{% endif %}</a></li>{% endfor %}
+            <li><a href="{{ switchHref }}" lang="{{ otherLang }}" hreflang="{{ otherLang }}"{% if not switchToHome %} data-lang-switch{% endif %}>{% icon "languages", "icon icon-sm" %}<span>{{ t.switchLabelHome if switchToHome else t.switchLabelLong }}</span></a></li>
           </ul>
         </div>
       </div>
@@ -51,7 +53,7 @@
         {# The full A.A.W.S. reprint credit applies only once the official texts are actually shown. #}
         {% set textsShown = [] %}{% for p in principles.items %}{% if p.step.text or p.tradition.text or p.concept.text %}{% set _ = textsShown.push(p.n) %}{% endif %}{% endfor %}
         <p>{{ t.footer.copyright if textsShown.length else t.footer.copyrightShort }}</p>
-        <p>© {% year %} {{ site.contact.committee }}</p>
+        <p>© {% year %} {{ site.contact.committeeEs if (lang == 'es' and site.contact.committeeEs) else site.contact.committee }}</p>
       </div>
     </div>
   </div>

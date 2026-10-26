@@ -46,13 +46,17 @@
 <link rel="apple-touch-icon" href="/brand/favicon/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="alternate" type="text/calendar" title="{{ t.calendar.title | tokens | plain }}" href="{{ calendar.ics[lang] }}">
+{#- The updates feed (eleventy.config.js → /feed.xml, entries in site.json → updates; English). -#}
+<link rel="alternate" type="application/atom+xml" title="{{ site.name }} — updates" href="/feed.xml">
 {% if isHome %}
 {#- Links into the old one-page site (/#join, /es/#unirse …) still circulate in emails and announcements.
-    GitHub Pages cannot redirect a #fragment, so send each old section to its new page before anything paints. -#}
-<script>(function(){var h=location.hash.slice(1);if(!h)return;var m={{ ({
+    GitHub Pages cannot redirect a #fragment, so send each old section to its new page before anything paints.
+    The old home's FAQ answers (/#faq-cost …) keep their ids on the FAQ page. Own keys only, so #constructor
+    or #toString never picks up an Object.prototype function. -#}
+<script>(function(){var h=location.hash.slice(1);if(!h)return;var M={{ ({
   "en": { "join": "/join/", "zoom": "/join/", "accessibility": "/join/#interpretation", "program": "/program/", "schedule": "/program/", "faq": "/faq/", "questions": "/faq/", "contribute": "/faq/#faq-cost", "seventh": "/faq/#faq-cost", "flyer": "/flyer/", "share": "#share-title", "at-a-glance": "#essentials-title", "updates": "#essentials-title", "about": "#about-title", "legacies": "/principles/#legacies", "thirty-six": "/principles/", "meeting": "/principles/" },
   "es": { "unirse": "/es/join/", "zoom": "/es/join/", "interpretacion": "/es/join/#interpretation", "programa": "/es/program/", "faq": "/es/faq/", "preguntas": "/es/faq/", "septima": "/es/faq/#faq-cost", "volante": "/es/flyer/", "compartir": "#share-title", "datos": "#essentials-title", "legados": "#about-title" }
-})[lang] | dump | safe }}[h];if(m)location.replace(m.charAt(0)==="#"?location.pathname+m:m)})()</script>
+})[lang] | dump | safe }};var m=Object.prototype.hasOwnProperty.call(M,h)?M[h]:/^faq-[a-z0-9-]+$/.test(h)?"{{ '/es/faq/#' if lang == 'es' else '/faq/#' }}"+h:"";if(m)location.replace(m.charAt(0)==="#"?location.pathname+m:m)})()</script>
 {% endif %}
 
 <link rel="preload" href="/assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -65,5 +69,6 @@
     phase on <html data-phase> (upcoming, live, ended: the Join and Add to calendar buttons hide once it
     has ended; app.js keeps it current on a page left open). -#}
 <script>(function(d){d.classList.add("js");var n=Date.now(),s=Date.parse("{{ when.startISO }}"),e=Date.parse("{{ when.endISO }}");d.dataset.phase=n>=e?"ended":n>=s?"live":"upcoming"})(document.documentElement)</script>
-<link rel="stylesheet" href="/assets/css/main.css">
+{#- ?v=<hash> (the `v` filter, eleventy.config.js): a new stylesheet is never mixed with cached HTML. -#}
+<link rel="stylesheet" href="{{ '/assets/css/main.css' | v }}">
 {% include "partials/jsonld.njk" %}

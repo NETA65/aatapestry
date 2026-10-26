@@ -2,5 +2,5 @@
     Rendered by app.js from the labels in i18n (t.countdown); hidden without JavaScript. role="timer" is a
     live region that is off by default, so screen readers do not announce every minute; app.js announces
     only the start and the end through its polite live region. -#}
-{%- set cdLabels = { "days": t.countdown.days, "tomorrow": t.countdown.tomorrow, "today": t.countdown.today, "startsIn": t.countdown.startsIn, "startsInMin": t.countdown.startsInMin, "live": t.countdown.live, "ended": t.countdown.ended } -%}
+{%- set cdLabels = { "days": t.countdown.days, "tomorrow": t.countdown.tomorrow, "today": t.countdown.today, "startsIn": t.countdown.startsIn, "startsInMin": t.countdown.startsInMin, "startsInHours": t.countdown.startsInHours,"live": t.countdown.live, "ended": t.countdown.ended } -%}
 <p class="countdown" data-countdown data-start="{{ when.startISO }}" data-end="{{ when.endISO }}" data-start-label="{{ (when.time.startZoneEs if lang == 'es' else when.time.startZone) | plain }}" data-labels="{{ cdLabels | dump }}" role="timer" hidden><span class="countdown-dot" aria-hidden="true"></span><span data-countdown-text></span></p>
