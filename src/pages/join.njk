@@ -18,7 +18,9 @@ eleventyComputed:
     the Zoom details (link, meeting ID, passcode, QR), the joining steps, Spanish/ASL interpretation and
     captions (#interpretation), Zoom etiquette and online anonymity (#etiquette) and website accessibility
     (#accessibility). Other pages link here instead of repeating it. Copy: src/_data/pagecopy/join.json (c)
-    and i18n (t); the Zoom numbers from site.json, the date and time from when.js. Styles: css/pages/join.css. -#}
+    and i18n (t); the Zoom numbers from site.json, the date and time from when.js. Styles: css/pages/join.css.
+    On /es/join/, #interpretacion and #etiqueta are kept as aliases for links to the old Spanish page.
+    The questions address is printed only in the footer band: here it is a link, [..](mailto:{email}) in the copy. -#}
 {% import "macros/ui.njk" as ui %}
 {% set c = pagecopy.join[lang] %}
 {% set es = lang == "es" %}
@@ -29,6 +31,9 @@ eleventyComputed:
     readers so, like every other new-tab link on the site. Applied after mdInline: | replace(newTab, newTabEnd). -#}
 {% set newTab = r/(<a [^>]*target="_blank"[^>]*>(?:(?!<\/a>)[\s\S])*)<\/a>/g %}
 {% set newTabEnd = '$1<span class="sr-only"> ' + t.a11y.openInNewTab + '</span></a>' %}
+{#- [..](mailto:{email}) links get a subject (| mailSubject). With no address in site.json the token is empty and
+    the link would be a bare "mailto:": keep its words, drop the link (| replace(noMail, "$1")). -#}
+{% set noMail = r/<a href="mailto:">((?:(?!<\/a>)[\s\S])*)<\/a>/g %}
 
 {% set hero = { eyebrow: t.labels.online, title: c.hero.title, lead: c.hero.lead } %}
 {% include "partials/page-hero.njk" %}
@@ -47,7 +52,9 @@ eleventyComputed:
           <p class="join-zoom-when"><time class="join-zoom-date" datetime="{{ when.startISO }}">{{ (when.date.longEs | capitalize) if es else when.date.long }}</time><span class="join-zoom-sep" aria-hidden="true">·</span> <span class="join-zoom-time">{{ when.time.leadEs if es else when.time.lead }}</span></p>
         </div>
         <div class="join-zoom-details">
-          {% set zoomActions = true %}{% set zoomJoinSize = "btn-lg" %}{% include "partials/zoom-details.njk" %}
+          {#- Join on Zoom and Copy link come first (zoomActionsFirst), in the DOM so the focus order matches:
+              on a phone, Join is then on the first screen. The link carries the passcode; the tiles are the fallback. -#}
+          {% set zoomActions = true %}{% set zoomActionsFirst = true %}{% set zoomJoinSize = "btn-lg" %}{% include "partials/zoom-details.njk" %}
         </div>
         <p class="join-zoom-more"><a href="{{ p }}/program/#time-zones" class="join-zoom-more-link">{% icon "calendar-days", "icon icon-sm" %}{% set moreWords = c.zoom.programLink.split(" ") %}{% set moreLast = moreWords.pop() %}<span>{{ moreWords | join(" ") }} <span class="whitespace-nowrap">{{ moreLast }}&nbsp;{% icon "arrow-right", "icon icon-sm join-zoom-more-arrow" %}</span></span></a></p>
       </div>
@@ -73,7 +80,7 @@ eleventyComputed:
         <span class="join-step-num">{{ loop.index }}</span>
         <div class="join-step-text">
           <h3 class="h-card">{{ s.title }}</h3>
-          <p class="join-step-body">{{ s.body | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | safe }}</p>
+          <p class="join-step-body">{{ s.body | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | mailSubject(t.contact.subject | tokens) | replace(noMail, "$1") | safe }}</p>
         </div>
       </li>
       {% endfor %}
@@ -84,7 +91,7 @@ eleventyComputed:
 {# ============ INTERPRETATION & CAPTIONS (#interpretation) ============ #}
 {% set interpIcons = { "es": "languages", "asl": "hand", "captions": "captions" } %}
 {% set interpLegacy = { "es": "recovery", "asl": "unity", "captions": "service" } %}
-<section class="section section-alt" aria-labelledby="interpretation">
+<section class="section section-alt" aria-labelledby="interpretation"{% if es %} id="interpretacion"{% endif %}>
   <div class="container-page">
     {{ ui.sectionHead(c.interpretation.heading, c.interpretation.lead, "", "interpretation") }}
     <div class="join-interp">
@@ -120,17 +127,19 @@ eleventyComputed:
 
 {# ============ ZOOM ETIQUETTE & ONLINE ANONYMITY (#etiquette) ============ #}
 {% set ruleIcons = { "camera": "video-off", "recording": "camera-off", "afterwards": "message-circle", "link": "share-2" } %}
-<section class="section" aria-labelledby="etiquette">
+<section class="section" aria-labelledby="etiquette"{% if es %} id="etiqueta"{% endif %}>
   <div class="container-page join-split">
     <div class="join-split-intro">
       <h2 class="h-section" id="etiquette">{{ c.etiquette.heading }}</h2>
       <p class="lead mt-4">{{ c.etiquette.lead }}</p>
     </div>
+    {#- Like the step cards: on phones the icon sits beside the bold lead-in and the text runs under both, across
+        the full width (join-rule-text has no semantics: display: contents there). -#}
     <ul class="join-rules" role="list">
       {% for r in c.etiquette.items %}
       <li class="join-rule">
         <span class="join-rule-icon">{% icon ruleIcons[r.key] or "check", "icon" %}</span>
-        <p><strong>{{ r.title }}</strong> {{ r.body }}</p>
+        <div class="join-rule-text"><strong class="join-rule-title">{{ r.title }}</strong> <p class="join-rule-body">{{ r.body }}</p></div>
       </li>
       {% endfor %}
     </ul>
@@ -138,15 +147,16 @@ eleventyComputed:
 </section>
 
 {# ============ WEBSITE ACCESSIBILITY (#accessibility) ============ #}
+{#- The way to ask is an inline link with the accessibility subject, not a button: the footer's questions band
+    with the address follows right after, and two email calls to action back to back would repeat each other. -#}
 <section class="section-tight section-alt" aria-labelledby="accessibility">
   <div class="container-page">
     <div class="join-a11y">
       <span class="card-icon">{% icon "accessibility", "icon" %}</span>
       <div class="join-a11y-text">
         <h2 class="join-a11y-title" id="accessibility">{{ c.accessibility.heading }}</h2>
-        <p>{{ c.accessibility.body }}</p>
+        <p>{{ c.accessibility.body | tokens | mdInline | mailSubject(t.contact.subjectAccessibility | tokens) | replace(noMail, "$1") | safe }}</p>
       </div>
-      {% if site.contact.email %}<a href="{{ site.contact.email | mailto(t.contact.subjectAccessibility | tokens) }}" class="btn btn-outline join-a11y-cta">{% icon "mail", "icon" %}<span>{{ t.contact.linkText }}</span></a>{% endif %}
     </div>
   </div>
 </section>

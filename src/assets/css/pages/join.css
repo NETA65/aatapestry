@@ -55,9 +55,12 @@
   .join-zoom .copy-btn.is-copied { border-color: var(--color-thread-green); color: #9ff0c4; }
   /* Meeting ID and passcode side by side only once each tile (at least 18.1rem) fits the ID and its Copy/Copiar button */
   @container (min-width: 37rem) { .join-zoom .kv { grid-template-columns: 1fr 1fr; } }
-  /* The narrowest cards: both values on their own line with Copy under them, so the two tiles always match
-     (otherwise only the longer meeting ID pushes its button down) */
-  @container (max-width: 17.99rem) { .join-zoom .kv-value { flex-basis: 100%; } }
+  /* The narrowest tiles: both values on their own line with Copy under them, so the two tiles always match
+     (otherwise only the longer meeting ID pushes its button down). The query is on the tile (.kv-row). Keep it:
+     phones' monospace fonts (SF Mono, Droid Sans Mono) are wider than Windows' Consolas, about 0.6em a digit,
+     and the ID plus its Copy button then needs about 17.4rem at full size; 17.5rem lets a 390px phone keep
+     Copy inline while a 360px one stacks both tiles evenly. */
+  @container (max-width: 17.5rem) { .join-zoom .kv-value { flex-basis: 100%; } }
 
   /* The QR code: only useful on a computer (scan it to join from a phone), so hidden on small screens */
   .join-qr { display: none; }
@@ -73,6 +76,11 @@
     width: 100%; max-width: 11rem; padding: 0.625rem; border-radius: 0.875rem;
     background: #fff; border: 3px solid var(--color-gold-400);
     box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.6);
+  }
+  /* A QR code only scans dark on light. In a dark contrast theme (forced colours) the white tile would become
+     Canvas (black) under the code's dark modules: keep the tile white, its padding as the quiet zone. */
+  @media (forced-colors: active) {
+    .join-qr-code { forced-color-adjust: none; background: #fff; }
   }
   .join-qr-svg { display: block; width: 100%; height: auto; }
   .join-qr-caption { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.875rem; line-height: 1.45; color: rgb(251 245 233 / 0.85); }
@@ -95,6 +103,8 @@
   }
   .join-tip .icon { margin-top: 0.1rem; color: var(--c-service-text); }
   .join-tip strong { font-weight: 600; }
+  /* Links inside the page's sentences are underlined, as in .prose: not told apart by colour alone (WCAG 1.4.1) */
+  :is(.join-tip, .join-step-body, .join-how dd, .join-interp-note, .join-a11y-text p) a { text-decoration: underline; }
 
   /* Phones (below 40rem): a small number badge beside the heading, and the text under both across the full
      card width (a big badge would leave the text a narrow column beside an empty strip). The wrapper div has no
@@ -167,16 +177,29 @@
     display: grid; padding: 0.5rem clamp(1.125rem, 3vw, 1.75rem);
     background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-card);
   }
+  /* 40rem and up: the icon, with the bold lead-in and the text in a column beside it. Phones: like the step
+     cards, a smaller icon beside the lead-in and the text under both across the full width (no narrow column
+     beside an empty strip). .join-rule-text has no semantics, so display: contents lets its two parts join the grid. */
   .join-rule { display: flex; gap: 1rem; align-items: flex-start; padding-block: 1.125rem; }
   .join-rule + .join-rule { border-top: 1px solid var(--line); }
   .join-rule-icon {
     display: grid; place-items: center; flex: none; width: 2.75rem; height: 2.75rem; border-radius: 999px;
     background: var(--accent-soft); color: var(--accent);
   }
-  .join-rule p { min-width: 0; padding-top: 0.125rem; color: var(--muted); line-height: 1.55; }
-  .join-rule strong { display: block; color: var(--fg); font-weight: 600; }
+  .join-rule-text { min-width: 0; padding-top: 0.125rem; }
+  .join-rule-title { display: block; color: var(--fg); font-weight: 600; line-height: 1.45; }
+  .join-rule-body { color: var(--muted); line-height: 1.55; }
+  @media (max-width: 39.99rem) {
+    .join-rule { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: 0.5rem 0.75rem; align-items: center; }
+    .join-rule-icon { width: 2.25rem; height: 2.25rem; }
+    .join-rule-icon .icon { width: 1.125rem; height: 1.125rem; }
+    .join-rule-text { display: contents; }
+    .join-rule-body { grid-column: 1 / -1; }
+  }
 
   /* ---------- Website accessibility ---------- */
+  /* The same switch at 40rem: icon beside the title, the text under both on phones; the text in a column
+     beside the icon from 40rem up. */
   .join-a11y {
     display: grid; gap: 1rem 1.25rem; grid-template-columns: auto minmax(0, 1fr); align-items: start;
     padding: clamp(1.25rem, 3vw, 1.75rem); border-radius: var(--radius-card);
@@ -186,11 +209,12 @@
   .join-a11y-text { min-width: 0; }
   .join-a11y-title { font-size: clamp(1.375rem, 2.6vw, 1.75rem); }
   .join-a11y-text p { margin-top: 0.375rem; max-width: 62ch; color: var(--muted); }
-  .join-a11y-cta { grid-column: 1 / -1; justify-self: start; }
-  @media (min-width: 30rem) { .join-a11y-cta { grid-column: 2; } }
-  @media (min-width: 60rem) {
-    .join-a11y { grid-template-columns: auto minmax(0, 1fr) auto; gap: 1rem 1.5rem; }
-    .join-a11y-cta { grid-column: auto; align-self: center; }
+  @media (max-width: 39.99rem) {
+    .join-a11y { grid-template-columns: 2.5rem minmax(0, 1fr); gap: 0.75rem; align-items: center; }
+    .join-a11y .card-icon { width: 2.5rem; height: 2.5rem; }
+    .join-a11y .card-icon .icon { width: 1.25rem; height: 1.25rem; }
+    .join-a11y-text { display: contents; }
+    .join-a11y-text p { grid-column: 1 / -1; margin-top: 0; }
   }
 
   /* ---------- Print: the dark card prints black on white, with the QR code and without the buttons ---------- */
@@ -202,5 +226,13 @@
     .join-zoom-mark { background: none; color: #000; box-shadow: none; border: 1.5px solid #000; }
     .join-qr { display: flex; border-left-color: #888; }
     .join-split-intro { position: static; }
+    /* On paper an interpretation card may break between its how-to rows (each row stays whole) instead of
+       moving whole to the next sheet and leaving most of a sheet blank. !important: main.css's print rule
+       .card { break-inside: avoid } is unlayered, so it beats any normal declaration in this layer. Block
+       layout (not flex), so a sheet never ends with an empty card top. */
+    .join-interp-card { display: block; break-inside: auto !important; }
+    .join-interp-card > * + * { margin-top: 1rem; } /* the screen layout's flex gap */
+    .join-interp-head, .join-interp-summary { break-after: avoid; }
+    .join-how-row, .join-interp-note, .join-a11y { break-inside: avoid; }
   }
 }
