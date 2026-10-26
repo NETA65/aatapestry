@@ -13,7 +13,8 @@
   .nf-code { margin-top: clamp(1.25rem, 3vw, 1.75rem); }
   .nf-title { margin-top: 0.5rem; max-width: 18ch; color: var(--color-cream); }
   .nf-lead { margin-top: 1rem; max-width: 38rem; }
-  .nf-es {
+  /* The one line in the other language (Spanish on the English page, English on the Spanish swap-in). */
+  .nf-other {
     margin-top: 0.875rem; max-width: 36rem;
     font-family: var(--font-display); font-style: italic; font-weight: 500;
     font-size: clamp(1rem, 1.5vw, 1.125rem); line-height: 1.5; color: rgb(251 245 233 / 0.8);
