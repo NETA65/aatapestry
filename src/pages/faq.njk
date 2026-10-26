@@ -15,10 +15,10 @@ eleventyComputed:
 {#- The FAQ page, /faq/ and /es/faq/: the questions (src/_data/faq.json) sorted under a few headings
     (pagecopy/faq.json → groups), each one a <details id="faq-{id}"> that opens on its own. Answers stay
     short and link to the page that owns the details (How to join, Program, Flyer). The page never prints
-    the questions address (the footer does): the closing line links to it. Copy: c = pagecopy.faq[lang]. -#}
+    the questions address: the footer band right under the questions does. Copy: c = pagecopy.faq[lang]. -#}
 {% set c = pagecopy.faq[lang] %}
 {% set es = lang == "es" %}
-{% set hero = { title: c.hero.title, lead: c.hero.lead, crumbLabel: t.nav.faq } %}
+{% set hero = { eyebrow: c.hero.eyebrow, title: c.hero.title, lead: c.hero.lead, crumbLabel: t.nav.faq } %}
 {% include "partials/page-hero.njk" %}
 
 {# Decoration only: an icon and a thread colour per heading (any new group falls back to the defaults). #}
@@ -67,18 +67,6 @@ eleventyComputed:
         </div>
       </section>
       {% endfor %}
-
-      {# Kept as #faq-contact: the old "Who do I contact?" question now lives here, once. #}
-      {% if site.contact.email %}
-      <section class="faq-closing" id="faq-contact" aria-labelledby="faq-contact-title">
-        <span class="faq-closing-icon">{% icon "mail", "icon" %}</span>
-        <div class="faq-closing-text">
-          <h2 class="faq-closing-title" id="faq-contact-title">{{ c.closing.heading }}</h2>
-          <p>{{ c.closing.body }}</p>
-        </div>
-        <a href="{{ site.contact.email | mailto(t.contact.subject | tokens) }}" class="btn btn-primary faq-closing-btn">{% icon "send", "icon" %}<span>{{ t.contact.linkText }}</span></a>
-      </section>
-      {% endif %}
     </div>
   </div>
 </section>
@@ -102,13 +90,14 @@ eleventyComputed:
     if (a && a.pathname === location.pathname) reveal(a.hash, false);
   });
 
+  // A plain button whose label names what it will do next (no aria-pressed: "Collapse all, pressed"
+  // would contradict itself).
   const btn = document.querySelector("[data-faq-toggle-all]");
   if (btn && items.length) {
     const label = btn.querySelector("span");
     const sync = () => {
       const all = items.every((d) => d.open);
       label.textContent = all ? btn.dataset.labelClose : btn.dataset.labelOpen;
-      btn.setAttribute("aria-pressed", String(all));
     };
     btn.addEventListener("click", () => {
       const open = !items.every((d) => d.open);
