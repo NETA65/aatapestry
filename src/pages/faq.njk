@@ -1,0 +1,127 @@
+---
+pagination:
+  data: faqLangs
+  size: 1
+  alias: plang
+  addAllPagesToCollections: true
+faqLangs: ["en", "es"]
+permalink: "{% if plang == 'es' %}/es/faq/{% else %}/faq/{% endif %}"
+translated: true
+eleventyComputed:
+  lang: "{{ plang }}"
+  title: "{{ pagecopy.faq[plang].meta.title | safe }}"
+  description: "{{ pagecopy.faq[plang].meta.description | safe }}"
+---
+{#- The FAQ page, /faq/ and /es/faq/: the questions (src/_data/faq.json) sorted under a few headings
+    (pagecopy/faq.json → groups), each one a <details id="faq-{id}"> that opens on its own. Answers stay
+    short and link to the page that owns the details (How to join, Program, Flyer). The page never prints
+    the questions address (the footer does): the closing line links to it. Copy: c = pagecopy.faq[lang]. -#}
+{% set c = pagecopy.faq[lang] %}
+{% set es = lang == "es" %}
+{% set hero = { title: c.hero.title, lead: c.hero.lead, crumbLabel: t.nav.faq } %}
+{% include "partials/page-hero.njk" %}
+
+{# Decoration only: an icon and a thread colour per heading (any new group falls back to the defaults). #}
+{% set groupIcons = { "attending": "door-open", "on-the-day": "calendar-days", "legacies": "layers", "sharing": "megaphone" } %}
+{% set groupTones = { "attending": "blue", "on-the-day": "green", "legacies": "gold", "sharing": "purple" } %}
+{# The headings, in pagecopy order, each with its questions (one whose group is unknown goes under the last). #}
+{% set groupKeys = [] %}{% for key, label in c.groups %}{% set _ = groupKeys.push(key) %}{% endfor %}
+{% set groups = [] %}
+{% for key in groupKeys %}
+  {% set isLast = loop.last %}
+  {% set list = [] %}
+  {% for q in faq.items %}{% if q.group == key or (isLast and not (q.group in groupKeys)) %}{% set _ = list.push(q) %}{% endif %}{% endfor %}
+  {% if list.length %}{% set _ = groups.push({ key: key, label: c.groups[key], icon: groupIcons[key] or "circle-help", tone: groupTones[key] or "blue", items: list }) %}{% endif %}
+{% endfor %}
+
+<section class="section faq-section">
+  <div class="container-page faq-layout">
+    <div class="faq-aside">
+      <div class="faq-aside-head">
+        <p class="eyebrow" id="faq-jump-label">{{ c.jump.label }}</p>
+        <button type="button" class="faq-toggle-all" data-faq-toggle-all data-label-open="{{ c.jump.expandAll }}" data-label-close="{{ c.jump.collapseAll }}" hidden>{% icon "chevrons-up-down", "icon icon-sm" %}<span>{{ c.jump.expandAll }}</span></button>
+      </div>
+      <nav class="faq-jump" aria-labelledby="faq-jump-label">
+        <ul class="faq-jump-list">
+          {% for g in groups %}
+          <li><a href="#{{ g.key }}" class="faq-jump-link" data-tone="{{ g.tone }}"><span class="faq-jump-icon">{% icon g.icon, "icon" %}</span><span class="faq-jump-text">{{ g.label }}</span><span class="faq-jump-count" aria-hidden="true">{{ g.items.length }}</span></a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+
+    <div class="faq-main" id="faq">
+      {% for g in groups %}
+      <section class="faq-group" id="{{ g.key }}" aria-labelledby="{{ g.key }}-title" data-tone="{{ g.tone }}">
+        <h2 class="faq-group-title" id="{{ g.key }}-title"><span class="faq-group-icon">{% icon g.icon, "icon" %}</span><span>{{ g.label }}</span></h2>
+        <div class="faq-list">
+          {% for q in g.items %}
+          {% set subject = t.contact[q.subject] if (q.subject and t.contact[q.subject]) else t.contact.subject %}
+          <details class="faq-item" id="faq-{{ q.id }}">
+            <summary class="faq-q"><span class="faq-q-text">{{ (q.qEs if es else q.q) | tokens }}</span><span class="faq-sign" aria-hidden="true"></span></summary>
+            {% set answer = (q.aEs if es else q.a) | tokens | md | mailSubject(subject | tokens) %}
+            {# In the Spanish answers, *italics* mark an English Zoom label: *Interpretation*. #}
+            <div class="faq-a prose">{{ ((answer | replace("<em>", '<em lang="en">')) if es else answer) | safe }}</div>
+          </details>
+          {% endfor %}
+        </div>
+      </section>
+      {% endfor %}
+
+      {# Kept as #faq-contact: the old "Who do I contact?" question now lives here, once. #}
+      {% if site.contact.email %}
+      <section class="faq-closing" id="faq-contact" aria-labelledby="faq-contact-title">
+        <span class="faq-closing-icon">{% icon "mail", "icon" %}</span>
+        <div class="faq-closing-text">
+          <h2 class="faq-closing-title" id="faq-contact-title">{{ c.closing.heading }}</h2>
+          <p>{{ c.closing.body }}</p>
+        </div>
+        <a href="{{ site.contact.email | mailto(t.contact.subject | tokens) }}" class="btn btn-primary faq-closing-btn">{% icon "send", "icon" %}<span>{{ t.contact.linkText }}</span></a>
+      </section>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{# Opens the question a link points to (#faq-…), on arrival and on click; the Expand all button;
+   every answer opens for printing. Without JavaScript the questions simply open when tapped. #}
+<script>
+(() => {
+  const items = Array.from(document.querySelectorAll(".faq-item"));
+  const reveal = (hash, scroll) => {
+    if (!/^#faq-[\w-]+$/.test(hash || "")) return;
+    const d = document.getElementById(decodeURIComponent(hash.slice(1)));
+    if (!d || d.tagName !== "DETAILS") return;
+    d.open = true;
+    if (scroll) requestAnimationFrame(() => d.scrollIntoView({ block: "start" }));
+  };
+  reveal(location.hash, true);
+  addEventListener("hashchange", () => reveal(location.hash, true));
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest && e.target.closest("a[href*='#faq-']");
+    if (a && a.pathname === location.pathname) reveal(a.hash, false);
+  });
+
+  const btn = document.querySelector("[data-faq-toggle-all]");
+  if (btn && items.length) {
+    const label = btn.querySelector("span");
+    const sync = () => {
+      const all = items.every((d) => d.open);
+      label.textContent = all ? btn.dataset.labelClose : btn.dataset.labelOpen;
+      btn.setAttribute("aria-pressed", String(all));
+    };
+    btn.addEventListener("click", () => {
+      const open = !items.every((d) => d.open);
+      items.forEach((d) => { d.open = open; });
+      sync();
+    });
+    items.forEach((d) => d.addEventListener("toggle", sync));
+    btn.hidden = false;
+    sync();
+  }
+
+  let before = null;
+  addEventListener("beforeprint", () => { before = items.map((d) => d.open); items.forEach((d) => { d.open = true; }); });
+  addEventListener("afterprint", () => { if (before) items.forEach((d, i) => { d.open = before[i]; }); before = null; });
+})();
+</script>
