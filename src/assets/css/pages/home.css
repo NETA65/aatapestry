@@ -1,7 +1,13 @@
 /* Home page (/ and /es/) — src/pages/index.njk. Imported by ../main.css. */
 @layer components {
   /* ---------- Hero: the flyer as a web page ---------- */
-  .home-hero { overflow: hidden; }
+  /* Clip sideways only: the open "Add to calendar" panel must be free to hang below the hero, over the
+     next section, or its last links can't be tapped. */
+  .home-hero { overflow-x: clip; }
+  /* The calendar panel is a light card even inside this dark hero: keep its links and focus ring in the
+     card's own colours, not the gold that .on-dark gives links on the navy. */
+  .home-hero .cal-menu-panel a:not(.btn), .home-hero .cal-menu-panel a:not(.btn):hover { color: var(--fg); }
+  .home-hero .cal-menu-panel :focus-visible { outline-color: var(--focus); }
   .home-hero-inner {
     display: flex; flex-direction: column; align-items: center; text-align: center;
     padding-block: clamp(1.25rem, 3vw, 2rem) clamp(2.75rem, 6vw, 4.5rem);
@@ -17,13 +23,15 @@
     width: clamp(6.5rem, 26vw, 9rem); height: auto; flex: none;
     filter: drop-shadow(0 10px 30px rgb(0 0 0 / 0.55));
   }
+  /* The title and (in Spanish) its translation, centred together beside the logo, as on the poster */
+  .home-title-col { display: flex; flex-direction: column; align-items: center; }
   .home-title { font-size: clamp(2.6rem, 10.5vw, 6.25rem); font-weight: 400; letter-spacing: 0; text-wrap: nowrap; }
   .home-gloss { margin-top: 0.25rem; font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: clamp(1.125rem, 2.6vw, 1.5rem); color: rgb(251 245 233 / 0.85); }
   .home-braid { margin-top: clamp(0.5rem, 2vw, 1rem); width: min(100%, 40rem); }
   .home-overline {
     margin-top: clamp(1rem, 2.5vw, 1.5rem);
     font-family: var(--font-title); font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em;
-    font-size: clamp(1.125rem, 3.4vw, 2rem); line-height: 1.15; color: var(--color-cream);
+    font-size: clamp(1.125rem, 3.4vw, 2rem); line-height: 1.15; color: var(--color-cream); text-wrap: balance;
   }
   .home-subline {
     margin-top: 0.5rem; max-width: 40rem;
@@ -36,7 +44,9 @@
   .home-chips { justify-content: center; margin-top: 1.5rem; }
   .home-hero .countdown { margin-top: 1.25rem; }
 
-  @media (max-width: 29.99rem) {
+  /* Stack Join + Add to calendar at equal widths until the pair fits side by side (the Spanish pair is
+     about 524 px wide) */
+  @media (max-width: 35.99rem) {
     .home-actions { flex-direction: column; align-items: stretch; width: 100%; max-width: 22rem; }
     .home-actions > .btn, .home-actions > .cal-menu, .home-actions > .cal-menu > summary { width: 100%; }
   }
@@ -45,10 +55,54 @@
     .home-hero-logo { width: clamp(9rem, 17vw, 14.5rem); }
   }
 
+  /* Keep the date, the times and Join / Add to calendar on the first screen where screens are short. */
+  /* Wide screens: the header already shows the language switch, so the hero chip would repeat it.
+     Below 68rem the header keeps it inside the Menu, so the chip stays. */
+  @media (min-width: 68rem) {
+    .home-hero-lang { display: none; }
+    .home-hero-top { margin-top: 0; }
+  }
+  /* Short screens (laptops, 1280×720 to 1440×900) */
+  @media (min-width: 48rem) and (max-height: 60rem) {
+    .home-hero-inner { padding-block: 1.25rem 2.5rem; }
+    .home-title { font-size: clamp(2.6rem, 10.5vw, min(6.25rem, 11vh)); }
+    .home-hero-logo { width: clamp(7rem, 23vh, 14.5rem); }
+    .home-braid { margin-top: 0.25rem; }
+    .home-overline { margin-top: 0.75rem; }
+    .home-date { margin-top: 1rem; }
+    .home-when { margin-top: 0.75rem; }
+    .home-actions { margin-top: 1.25rem; }
+  }
+  /* Landscape phones: the logo beside the title, not above it */
+  @media (orientation: landscape) and (max-height: 30rem) {
+    .home-hero-inner { padding-block: 0.75rem 2rem; }
+    .home-hero-top { flex-direction: row; gap: 1.25rem; margin-top: 0.25rem; }
+    .home-hero-logo { width: 6rem; }
+    .home-title { font-size: clamp(2.6rem, 8vw, 4.5rem); }
+    .home-overline { margin-top: 0.75rem; }
+    .home-date { margin-top: 1rem; }
+    .home-when { margin-top: 0.75rem; }
+    .home-actions { margin-top: 1.25rem; }
+  }
+  /* Portrait phones (the header has no Join button below 30rem): a smaller logo and tighter spacing */
+  @media (max-width: 29.99rem) {
+    .home-hero-inner { padding-top: 0.75rem; }
+    .home-hero-top { margin-top: 0.25rem; gap: 0.5rem; }
+    .home-hero-logo { width: 5.25rem; }
+    .home-overline { margin-top: 0.75rem; }
+    .home-date { margin-top: 1.25rem; }
+    .home-when { margin-top: 1rem; }
+    .home-actions { margin-top: 1.25rem; }
+  }
+
   /* ---------- Essentials ---------- */
   .essentials-grid { display: grid; gap: clamp(1rem, 2.5vw, 1.5rem); grid-template-columns: 1fr; }
   @media (min-width: 48rem) { .essentials-grid { grid-template-columns: 1fr 1fr; } .essential--zoom { grid-column: 1 / -1; } }
-  @media (min-width: 72rem) { .essentials-grid { grid-template-columns: 1.35fr 1fr 1fr; } .essential--zoom { grid-column: auto; } }
+  /* Mid widths: the Zoom card spans the row, so set the meeting ID and passcode side by side to keep
+     each Copy button near its number (from 72rem the card is a column, too narrow for two) */
+  @media (min-width: 48rem) and (max-width: 71.99rem) { .essential--zoom .kv { grid-template-columns: 1fr 1fr; } }
+  /* Wide: the Zoom card on the left, interpretation and cost stacked on the right */
+  @media (min-width: 72rem) { .essentials-grid { grid-template-columns: 1.25fr 1fr; } .essential--zoom { grid-column: auto; grid-row: span 2; } }
   .essential { display: flex; flex-direction: column; gap: 0.875rem; --tint: var(--legacy-soft); --tint-fg: var(--legacy-text); border-top: 4px solid var(--legacy); }
   .essential-body { color: var(--muted); }
   .essential-body strong { color: var(--fg); font-weight: 600; }
@@ -77,13 +131,18 @@
   .thread-icon .icon { width: 1.625rem; height: 1.625rem; }
   .thread-name { font-family: var(--font-title); font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em; font-size: 1.1875rem; color: var(--legacy-text); line-height: 1.2; }
   .thread-legacy { font-family: var(--font-sans); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted); }
+  /* Narrow phones: the legacy drops onto its own line, without a dangling "·" */
+  @media (max-width: 22.5rem) { .thread-legacy { display: block; margin-top: 0.125rem; } .thread-dot { display: none; } }
   .thread-text { margin-top: 0.25rem; color: var(--muted); font-size: 0.9875rem; line-height: 1.5; }
   .burst {
     display: inline-block; margin-top: 1.5rem; padding: 0.625rem 1.25rem; transform: rotate(-1.5deg);
     font-family: var(--font-title); font-weight: 900; text-transform: uppercase; letter-spacing: 0.02em; font-size: 1.0625rem; line-height: 1.25;
+    text-align: center; text-wrap: balance;
     color: var(--color-navy-900); background: linear-gradient(180deg, #ffe3a0, var(--color-gold-400) 60%, #e7ab45);
     clip-path: polygon(2% 10%, 30% 0, 70% 6%, 98% 0, 100% 50%, 97% 100%, 60% 92%, 25% 100%, 0 88%, 1% 45%);
   }
+  /* Each item stays whole, with its "·" at the end of its own line, never at the start of the next */
+  .burst-item { white-space: nowrap; }
 
   /* ---------- Flyer + share ---------- */
   .flyer-band { display: grid; gap: clamp(2rem, 5vw, 3.5rem); align-items: center; }
