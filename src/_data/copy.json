@@ -1,128 +1,59 @@
 {
-  "_readme": "English page prose that the Spanish pages do not share (shared labels, How to join, the contact card, the flyer text and the poster lines are in i18n.json). Write the email, date, times and Zoom numbers ONLY as tokens: {email}, {date}, {time}, {timeLong}, {startsAlso}, {rangesAlso}, {zoomId}, {passcode}; the build fills them in from site.json. The email address is printed at most ONCE per page (the Questions card, the flyer text or the poster line do that), so prose never writes a bare {email}: link to it instead, as [email the planning committee](mailto:{email}). Fields marked (md) in docs/EDITING.md accept simple Markdown (bold, links); every other field is plain text. The program comes from schedule.json; meetingTeaser is shown only when meeting.json → published is true. Keep the voice warm and plain: we are A.A. members talking to A.A. members.",
-  "hero": {
-    "eyebrow": "A 1-day online A.A. workshop",
-    "headline": "The Incredible Tapestry",
-    "sub": "A series of presentations on the Steps, Traditions and Concepts, with plenty of time for sharing and asking questions. Spanish and ASL interpretation will be provided. It’s free, and no pre-registration is required.",
-    "ctaPrimary": "Join on Zoom",
-    "ctaSecondary": "Add to calendar",
-    "ctaFlyer": "View the flyer",
-    "markAlt": "The Incredible Tapestry mark: a circle around a triangle whose three sides are labeled Unity, Service and Recovery, with three overlapping colored circles inside, one for each legacy."
-  },
-  "program": {
-    "heading": "About the day",
-    "lead": "Come join us on {date}, for a 1-day online workshop. There will be a series of presentations that look at how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions.",
-    "history": "The workshop is similar to the Tapestry meetings held previously in Raynham, Massachusetts.",
-    "strandsLine": "Presentations · Sharing · Questions and more",
-    "pageTitle": "Program",
-    "pageDescription": "Times for The Incredible Tapestry, {date}, {time}, on Zoom. The program will be available on this website shortly.",
-    "pageHeading": "The program",
-    "pageLead": "On this page: the day’s times (in your own time zone, too), how to add the workshop to your calendar, and how to join on Zoom.",
-    "allTimes": "All times are Eastern (ET). Where your browser allows, your local time is shown too.",
-    "calendarNote": "If the Zoom details ever change, this site will show the current ones. A calendar entry does not update itself, so if that happens, please delete the old entry and add the workshop to your calendar again.",
-    "programPageCta": "Program page"
-  },
+  "_readme": "English-only copy: the study pages (/principles/ and /principles/N/: intro, legacies, thirtySix, logoStory), the English half of the 404 page (notFound; its Spanish twin is in the front matter of src/pages/404.njk) and the one-paragraph event summary used by the JSON-LD and the calendar file (jsonld.eventSummary). The workshop pages have their own bilingual files in src/_data/pagecopy/. Write the email, date, times and Zoom numbers only as tokens ({email}, {date}, {time}…). Fields read through | md accept simple Markdown.",
   "intro": {
+    "_readme": "/principles/: the heading and the two short paragraphs below the twelve number tiles, the first section after the hero (body accepts simple Markdown).",
     "heading": "Pull one thread and the whole cloth moves",
     "body": [
-      "Most of us met the Steps first, in a church basement or on a screen, from someone who had been where we were. The Traditions came later, usually when a group business meeting got lively. The Concepts, if we met them at all, arrived with a service job we did not quite ask for. We tend to keep the three in separate drawers. This workshop takes them out and looks at how they weave together.",
-      "No homework is needed, and nobody expects you to know the Concepts by heart. Bring your coffee and your home group’s questions."
+      "Most of us met the Steps first, from someone who had been where we were. The Traditions came later, usually when a group business meeting got lively. The Concepts, if we met them at all, arrived with a service job we did not quite ask for. We tend to keep the three in separate drawers.",
+      "Look at number **one**. Step One admits powerlessness, Tradition One puts our common welfare first, and Concept I places final authority in the conscience of the whole Fellowship. Written years apart, the three say the same thing: none of us gets well alone."
     ]
   },
   "legacies": {
+    "_readme": "/principles/: the three legacy cards. Each card's name, blurb and literature come from site.json → legacies, and its aa.org link from principles.json → sources.",
     "heading": "Three legacies, one Fellowship",
-    "lead": "At the St. Louis convention in 1955, Bill W. handed A.A. to its members in the form of three legacies: Recovery, Unity and Service. They were never meant to be studied apart. Recovery is how the alcoholic gets well, Unity is how the group stays well, and Service is how the Fellowship as a whole keeps the hand of A.A. there for the next person who reaches for it.",
-    "closing": "Each legacy has twelve principles, and the twelve line up more closely than most of us ever noticed."
+    "lead": "At the St. Louis convention in 1955, Bill W. handed A.A. to its members in the form of three legacies: Recovery, Unity and Service. They were never meant to be studied apart.",
+    "literature": "In the literature"
   },
   "thirtySix": {
-    "heading": "36 threads, one tapestry",
-    "lead": "Take any number from one to twelve. The Step, the Tradition and the Concept that carry that number are three expressions of one idea, seen from the chair, from the group and from the Fellowship as a whole.",
-    "body": [
-      "Look at the number **one**. Step One admits that we were powerless over alcohol and that our lives had become unmanageable. Tradition One says our common welfare comes first, because personal recovery depends on A.A. unity. Concept One places the final responsibility and ultimate authority for world services in the collective conscience of the whole Fellowship. Three sentences written years apart, and the same thread runs through all of them: none of us gets well alone, and the whole only works when each part admits it needs the others. Try it with **two** (a Power greater than ourselves, a loving God as expressed in our group conscience, the Conference as the active voice and effective conscience of the whole Fellowship) and the pattern shows up again.",
-      "The [study pages](/principles/) lay out all 36 side by side, with the Step, the Tradition and the Concept of each number together. They are a companion to the workshop: something to read before the day, and a way to keep weaving after it is over."
-    ],
-    "cta": "Explore all 36"
-  },
-  "accessibility": {
-    "heading": "Accessibility & interpretation",
-    "lead": "The hand of A.A. should reach everyone who wants it. Interpretation will be provided in Spanish and ASL, and this page shows how to use it in Zoom.",
-    "teaser": "Spanish and ASL interpretation will be provided, and the accessibility page shows how to use it in Zoom on a computer or a phone.",
-    "sections": [
-      {
-        "key": "es",
-        "title": "Spanish interpretation",
-        "body": [
-          "Spanish interpretation will be provided on its own audio channel in Zoom.",
-          "To listen in Spanish, click the **Interpretation** (globe) button on the Zoom toolbar and choose **Spanish**. On a phone or tablet the same control is under **More** (the three dots), then **Language Interpretation**. Turn on **Mute Original Audio** if you prefer to hear only the Spanish; leave it off to hear the original speaker quietly underneath."
-        ]
-      },
-      {
-        "key": "asl",
-        "title": "ASL interpretation",
-        "body": [
-          "American Sign Language (ASL) interpretation will be provided.",
-          "On a desktop or laptop, if Zoom’s **sign language interpretation view** is offered, choose ASL from the **Interpretation** (globe) button and the interpreter appears in a dedicated, resizable window. If that option is not showing, hover over the interpreter’s video, open the three-dot menu and choose **Pin** to keep the interpreter on screen."
-        ]
-      },
-      {
-        "key": "captions",
-        "title": "Captions",
-        "body": [
-          "If captions are turned on for the meeting, click **CC** or **Show Captions** on the Zoom toolbar to see them, or choose **View Full Transcript** to read along and scroll back. Captions are generated by software, not a person, so they may stumble on names and A.A. phrases; think of them as a help rather than a record."
-        ]
-      },
-      {
-        "key": "other",
-        "title": "Anything else",
-        "body": [
-          "This website is built to work with screen readers and keyboard navigation."
-        ]
-      }
-    ],
-    "requests": "If you have a question about accessibility, or if anything would make it easier for you to take part, please email:"
-  },
-  "anonymity": {
-    "heading": "A word about anonymity",
-    "body": [
-      "Anonymity is the spiritual foundation of all our Traditions, and it does not take the day off because we are online. Who you see and what you hear in this room stays in this room. Please do not record, screenshot or quote members by name, and if you share about the workshop afterwards, speak of what you learned, not of who was there. On Zoom, please use your first name and last initial as your display name."
-    ]
-  },
-  "seventh": {
-    "heading": "Seventh Tradition",
-    "body": [
-      "The workshop is free. There will be some expenses for the Spanish and ASL interpretation, and contributions are welcome to help cover them.",
-      "In keeping with our Seventh Tradition, we are self-supporting through our own contributions, so we accept them from A.A. members only. To ask how to contribute, please [email the planning committee](mailto:{email})."
-    ]
-  },
-  "meetingTeaser": {
-    "heading": "Keep weaving, every week",
-    "body": "A weekly online A.A. meeting is being planned around the same idea: the Step, the Tradition and the Concept of one number, read aloud together, followed by sharing on how that thread shows up in our recovery, our home groups and our service.",
-    "cta": "About the meeting",
-    "comingSoon": "The meeting day, time and Zoom details will be posted here once the founding group has settled them."
+    "_readme": "/principles/ (page title, hero lead, meta description, the side-by-side table and the one link back to the workshop) and, under numberPage, the headings and labels of /principles/1/ … /principles/12/. The 36 principles themselves are in principles.json.",
+    "title": "The 36 Principles",
+    "lead": "Take any number from one to twelve. The Step, the Tradition and the Concept that carry it are three expressions of one idea, seen from the chair, from the group and from the Fellowship as a whole.",
+    "description": "All 36 principles of A.A. side by side: the Twelve Steps, Twelve Traditions and Twelve Concepts for World Service, with the thread that runs through each number.",
+    "tableHeading": "Side by side",
+    "tableLead": "All 36 in one table, each with its principle word and a one-line summary. To read one legacy straight through, show it on its own.",
+    "tableCaption": "The 36 principles: for each number, the Step, the Tradition and the Concept, each with a principle word and a one-line summary.",
+    "threadColumn": "Number and thread",
+    "filterLabel": "Show",
+    "filterAll": "All three",
+    "companion": "These study pages are a companion to The Incredible Tapestry, a free 1-day online A.A. workshop on {date}.",
+    "companionLink": "About the workshop",
+    "numberPage": {
+      "threadHeading": "The thread",
+      "weaveHeading": "How it weaves",
+      "questionsHeading": "Questions for a meeting or a sponsor conversation",
+      "questionsNote": "In a group, read the Step, the Tradition and the Concept aloud, then share on the thread that connects them.",
+      "keywords": "Keywords",
+      "readPrefix": "Read",
+      "readSuffix": "at aa.org",
+      "pagerLabel": "More principles",
+      "previous": "Previous",
+      "next": "Next",
+      "all": "All 36 Principles"
+    }
   },
   "logoStory": {
+    "_readme": "/principles/: the closing section beside the logo (body accepts simple Markdown).",
     "heading": "About the mark",
+    "alt": "The Incredible Tapestry logo",
     "body": [
       "The circle and triangle have stood for A.A. since the 1950s: the circle is the whole world of A.A., and the three sides of the triangle are our Three Legacies, named here the way they appear on a medallion: Unity, Service, Recovery.",
-      "Inside the triangle, three circles overlap like a Venn diagram, one for each legacy in its own color. Where two meet, a Step and a Tradition, or a Tradition and a Concept, share a principle; the small shape where all three meet is the tapestry itself: the Fellowship, held together by all 36 threads."
+      "Inside, three circles overlap, one for each legacy in its own color: blue for Recovery, green for Unity and gold for Service. The small shape where all three meet is the tapestry itself: the Fellowship, held together by all 36 threads."
     ]
-  },
-  "updates": {
-    "heading": "Updates",
-    "feed": "Subscribe (RSS)"
-  },
-  "faq": {
-    "heading": "Questions & answers",
-    "lead": ""
   },
   "notFound": {
     "heading": "That thread leads nowhere",
     "body": "The page you were looking for has moved or never existed. The whole tapestry is still here, though, starting from the front page.",
     "cta": "Back to the start"
-  },
-  "share": {
-    "heading": "Spread the word",
-    "body": "Tell your home group, your sponsees and your district. The best way an announcement travels in A.A. is still one alcoholic talking to another."
   },
   "jsonld": {
     "eventSummary": "A free, 1-day online A.A. workshop on Zoom: a series of presentations on how the Steps, Traditions and Concepts weave this incredible tapestry, with plenty of time for sharing and asking questions. Spanish and ASL interpretation will be provided, and no pre-registration is required. It is similar to the Tapestry meetings held previously in Raynham, Massachusetts."

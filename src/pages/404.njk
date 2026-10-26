@@ -3,18 +3,75 @@ permalink: /404.html
 title: Page not found
 noindex: true
 eleventyExcludeFromCollections: true
+bodyClass: not-found
+# GitHub Pages serves this one file for every missing path, under /es/ too, so every link and asset here is
+# root-absolute. The English heading, lead and button come from copy.json → notFound; everything else is
+# below. `other` is the one line in the other language under each version's lead.
+nfCopy:
+  en:
+    code: "Page not found"
+    nextHeading: "Pick up another thread"
+    other: "Ese hilo no lleva a ninguna parte: la página que busca cambió de lugar o nunca existió."
+  es:
+    code: "Página no encontrada"
+    heading: "Ese hilo no lleva a ninguna parte"
+    body: "La página que busca cambió de lugar o nunca existió. Todo el tapiz sigue aquí, empezando por la página principal."
+    cta: "Volver al inicio"
+    nextHeading: "Elija otro hilo"
+    other: "That thread leads nowhere: the page you were looking for has moved or never existed."
+# The four workshop pages (each has an /es/ twin). Card labels come from i18n.json → nav.
+nextPages:
+  - { key: "program", href: "/program/", icon: "clipboard-list", legacy: "recovery", desc: "The day at a glance, and the time where you are.", descEs: "El día de un vistazo y la hora donde usted está." }
+  - { key: "join", href: "/join/", icon: "video", legacy: "unity", desc: "The Zoom link, meeting ID and passcode.", descEs: "El enlace de Zoom, el ID de reunión y el código de acceso." }
+  - { key: "flyer", href: "/flyer/", icon: "image", legacy: "service", desc: "Download, print and share the official flyer.", descEs: "Descargue, imprima y comparta el volante oficial." }
+  - { key: "faq", href: "/faq/", icon: "circle-help", legacy: "accent", desc: "Cost, interpretation, anonymity and more.", descEs: "Costo, interpretación, anonimato y más." }
 ---
-<section class="section weave-bg">
-  <div class="container-page hero text-center">
-    {% inlineSvg "brand/logo/mark-plain-mono.svg", "w-28 h-28 mx-auto opacity-60 mark-mono" %}
-    <p class="eyebrow mt-6">404</p>
-    <h1 class="h-display">{{ copy.notFound.heading | tokens }}</h1>
-    <p class="lead mx-auto">{{ copy.notFound.body | tokens }}</p>
-    <div class="hero-actions justify-center">
-      <a href="/" class="btn btn-primary">{% icon "arrow-left", "icon" %}<span>{{ copy.notFound.cta | tokens }}</span></a>
-      <a href="/join/" class="btn btn-secondary">{% icon "video", "icon" %}<span>{{ t.nav.join }}</span></a>
-      <a href="/flyer/" class="btn btn-secondary">{% icon "image", "icon" %}<span>{{ t.nav.flyer }}</span></a>
-      <a href="/es/" class="btn btn-ghost" lang="es" hreflang="es">{{ t.switchLabel }}</a>
+{#- The 404 page (/404.html): a short dark band with the logo, the heading, one line in the other language
+    and the two front pages, then the four workshop pages. Styles: src/assets/css/pages/misc.css.
+    One file serves both languages. The page is built in English; its Spanish twin (same markup, Spanish copy,
+    links into /es/) waits in <template id="nf-es">, and the inline script after it swaps that in on a missing
+    /es/… path: <main lang="es"> and a Spanish document title. The template's content is not part of the
+    page, so there is still one h1. The header and footer stay English (so <html lang="en"> stays right).
+    Without JavaScript the English version stays, with its Spanish line and button to the Spanish home page. -#}
+{%- set nfEn = copy.notFound | merge(nfCopy.en) -%}
+{%- macro notFoundMain(L) -%}
+{%- set c = nfCopy.es if L == "es" else nfEn -%}
+{%- set other = "en" if L == "es" else "es" -%}
+{%- set prefix = "/es" if L == "es" else "" -%}
+<section class="nf-hero thread-bg on-dark" aria-labelledby="nf-title-{{ L }}">
+  <div class="container-page nf-hero-inner">
+    {% inlineSvg "src/assets/img/logo.svg", "nf-logo" %}
+    <p class="eyebrow nf-code">404 · {{ c.code }}</p>
+    <h1 class="h-display nf-title" id="nf-title-{{ L }}">{{ c.heading | tokens }}</h1>
+    <p class="lead nf-lead">{{ c.body | tokens }}</p>
+    <p class="nf-other" lang="{{ other }}">{{ c.other }}</p>
+    <div class="btn-row nf-actions">
+      <a href="{{ prefix }}/" class="btn btn-primary btn-lg">{% icon "house", "icon" %}<span>{{ c.cta | tokens }}</span></a>
+      <a href="{{ '/' if L == 'es' else '/es/' }}" class="btn btn-outline btn-lg" lang="{{ other }}" hreflang="{{ other }}">{% icon "languages", "icon" %}<span>{{ i18n[L].switchLabelHome }}</span></a>
     </div>
   </div>
 </section>
+
+<section class="section-tight" aria-labelledby="nf-next-{{ L }}">
+  <div class="container-page nf-next">
+    <h2 class="h-card nf-next-title" id="nf-next-{{ L }}">{{ c.nextHeading }}</h2>
+    <ul class="nf-links" role="list">
+      {% for item in nextPages %}
+      <li>
+        <a href="{{ prefix }}{{ item.href }}" class="nf-link" data-legacy="{{ item.legacy }}">
+          <span class="card-icon">{% icon item.icon, "icon" %}</span>
+          <span class="nf-link-text">
+            <span class="nf-link-title">{{ i18n[L].nav[item.key] }}</span>
+            <span class="nf-link-desc">{{ item.descEs if L == "es" else item.desc }}</span>
+          </span>
+          {% icon "arrow-right", "icon nf-link-arrow" %}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{%- endmacro %}
+{{ notFoundMain("en") }}
+<template id="nf-es">{{ notFoundMain("es") }}</template>
+<script>(function(){if(!/^\/es\//i.test(location.pathname))return;var m=document.getElementById("main"),t=document.getElementById("nf-es");if(!m||!t||!t.content)return;var f=t.content.cloneNode(true);m.lang="es";m.textContent="";m.appendChild(f);document.title={{ (nfCopy.es.code + " · " + site.name) | json | safe }}})()</script>

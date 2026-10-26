@@ -1,0 +1,52 @@
+/* Small pages — the 404 page (src/pages/404.njk). Imported by ../main.css. */
+@layer components {
+  /* ---------- 404: the dark band ---------- */
+  .nf-hero { overflow: hidden; }
+  .nf-hero-inner {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding-block: clamp(2.5rem, 7vw, 4.5rem) clamp(2.75rem, 7vw, 4.75rem);
+  }
+  .nf-logo {
+    width: clamp(5.5rem, 22vw, 7.5rem); height: auto; flex: none;
+    filter: drop-shadow(0 10px 30px rgb(0 0 0 / 0.55));
+  }
+  .nf-code { margin-top: clamp(1.25rem, 3vw, 1.75rem); }
+  .nf-title { margin-top: 0.5rem; max-width: 18ch; color: var(--color-cream); }
+  .nf-lead { margin-top: 1rem; max-width: 38rem; }
+  /* The one line in the other language (Spanish on the English page, English on the Spanish swap-in). */
+  .nf-other {
+    margin-top: 0.875rem; max-width: 36rem;
+    font-family: var(--font-display); font-style: italic; font-weight: 500;
+    font-size: clamp(1rem, 1.5vw, 1.125rem); line-height: 1.5; color: rgb(251 245 233 / 0.8);
+    text-wrap: balance;
+  }
+  .nf-actions { justify-content: center; margin-top: clamp(1.75rem, 4vw, 2.25rem); }
+  @media (max-width: 29.99rem) {
+    .nf-actions { flex-direction: column; align-items: stretch; width: 100%; max-width: 22rem; }
+  }
+
+  /* ---------- 404: the four workshop pages ---------- */
+  .nf-next { max-width: 56rem; }
+  .nf-next-title { margin-bottom: 1.25rem; text-align: center; }
+  .nf-links { display: grid; gap: clamp(0.75rem, 2vw, 1rem); grid-template-columns: 1fr; }
+  @media (min-width: 40rem) { .nf-links { grid-template-columns: 1fr 1fr; } }
+  .nf-links > li { display: flex; min-width: 0; }
+  .nf-link[data-legacy="accent"] { --legacy: var(--accent); --legacy-text: var(--accent); --legacy-soft: var(--accent-soft); }
+  .nf-link {
+    --tint: var(--legacy-soft); --tint-fg: var(--legacy-text);
+    flex: 1; min-width: 0; display: flex; align-items: center; gap: 1rem;
+    min-height: 2.75rem; padding: 1rem 1.125rem;
+    border-radius: var(--radius-card); border: 1px solid var(--line); border-top: 4px solid var(--legacy);
+    background: var(--surface); box-shadow: var(--shadow-card);
+    color: var(--fg); text-decoration: none;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+  .nf-link:hover { color: var(--fg); border-color: var(--line-strong); border-top-color: var(--legacy); box-shadow: var(--shadow-pop); transform: translateY(-1px); }
+  .nf-link .card-icon { flex: none; }
+  .nf-link-text { display: grid; gap: 0.125rem; min-width: 0; flex: 1; }
+  .nf-link-title { font-family: var(--font-display); font-weight: 600; font-size: 1.125rem; line-height: 1.25; }
+  .nf-link-desc { font-size: 0.9375rem; line-height: 1.45; color: var(--muted); }
+  .nf-link-arrow { flex: none; color: var(--legacy-text); transition: transform 0.15s; }
+  .nf-link:hover .nf-link-title { text-decoration: underline; text-underline-offset: 0.18em; text-decoration-thickness: 0.07em; }
+  .nf-link:hover .nf-link-arrow { transform: translateX(3px); }
+}

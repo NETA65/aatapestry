@@ -1,93 +1,140 @@
 ---
 permalink: /principles/
-title: The 36 principles
-description: "All 36 principles of A.A. side by side: the Twelve Steps, Twelve Traditions and Twelve Concepts for World Service, with the thread that runs through each number."
+bodyClass: principles
+eleventyComputed:
+  title: "{{ copy.thirtySix.title | safe }}"
+  description: "{{ copy.thirtySix.description | safe }}"
 ---
-{% import "macros/ui.njk" as ui %}
-<section class="section weave-bg">
-  <div class="container-page hero" style="padding-block: clamp(2rem, 5vw, 4rem)">
-    <p class="eyebrow">{{ site.hook }}</p>
-    <h1 class="h-display">{{ copy.thirtySix.heading | tokens }}</h1>
-    <p class="lead">{{ copy.thirtySix.lead | tokens }}</p>
-    {# Only the first paragraph: the second one introduces (and links to) this very page. #}
-    <div class="prose mt-6">{{ copy.thirtySix.body[0] | tokens | md | safe }}</div>
-  </div>
-</section>
+{#- /principles/ (English only), top to bottom: the twelve numbers as a compact picker right under the hero
+    (the twelve tiles come first, so they start on the first screen; the two intro paragraphs follow them),
+    the three legacies, all 36 side by side (with a Steps / Traditions / Concepts filter), and the story of
+    the mark. Each number has its own page, /principles/N/ (principle.njk). The tiles carry only the number
+    and its thread; the principle words live once, in the side-by-side table. Words: copy.json → intro,
+    legacies, thirtySix, logoStory; the principles: principles.json; the legacies: site.json → legacies.
+    Styles: assets/css/pages/principles.css. -#}
+{% set c36 = copy.thirtySix %}
+{% set strandKey = { "recovery": "step", "unity": "tradition", "service": "concept" } %}
+{% set legacyIcon = { "recovery": "book-open", "unity": "users", "service": "network" } %}
 
-<section class="section-tight">
+{# The hero, plus a big decorative "36" on wide screens (hidden from screen readers), like each number's page. #}
+<div class="pp-hero">
+  {% set hero = { eyebrow: site.hook, title: c36.title, lead: c36.lead | tokens, crumbLabel: t.nav.principles } %}
+  {% include "partials/page-hero.njk" %}
+  <div class="pp-hero-deco" aria-hidden="true"><div class="container-page"><span class="pp-hero-num">{{ principles.items.length * 3 }}</span></div></div>
+</div>
+
+{# ============ THE TWELVE THREADS (one tile per number: the picker the hero invites) ============
+   The heading, then the tiles, then the intro text that explains them (below the grid, so the picker
+   is on the first screen at laptop and phone sizes). #}
+<section class="section" id="threads" aria-labelledby="threads-title">
   <div class="container-page">
-    <div class="grid-cards">
-      {% for l in site.legacies %}
-      <article class="card legacy-card" id="{{ l.key }}" style="--legacy: var(--c-{{ l.key }}); --legacy-soft: var(--c-{{ l.key }}-soft); --legacy-text: var(--c-{{ l.key }}-text)">
-        <div class="legacy-card-stripe" aria-hidden="true"></div>
-        <p class="eyebrow legacy-eyebrow">{{ l.name }}</p>
-        <h2 class="h-card">{{ l.body }}</h2>
-        <p class="text-muted mt-1">{{ l.blurb }}</p>
-        <p class="text-xs text-muted mt-2">{{ l.source }}</p>
-      </article>
+    <div class="section-head">
+      <h2 class="h-section" id="threads-title">{{ copy.intro.heading | tokens }}</h2>
+    </div>
+    <ol class="pp-tiles">
+      {% for item in principles.items %}
+      <li>
+        <a href="/principles/{{ item.n }}/" class="pp-tile">
+          <span class="pp-tile-n"><span class="pp-tile-arabic">{{ item.n }}</span><span class="pp-tile-roman" aria-hidden="true">{{ item.n | roman }}</span></span>
+          <span class="sr-only">: </span><span class="pp-tile-title">{{ item.thread.title }}</span>
+          {% icon "arrow-right", "icon icon-sm pp-tile-arrow" %}
+        </a>
+      </li>
       {% endfor %}
-    </div>
+    </ol>
+    <div class="prose pp-intro">{% for p in copy.intro.body %}{{ p | tokens | md | safe }}{% endfor %}</div>
   </div>
 </section>
 
-<section class="section" x-data="{ view: 'all' }">
+{# ============ THE THREE LEGACIES ============ #}
+<section class="section section-alt" id="legacies" aria-labelledby="legacies-title">
   <div class="container-page">
-    <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
-      <div>
-        <h2 class="h-section">Side by side</h2>
-        {#- Until the official texts are pasted into principles.json (text), the number pages give a gist and a link to aa.org. -#}
-        {% set textsShown = [] %}{% for p in principles.items %}{% if p.step.text or p.tradition.text or p.concept.text %}{% set _ = textsShown.push(p.n) %}{% endif %}{% endfor %}
-        <p class="text-muted mt-1">{% if textsShown.length %}Choose a number for the texts{% else %}Choose a number for a summary of each Step, Tradition and Concept with a link to its text at aa.org{% endif %}, the thread that connects them, and questions for a meeting or a sponsor conversation.</p>
+    <div class="section-head">
+      <h2 class="h-section" id="legacies-title">{{ copy.legacies.heading | tokens }}</h2>
+      <p class="lead">{{ copy.legacies.lead | tokens }}</p>
+    </div>
+    <ul class="pp-legacies">
+      {% for l in site.legacies %}
+      {% set src = principles.sources[strandKey[l.key]] %}
+      <li class="card pp-legacy" id="{{ l.key }}" data-legacy="{{ l.key }}">
+        <p class="pp-legacy-head"><span class="card-icon">{% icon legacyIcon[l.key], "icon" %}</span><span class="pp-legacy-name">{{ l.name }}</span></p>
+        <h3 class="h-card">{{ l.body }}</h3>
+        <p class="pp-legacy-blurb">{{ l.blurb }}</p>
+        <p class="pp-legacy-source"><span class="pp-label">{{ copy.legacies.literature }}</span> {{ l.source }}</p>
+        <a href="{{ src.url }}" class="pp-link pp-legacy-link" target="_blank" rel="noopener">{% set srcWords = src.label.split(" ") %}{{ srcWords.slice(0, -1).join(" ") }} <span class="pp-link-end">{{ srcWords | last }}{% icon "arrow-up-right", "icon icon-sm" %}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ============ ALL 36, SIDE BY SIDE ============
+   The filter shows one legacy's column at a time. It needs JavaScript, so it stays hidden without it
+   (and the table then shows all three columns). Below 64rem the rows become cards (principles.css);
+   the explicit roles keep the table's semantics when its display changes. #}
+<section class="section" id="side-by-side" aria-labelledby="table-title">
+  <div class="container-page">
+    <div class="pp-table-top">
+      <div class="section-head">
+        <h2 class="h-section" id="table-title">{{ c36.tableHeading }}</h2>
+        <p class="lead">{{ c36.tableLead | tokens }}</p>
       </div>
-      <div class="chip-row" role="group" aria-label="Show">
-        <button type="button" class="chip" :aria-pressed="(view === 'all').toString()" aria-pressed="true" @click="view = 'all'">All three</button>
-        {% for l in site.legacies %}
-        <button type="button" class="chip" :aria-pressed="(view === '{{ l.key }}').toString()" aria-pressed="false" @click="view = '{{ l.key }}'"><span class="legacy-dot" style="display:inline-block;width:.6rem;height:.6rem;border-radius:50%;background:{{ l.color }}"></span>{{ l.shortBody }}</button>
-        {% endfor %}
+      <div class="pp-filter" role="group" aria-label="{{ c36.filterLabel }}" data-pp-filter hidden>
+        <button type="button" aria-pressed="true" aria-controls="pp-table" data-show="all"><span class="pp-dot pp-dot--all"></span>{{ c36.filterAll }}</button>
+        {% for l in site.legacies %}<button type="button" aria-pressed="false" aria-controls="pp-table" data-show="{{ l.key }}" data-legacy="{{ l.key }}"><span class="pp-dot"></span>{{ l.shortBody }}</button>{% endfor %}
       </div>
     </div>
 
-    <table class="principles-table" :class="view === 'all' ? '' : 'show-' + view">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          {% for l in site.legacies %}<th scope="col" class="{{ l.key }}" style="--legacy: var(--c-{{ l.key }}); --legacy-text: var(--c-{{ l.key }}-text)"><span class="legacy-dot"></span>{{ l.singular }}</th>{% endfor %}
-          <th scope="col">Thread</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in principles.items %}
-        <tr>
-          <td class="n"><a href="/principles/{{ item.n }}/">{{ item.n }}<small>{{ item.n | roman }}</small></a></td>
-          {% for key in ["step", "tradition", "concept"] %}{% set l = site.legacies[loop.index0] %}
-          <td class="{{ l.key }}" data-label="{{ l.singular }} {{ item.n }}" style="--legacy: var(--c-{{ l.key }}); --legacy-text: var(--c-{{ l.key }}-text)"><span class="word">{{ item[key].principle }}</span>{% if item[key].text %}{{ item[key].text }}{% else %}{{ item[key].gist }} <a href="{{ principles.sources[key].url }}" class="text-muted text-xs whitespace-nowrap" target="_blank" rel="noopener">{{ 'Read ' + l.singular + ' ' + (item.n | roman if key == 'concept' else item.n) }} ↗<span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>{% endif %}</td>
+    <div class="pp-table-wrap">
+      <table class="pp-table" id="pp-table" role="table">
+        <caption class="sr-only">{{ c36.tableCaption }}</caption>
+        <thead role="rowgroup">
+          <tr role="row">
+            <th scope="col" role="columnheader">{{ c36.threadColumn }}</th>
+            {% for l in site.legacies %}<th scope="col" role="columnheader" data-col="{{ l.key }}" data-legacy="{{ l.key }}"><span class="pp-dot"></span>{{ l.singular }}</th>{% endfor %}
+          </tr>
+        </thead>
+        <tbody role="rowgroup">
+          {% for item in principles.items %}
+          <tr role="row">
+            <th scope="row" role="rowheader"><a href="/principles/{{ item.n }}/" class="pp-row-link"><span class="pp-row-n">{{ item.n }}</span><span class="sr-only">: </span><span class="pp-row-title">{{ item.thread.title }}</span></a></th>
+            {% for l in site.legacies %}
+            {% set s = item[strandKey[l.key]] %}
+            <td role="cell" data-col="{{ l.key }}" data-legacy="{{ l.key }}"><span class="pp-cell-label" aria-hidden="true">{{ l.singular }} {{ (item.n | roman) if l.key == "service" else item.n }}</span><strong class="pp-cell-word">{{ s.principle }}</strong> <span class="pp-cell-gist">{{ s.text or s.gist }}</span></td>
+            {% endfor %}
+          </tr>
           {% endfor %}
-          <td class="thread" data-label="Thread"><a href="/principles/{{ item.n }}/">{{ item.thread.title }}</a><p class="text-muted text-sm mt-1">{{ item.thread.oneLiner }}</p></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
 
-    <p class="text-sm text-muted mt-6 max-w-3xl">{{ principles.principleWordsNote }}</p>
-    <p class="text-xs text-muted mt-2 max-w-3xl">{{ principles.notice }}</p>
+    {# principles.notice (the A.A.W.S. copyright line) is not repeated here: the footer of every page says it. #}
+    <p class="pp-fineprint">{{ principles.principleWordsNote }}</p>
   </div>
 </section>
+<script>
+(() => {
+  const group = document.querySelector("[data-pp-filter]");
+  const table = document.getElementById("pp-table");
+  if (!group || !table) return;
+  const buttons = Array.from(group.querySelectorAll("button[data-show]"));
+  buttons.forEach((btn) => btn.addEventListener("click", () => {
+    const show = btn.dataset.show;
+    if (show === "all") table.removeAttribute("data-show"); else table.setAttribute("data-show", show);
+    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+  }));
+  group.hidden = false;
+})();
+</script>
 
-{# The weekly meeting card and its format: only once meeting.json is published. #}
-{% if meeting.published %}
-<section class="section section-band">
-  <div class="container-page">
-    <div class="grid gap-6 lg:grid-cols-2">
-      <div class="card">
-        <h2 class="h-card">{{ copy.meetingTeaser.heading | tokens }}</h2>
-        <p class="text-muted mt-2">{{ copy.meetingTeaser.body | tokens }}</p>
-        <a href="/meeting/" class="btn btn-primary mt-4">{{ copy.meetingTeaser.cta | tokens }}</a>
-      </div>
-      <div class="card">
-        <h2 class="h-card">Suggested meeting format</h2>
-        <ol class="prose mt-2 text-muted list-decimal pl-5">{% for f in meeting.format %}<li>{{ f }}</li>{% endfor %}</ol>
-      </div>
+{# ============ ABOUT THE MARK (+ the one link back to the workshop) ============ #}
+<section class="section section-alt" id="mark" aria-labelledby="mark-title">
+  <div class="container-page pp-mark">
+    {% inlineSvg "src/assets/img/logo.svg", "pp-mark-logo", copy.logoStory.alt %}
+    <div class="pp-mark-text">
+      <h2 class="h-section" id="mark-title">{{ copy.logoStory.heading | tokens }}</h2>
+      <div class="prose pp-mark-story">{% for p in copy.logoStory.body %}{{ p | tokens | md | safe }}{% endfor %}</div>
+      <p class="pp-companion">{% icon "calendar-heart", "icon" %}<span>{{ c36.companion | tokens }} <a href="/" class="pp-companion-link">{{ c36.companionLink }}</a></span></p>
     </div>
   </div>
 </section>
-{% endif %}

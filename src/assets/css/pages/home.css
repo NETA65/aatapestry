@@ -1,0 +1,209 @@
+/* Home page (/ and /es/) — src/pages/index.njk. Imported by ../main.css. */
+@layer components {
+  /* ---------- Hero: the flyer as a web page ---------- */
+  /* Clip sideways only: the open "Add to calendar" panel must be free to hang below the hero, over the
+     next section, or its last links can't be tapped. */
+  .home-hero { overflow-x: clip; }
+  .home-hero-inner {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding-block: clamp(1.25rem, 3vw, 2rem) clamp(2.75rem, 6vw, 4.5rem);
+  }
+  .home-hero-lang { align-self: flex-end; }
+  .home-hero-lang .chip { text-decoration: none; min-height: 2.25rem; }
+  .home-hero-lang .chip:hover { background: rgb(251 245 233 / 0.18); color: var(--color-cream); }
+  .home-hero-top {
+    display: flex; flex-direction: column; align-items: center; gap: clamp(0.75rem, 2vw, 1.5rem);
+    margin-top: clamp(0.5rem, 2vw, 1rem);
+  }
+  .home-hero-logo {
+    width: clamp(6.5rem, 26vw, 9rem); height: auto; flex: none;
+    filter: drop-shadow(0 10px 30px rgb(0 0 0 / 0.55));
+  }
+  /* The title and (in Spanish) its translation, centred together beside the logo, as on the poster */
+  .home-title-col { display: flex; flex-direction: column; align-items: center; }
+  /* The title never wraps, so its floor is capped by the screen width (min(…, 13vw)): with a large default
+     font size or a zoomed phone it still fits. At the default 16 px, 13vw = 2.6rem at 320 px, so nothing
+     changes there. */
+  .home-title { font-size: clamp(min(2.6rem, 13vw), 10.5vw, 6.25rem); font-weight: 400; letter-spacing: 0; text-wrap: nowrap; }
+  .home-gloss { margin-top: 0.25rem; font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: clamp(1.125rem, 2.6vw, 1.5rem); color: rgb(251 245 233 / 0.85); }
+  .home-braid { margin-top: clamp(0.5rem, 2vw, 1rem); width: min(100%, 40rem); }
+  .home-overline {
+    margin-top: clamp(1rem, 2.5vw, 1.5rem);
+    font-family: var(--font-title); font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em;
+    font-size: clamp(1.125rem, 3.4vw, 2rem); line-height: 1.15; color: var(--color-cream); text-wrap: balance;
+  }
+  .home-subline {
+    margin-top: 0.5rem; max-width: 40rem;
+    font-family: var(--font-display); font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: clamp(0.875rem, 2vw, 1.125rem); line-height: 1.45; color: rgb(251 245 233 / 0.82); text-wrap: balance;
+  }
+  .home-date { margin-top: clamp(1.5rem, 3.5vw, 2.25rem); }
+  .home-when { margin-top: 1.25rem; width: 100%; max-width: 48rem; display: flex; flex-direction: column; align-items: center; }
+  .home-actions { justify-content: center; margin-top: clamp(1.5rem, 3.5vw, 2rem); }
+  .home-chips { justify-content: center; margin-top: 1.5rem; }
+  .home-hero .countdown { margin-top: 1.25rem; }
+
+  /* Stack Join + Add to calendar at equal widths until the pair fits side by side (the Spanish pair is
+     about 524 px wide) */
+  @media (max-width: 35.99rem) {
+    .home-actions { flex-direction: column; align-items: stretch; width: 100%; max-width: 22rem; }
+    .home-actions > .btn, .home-actions > .cal-menu, .home-actions > .cal-menu > summary { width: 100%; }
+  }
+  @media (min-width: 48rem) {
+    .home-hero-top { flex-direction: row; gap: 2rem; }
+    .home-hero-logo { width: clamp(9rem, 17vw, 14.5rem); }
+  }
+
+  /* Keep the date, the times and Join / Add to calendar on the first screen where screens are short. */
+  /* Wide screens: the header shows the language switch from 64rem (--breakpoint-nav in main.css, the nav:
+     variant in header.njk, the matchMedia in app.js), so the hero chip would repeat it. Below 64rem the
+     header keeps the switch inside the Menu, so the chip stays. Keep this in step with --breakpoint-nav. */
+  @media (min-width: 64rem) {
+    .home-hero-lang { display: none; }
+    .home-hero-top { margin-top: 0; }
+  }
+  /* The Spanish time bar goes on one row (like the English one) once its box is 54rem wide (main.css), so
+     the Spanish hero is no taller than it needs to be and Join / Add to calendar stay on the first screen of
+     a laptop. From 58rem (the page less its two 2rem gutters is then 54rem) the box widens to 56rem. */
+  @media (min-width: 58rem) { .home-when:has(.when-bar--long) { max-width: 56rem; } }
+  /* Short screens (laptops, 1280×720 to 1440×900): a smaller title and logo and no gap under the title,
+     so the Spanish hero (its translated title adds a line) fits as well as the English one */
+  @media (min-width: 48rem) and (max-height: 60rem) {
+    .home-hero-inner { padding-block: 1.25rem 2.5rem; }
+    .home-title { font-size: clamp(min(2.6rem, 13vw), 10.5vw, min(6.25rem, 9.5vh)); }
+    .home-hero-logo { width: clamp(6.5rem, 19vh, 14.5rem); }
+    .home-gloss { margin-top: 0; }
+    .home-braid { margin-top: 0.25rem; }
+    .home-overline { margin-top: 0.75rem; }
+    .home-date { margin-top: 1rem; }
+    .home-when { margin-top: 0.75rem; }
+    .home-actions { margin-top: 1.25rem; }
+  }
+  /* Landscape phones: the logo beside the title, not above it. The width floor keeps zoomed desktops
+     (1280×1024 at 400% is 320×256 CSS px) on the portrait layout below, where the row fits; the smallest
+     landscape phone (568×320) still gets this one. */
+  @media (orientation: landscape) and (max-height: 30rem) and (min-width: 34rem) {
+    .home-hero-inner { padding-block: 0.75rem 2rem; }
+    .home-hero-top { flex-direction: row; gap: 1.25rem; margin-top: 0.25rem; }
+    .home-hero-logo { width: 6rem; }
+    .home-title { font-size: clamp(min(2.6rem, 13vw), 8vw, 4.5rem); }
+    .home-overline { margin-top: 0.75rem; }
+    .home-date { margin-top: 1rem; }
+    .home-when { margin-top: 0.75rem; }
+    .home-actions { margin-top: 1.25rem; }
+  }
+  /* Phones held upright, and narrow zoomed windows (the header has no Join button below 30rem): the logo
+     beside the title, as on the poster, and tighter spacing, so Join stays on the first screen in both
+     languages. The logo, the gap and the title's floor give way to the screen width (min(…, vw)), so the
+     row still fits with a large default font size. */
+  @media (max-width: 29.99rem) {
+    .home-hero-inner { padding-top: 0.5rem; }
+    .home-hero-top { flex-direction: row; justify-content: center; gap: min(0.625rem, 3vw); margin-top: 0.25rem; }
+    .home-hero-logo { width: min(18vw, 4.5rem); }
+    .home-title { font-size: clamp(min(2rem, 10vw), 9.6vw, 2.75rem); }
+    .home-gloss { font-size: 1rem; margin-top: 0.125rem; }
+  }
+  /* Phone-sized portrait screens of ordinary height: tighter vertical rhythm down to Join / Add to calendar */
+  @media (max-width: 47.99rem) and (orientation: portrait) and (max-height: 56rem) {
+    .home-braid { margin-top: 0.5rem; }
+    .home-overline { margin-top: 0.5rem; }
+    .home-subline { font-size: 0.8125rem; line-height: 1.35; margin-top: 0.25rem; }
+    .home-date { margin-top: 0.75rem; }
+    .home-when { margin-top: 0.75rem; }
+    .home-actions { margin-top: 0.875rem; }
+    .home-hero .local-time { font-size: 0.875rem; }
+  }
+  /* The Spanish time range on one line in a phone-width time bar (home hero only; the container is the
+     time bar's .when-wrap) */
+  @container (max-width: 24rem) {
+    .home-when .when-bar--long .when-bar-main { font-size: clamp(1.25rem, 6.2cqi, 1.5rem); padding-block: 0.625rem; }
+  }
+
+  /* ---------- Essentials ---------- */
+  .essentials-grid { display: grid; gap: clamp(1rem, 2.5vw, 1.5rem); grid-template-columns: 1fr; }
+  @media (min-width: 48rem) { .essentials-grid { grid-template-columns: 1fr 1fr; } .essential--zoom { grid-column: 1 / -1; } }
+  /* Mid widths: the Zoom card spans the row, so set the meeting ID and passcode side by side to keep
+     each Copy button near its number (from 72rem the card is a column, too narrow for two) */
+  @media (min-width: 48rem) and (max-width: 71.99rem) { .essential--zoom .kv { grid-template-columns: 1fr 1fr; } }
+  /* Wide: the Zoom card on the left, interpretation and cost stacked on the right */
+  @media (min-width: 72rem) { .essentials-grid { grid-template-columns: 1.25fr 1fr; } .essential--zoom { grid-column: auto; grid-row: span 2; } }
+  .essential { display: flex; flex-direction: column; gap: 0.875rem; --tint: var(--legacy-soft); --tint-fg: var(--legacy-text); border-top: 4px solid var(--legacy); }
+  .essential-body { color: var(--muted); }
+  .essential-body strong { color: var(--fg); font-weight: 600; }
+  .essential .kv { margin-top: 0.25rem; }
+  /* The "more" link at the foot of each card: pinned to the bottom (so the links line up across a row) and
+     only as wide as its text, so its focus ring and tap area are the link, not the empty card width.
+     44 px tall, like the other arrow links that stand alone (flyer, poster, program). */
+  .essential-more { display: flex; margin-top: auto; padding-top: 0.75rem; }
+  .essential-more .link-arrow { min-height: 2.75rem; }
+
+  /* ---------- About the day ---------- */
+  /* minmax(0, 1fr): the column is the screen's width, never the widest unbreakable line inside it (the
+     burst, a long strand name with a large default font) */
+  .about-grid { display: grid; gap: clamp(2.25rem, 5vw, 4rem); align-items: center; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 60rem) { .about-grid { grid-template-columns: 1.15fr 1fr; } }
+  .about-grid .lead p { color: var(--fg); }
+  .threads { position: relative; }
+  .thread-list { position: relative; display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
+  /* The woven line that ties the three strands together, like the braid on the flyer, through the centre
+     of the icons (the card's left padding + its border + half the icon) */
+  .thread-list::before {
+    content: ""; position: absolute; left: calc(1rem + 1px + 1.75rem); top: 1.75rem; bottom: 1.75rem; width: 4px; border-radius: 4px; transform: translateX(-50%);
+    background: linear-gradient(180deg, var(--c-recovery), var(--c-unity) 50%, var(--c-service));
+  }
+  .thread {
+    position: relative; display: flex; gap: 1rem; align-items: center;
+    padding: 1rem 1.25rem 1rem 1rem; border-radius: var(--radius-card);
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card);
+  }
+  .thread-body { min-width: 0; }
+  .thread-icon {
+    position: relative; display: grid; place-items: center; flex: none; width: 3.5rem; height: 3.5rem; border-radius: 999px;
+    background: var(--legacy-soft); color: var(--legacy-text); border: 3px solid var(--legacy);
+  }
+  .thread-icon .icon { width: 1.625rem; height: 1.625rem; }
+  .thread-name { font-family: var(--font-title); font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em; font-size: 1.1875rem; color: var(--legacy-text); line-height: 1.2; }
+  .thread-legacy { font-family: var(--font-sans); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted); }
+  .thread-text { margin-top: 0.25rem; color: var(--muted); font-size: 0.9875rem; line-height: 1.5; }
+  /* Narrow phones: the legacy drops onto its own line, without a dangling "·", and the icon sits beside the
+     title, so the description uses the full card width (as on the /join/ steps). .thread-body has no
+     semantics, so display: contents just lets the title and the text join the card's grid. */
+  @media (max-width: 22.5rem) {
+    .thread-legacy { display: block; margin-top: 0.125rem; } .thread-dot { display: none; }
+    .thread { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.5rem 0.875rem; align-items: center; }
+    .thread-body { display: contents; }
+    .thread-text { grid-column: 1 / -1; margin-top: 0; }
+  }
+  .burst {
+    display: inline-block; max-width: 100%; margin-top: 1.5rem; padding: 0.625rem 1.25rem; transform: rotate(-1.5deg);
+    font-family: var(--font-title); font-weight: 900; text-transform: uppercase; letter-spacing: 0.02em; font-size: 1.0625rem; line-height: 1.25;
+    text-align: center; text-wrap: balance;
+    color: var(--color-navy-900); background: linear-gradient(180deg, #ffe3a0, var(--color-gold-400) 60%, #e7ab45);
+    clip-path: polygon(2% 10%, 30% 0, 70% 6%, 98% 0, 100% 50%, 97% 100%, 60% 92%, 25% 100%, 0 88%, 1% 45%);
+  }
+  /* Each item stays whole, with its "·" at the end of its own line, never at the start of the next */
+  .burst-item { white-space: nowrap; }
+  /* Very narrow (below 320 px at the default font size, or a phone with a large default font): the
+     burst's items may wrap between their words (the "·" is glued to its word with a no-break space), its
+     text and padding give way to the screen width so the longest word still fits whole, and each strand's
+     icon sits above its title, so the long Spanish names fit */
+  @media (max-width: 19.99rem) {
+    .burst { font-size: min(1.0625rem, 5.5vw); padding-inline: min(1.25rem, 4vw); }
+    .burst-item { white-space: normal; }
+    .thread { grid-template-columns: minmax(0, 1fr); justify-items: start; }
+  }
+
+  /* ---------- Flyer + share ---------- */
+  .flyer-band { display: grid; gap: clamp(2rem, 5vw, 3.5rem); align-items: center; }
+  .flyer-band > * { min-width: 0; }
+  @media (min-width: 40rem) { .flyer-band { grid-template-columns: 16rem 1fr; } }
+  @media (min-width: 64rem) { .flyer-band { grid-template-columns: 20rem 1fr; } }
+  .flyer-thumb {
+    display: block; justify-self: center; width: min(70vw, 20rem); border-radius: 0.75rem; overflow: hidden;
+    box-shadow: 0 24px 50px -24px rgb(7 10 20 / 0.6), 0 0 0 1px var(--line);
+    transform: rotate(-2deg); transition: transform 0.2s;
+  }
+  .flyer-thumb:hover { transform: rotate(0) scale(1.01); }
+  .flyer-thumb img { display: block; width: 100%; }
+  @media (min-width: 40rem) { .flyer-thumb { width: 100%; } }
+}

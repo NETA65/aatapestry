@@ -1,31 +1,17 @@
 // sitemap.xml — every indexable page, with hreflang alternates for the bilingual ones.
-// <lastmod> is the later of the template's and the data folder's last git commit (so the
-// scheduled rebuilds do not claim every page changed); falls back to the build date.
-import { execSync } from "node:child_process";
-
-const gitDate = (p) => {
-  try {
-    return execSync(`git log -1 --format=%cI -- "${p}"`, { stdio: ["ignore", "pipe", "ignore"] }).toString().trim().slice(0, 10);
-  } catch {
-    return "";
-  }
-};
-
+// <lastmod> is the `lastmod` filter (eleventy.config.js): the later of the template's and the data
+// folder's last git commit (so the scheduled rebuilds do not claim every page changed), else the
+// build date. The JSON-LD Article dateModified uses the same filter, so the two always agree.
 export default class {
   data() {
     return { permalink: "/sitemap.xml", eleventyExcludeFromCollections: true, layout: false };
   }
-  render({ collections, site, build }) {
+  render({ collections, site }) {
     const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
-    const pages = collections.all.filter((p) => p.url && p.url.endsWith("/") && !p.data.noindex && p.data.eleventyExcludeFromCollections !== "true");
+    const pages = collections.all.filter((p) => p.url && p.url.endsWith("/") && !p.data.noindex && p.data.layout !== false && p.data.eleventyExcludeFromCollections !== "true");
     const abs = (u) => new URL(u, site.url).href;
-    const dataDate = gitDate("src/_data") || gitDate("src");
-    const lastmodFor = (p) => {
-      const t = gitDate(p.inputPath);
-      const d = [t, dataDate].filter(Boolean).sort().pop();
-      return d || build.time.slice(0, 10);
-    };
-    const TOP = new Set(["/es/", "/join/", "/schedule/", "/flyer/", "/es/flyer/", "/principles/"]);
+    const lastmodFor = (p) => this.lastmod(p.inputPath);
+    const TOP = new Set(["/es/", "/program/", "/es/program/", "/join/", "/es/join/", "/flyer/", "/es/flyer/", "/faq/", "/es/faq/", "/principles/"]);
     const priority = (u) => (u === "/" ? "1.0" : TOP.has(u) ? "0.9" : u.startsWith("/principles/") ? "0.7" : "0.6");
     const alt = (p) => {
       if (!p.data.translated) return "";

@@ -5,90 +5,96 @@ pagination:
   alias: item
   addAllPagesToCollections: true
 permalink: "/principles/{{ item.n }}/"
-eleventyComputed:
-  title: "Number {{ item.n }}: {{ item.thread.title | safe }}"
-  description: "{{ item.thread.oneLiner | safe }} Step, Tradition and Concept {{ item.n }}, side by side."
 schema: article
+bodyClass: principle
+eleventyComputed:
+  title: "Step {{ item.n }}, Tradition {{ item.n }} and Concept {{ item.n | roman }}: {{ item.thread.title | safe }}"
+  description: "{{ item.thread.oneLiner | safe }} Step {{ item.n }}, Tradition {{ item.n }} and Concept {{ item.n | roman }}, side by side."
 ---
-{% import "macros/ui.njk" as ui %}
+{#- /principles/1/ … /principles/12/ (English only): one number's Step, Tradition and Concept side by side,
+    the thread that connects them, questions for sharing, and the way to the numbers before and after.
+    Data: principles.json (items[n-1]); labels: copy.json → thirtySix.numberPage; the legacies: site.json.
+    Styles: assets/css/pages/principles.css. -#}
+{% set np = copy.thirtySix.numberPage %}
+{% set strandKey = { "recovery": "step", "unity": "tradition", "service": "concept" } %}
+{% set legacyIcon = { "recovery": "book-open", "unity": "users", "service": "network" } %}
 {% set prev = principles.items[item.n - 2] if item.n > 1 else null %}
-{% set next = principles.items[item.n] if item.n < 12 else null %}
-<article>
-  <section class="section weave-bg">
-    <div class="container-page hero" style="padding-block: clamp(2rem, 5vw, 4rem)">
-      <nav aria-label="Breadcrumb" class="text-sm text-muted mb-4"><a href="/principles/">{{ t.nav.principles }}</a> / Number {{ item.n }}</nav>
-      <div class="hero-grid">
-        <div>
-          <p class="eyebrow">Step {{ item.n }} · Tradition {{ item.n }} · Concept {{ item.n | roman }}</p>
-          <h1 class="h-display">{{ item.thread.title }}</h1>
-          <p class="lead">{{ item.thread.oneLiner }}</p>
-          <div class="hero-badges">
-            {% for key in ["step", "tradition", "concept"] %}{% set l = site.legacies[loop.index0] %}
-            {{ ui.legacyBadge(l, l.singular + " " + ((item.n | roman) if key == "concept" else item.n) + ": " + item[key].principle) }}
-            {% endfor %}
-          </div>
-        </div>
-        <div class="text-center lg:text-right"><span class="big-number" aria-hidden="true">{{ item.n }}</span></div>
+{% set next = principles.items[item.n] if item.n < principles.items.length else null %}
+{% set roman = item.n | roman %}
+
+{# The hero, plus a big decorative number on wide screens (beside the title; hidden from screen readers). #}
+<div class="pp-hero">
+  {% set hero = {
+    eyebrow: site.legacies[0].singular + " " + item.n + " · " + site.legacies[1].singular + " " + item.n + " · " + site.legacies[2].singular + " " + roman,
+    title: item.thread.title,
+    lead: item.thread.oneLiner,
+    crumbs: [{ label: t.nav.principles, href: "/principles/" }]
+  } %}
+  {% include "partials/page-hero.njk" %}
+  <div class="pp-hero-deco" aria-hidden="true"><div class="container-page"><span class="pp-hero-num">{{ item.n }}</span></div></div>
+</div>
+
+{# ============ THE STEP, THE TRADITION AND THE CONCEPT ============ #}
+<div class="section-tight">
+  <div class="container-page pp-strands">
+    {% for l in site.legacies %}
+    {% set k = strandKey[l.key] %}
+    {% set s = item[k] %}
+    {% set num = roman if k == "concept" else item.n %}
+    <div class="pp-strand" id="{{ k }}" data-legacy="{{ l.key }}">
+      <div class="pp-strand-head">
+        <p class="pp-strand-legacy">{% icon legacyIcon[l.key], "icon icon-sm" %}<span>{{ l.name }}</span></p>
+        <h2 class="pp-strand-title"><span class="pp-strand-kicker">{{ l.singular }} {{ num }}<span class="sr-only">:</span></span> <span class="pp-strand-word">{{ s.principle }}</span></h2>
+      </div>
+      <div class="pp-strand-body">
+        {% if s.text %}
+        <blockquote class="pp-strand-text"><p>{{ s.text }}</p></blockquote>
+        {% else %}
+        <p class="pp-strand-gist">{{ s.gist }}</p>
+        {% endif %}
+        {% if s.keywords and s.keywords.length %}
+        <p class="sr-only">{{ np.keywords }}:</p>
+        <ul class="pp-keywords">{% for kw in s.keywords %}<li>{{ kw }}</li>{% endfor %}</ul>
+        {% endif %}
+        <a href="{{ principles.sources[k].url }}" class="pp-link pp-strand-link" target="_blank" rel="noopener">{{ np.readPrefix }} {{ l.singular }} {{ num }} <span class="pp-link-end">{{ np.readSuffix }}{% icon "arrow-up-right", "icon icon-sm" %}</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
       </div>
     </div>
-  </section>
+    {% endfor %}
+  </div>
+</div>
 
-  <section class="section-tight">
-    <div class="container-page">
-      <div class="three-up">
-        {% for key in ["step", "tradition", "concept"] %}{% set l = site.legacies[loop.index0] %}
-        <div class="legacy-panel" style="--legacy: var(--c-{{ l.key }}); --legacy-soft: var(--c-{{ l.key }}-soft); --legacy-text: var(--c-{{ l.key }}-text)" id="{{ key }}">
-          <p class="eyebrow">{{ l.singular }} {{ item.n if key != "concept" else (item.n | roman) }} · {{ l.name }}</p>
-          <p class="word">{{ item[key].principle }}</p>
-          {% if item[key].text %}
-          <blockquote>{{ item[key].text }}</blockquote>
-          {% else %}
-          <p class="text-lg">{{ item[key].gist }}</p>
-          <a href="{{ principles.sources[key].url }}" class="tap-link mt-3 text-sm" target="_blank" rel="noopener" style="color: var(--legacy-text)">{% icon "book-open", "icon" %}<span>Read {{ l.singular }} {{ item.n | roman if key == 'concept' else item.n }} at aa.org</span><span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a>
-          {% endif %}
-          {% if item[key].keywords and item[key].keywords.length %}<div class="keywords">{% for k in item[key].keywords %}<span>{{ k }}</span>{% endfor %}</div>{% endif %}
-        </div>
-        {% endfor %}
-      </div>
-      <p class="text-xs text-muted mt-3">{{ principles.notice }}</p>
+{# ============ THE THREAD ============ #}
+<section class="section pp-thread-section" aria-labelledby="thread-title">
+  <div class="container-page pp-thread">
+    <div class="pp-thread-main">
+      <h2 class="h-section" id="thread-title">{{ np.threadHeading }}</h2>
+      <div class="prose pp-summary">{{ item.thread.summary | md | safe }}</div>
+      <h2 class="h-section pp-weave-title" id="weave-title">{{ np.weaveHeading }}</h2>
+      <div class="prose pp-weave">{{ item.thread.weave | md | safe }}</div>
     </div>
-  </section>
+    <aside class="card pp-questions" aria-labelledby="questions-title">
+      <h2 class="h-card" id="questions-title">{{ np.questionsHeading }}</h2>
+      <ol class="pp-question-list">{% for q in item.thread.questions %}<li>{{ q }}</li>{% endfor %}</ol>
+      <p class="pp-questions-note">{{ np.questionsNote }}</p>
+    </aside>
+  </div>
+</section>
 
-  <section class="section">
-    <div class="container-page">
-      <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
-        <div>
-          <h2 class="h-section">The thread</h2>
-          <div class="prose text-lg mt-3">{{ item.thread.summary | md | safe }}</div>
-          <h2 class="h-section mt-10">Where it shows up</h2>
-          <div class="prose mt-3">{{ item.thread.weave | md | safe }}</div>
-        </div>
-        <aside>
-          <h2 class="h-card">For sharing or sponsorship</h2>
-          <ol class="questions mt-3">{% for q in item.thread.questions %}<li>{{ q }}</li>{% endfor %}</ol>
-          <div class="card mt-6">
-            {# The meeting format belongs to the weekly meeting: shown only once meeting.json is published. #}
-            {% if meeting.published %}
-            <h3 class="h-card">In a 36 Principles meeting</h3>
-            <ol class="prose text-muted text-sm mt-2 list-decimal pl-5">{% for f in meeting.format %}<li>{{ f }}</li>{% endfor %}</ol>
-            {% else %}
-            <h3 class="h-card">Using this page in a group</h3>
-            <p class="text-muted text-sm mt-2">Read the Step, the Tradition and the Concept aloud, then share on the thread that connects them.</p>
-            {% endif %}
-            <button type="button" class="btn btn-secondary btn-sm mt-4 no-print" onclick="window.print()">{% icon "printer", "icon" %}<span>{{ t.labels.print }} handout</span></button>
-          </div>
-        </aside>
-      </div>
+{# ============ PREVIOUS · NEXT · ALL 36 ============ #}
+<nav class="section-tight section-alt pp-pager-band" aria-label="{{ np.pagerLabel }}">
+  <div class="container-page">
+    <div class="pp-pager">
+      {% if prev %}
+      <a href="/principles/{{ prev.n }}/" class="pp-pager-link pp-pager-prev" rel="prev"><span class="pp-pager-dir">{% icon "arrow-left", "icon icon-sm" %}<span>{{ np.previous }}</span></span><span class="pp-pager-title"><span class="pp-pager-n">{{ prev.n }}</span> {{ prev.thread.title }}</span></a>
+      {% else %}
+      <span class="pp-pager-spacer"></span>
+      {% endif %}
+      {% if next %}
+      <a href="/principles/{{ next.n }}/" class="pp-pager-link pp-pager-next" rel="next"><span class="pp-pager-dir"><span>{{ np.next }}</span>{% icon "arrow-right", "icon icon-sm" %}</span><span class="pp-pager-title"><span class="pp-pager-n">{{ next.n }}</span> {{ next.thread.title }}</span></a>
+      {% else %}
+      <span class="pp-pager-spacer"></span>
+      {% endif %}
     </div>
-  </section>
-
-  <section class="section-tight section-band">
-    <div class="container-page">
-      <nav class="pager" aria-label="Other numbers">
-        {% if prev %}<a href="/principles/{{ prev.n }}/" class="btn btn-secondary">{% icon "arrow-left", "icon" %}<span>{{ prev.n }} · {{ prev.thread.title }}</span></a>{% else %}<span></span>{% endif %}
-        <a href="/principles/" class="btn btn-ghost">{% icon "layers", "icon" %}<span>All 36</span></a>
-        {% if next %}<a href="/principles/{{ next.n }}/" class="btn btn-secondary"><span>{{ next.n }} · {{ next.thread.title }}</span>{% icon "arrow-right", "icon" %}</a>{% else %}<span></span>{% endif %}
-      </nav>
-    </div>
-  </section>
-</article>
+    <p class="pp-pager-all"><a href="/principles/" class="btn btn-outline">{% icon "layout-grid", "icon" %}<span>{{ np.all }}</span></a></p>
+  </div>
+</nav>

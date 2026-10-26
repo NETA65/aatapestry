@@ -8,49 +8,155 @@ joinLangs: ["en", "es"]
 permalink: "{% if plang == 'es' %}/es{% endif %}/join/"
 translated: true
 schema: event
-atcb: true
+bodyClass: join
 eleventyComputed:
   lang: "{{ plang }}"
-  title: "{{ i18n[plang].labels.joinZoom | tokens }}"
-  description: "{% if plang == 'es' %}Cómo unirse por Zoom a The Incredible Tapestry ({{ when.date.day }} de {{ when.date.monthEs }}, {{ when.time.leadShortEs }}): enlace, ID, código de acceso e interpretación en español o en ASL.{% else %}How to join The Incredible Tapestry on Zoom ({{ when.date.medium }}, {{ when.time.leadShort }}): link, meeting ID, passcode, and Spanish or ASL interpretation.{% endif %}"
+  title: "{{ pagecopy.join[plang].hero.title }}"
+  description: "{{ pagecopy.join[plang].meta.description }}"
 ---
+{#- How to join, /join/ and /es/join/: the ONE page with everything about getting into the room —
+    the Zoom details (link, meeting ID, passcode, QR), the joining steps, Spanish/ASL interpretation and
+    captions (#interpretation), Zoom etiquette and online anonymity (#etiquette) and website accessibility
+    (#accessibility). Other pages link here instead of repeating it. Copy: src/_data/pagecopy/join.json (c)
+    and i18n (t); the Zoom numbers from site.json, the date and time from when.js. Styles: css/pages/join.css.
+    On /es/join/, #interpretacion and #etiqueta are kept as aliases for links to the old Spanish page.
+    The questions address is printed only in the footer band: here it is a link, [..](mailto:{email}) in the copy. -#}
 {% import "macros/ui.njk" as ui %}
-<section class="section weave-bg">
-  <div class="container-page hero" style="padding-block: clamp(2rem, 5vw, 4rem)">
-    <div class="hero-grid">
-      <div>
-        <p class="eyebrow">{{ t.landing.eyebrow | tokens }}</p>
-        <h1 class="h-display">{{ title }}</h1>
-        {% set whenTile = false %}{% set whenClass = "mt-4" %}{% include "partials/when-text.njk" %}
-        {#- Add to calendar here too: the changed-Zoom-link notice below asks people to add the workshop again. #}
-        <div class="hero-actions">{% set atcbLabel = "" %}{% include "partials/atcb.njk" %}</div>
-        {% include "partials/countdown.njk" %}
+{% set c = pagecopy.join[lang] %}
+{% set es = lang == "es" %}
+{% set p = "/es" if es else "" %}
+{#- In the Spanish copy, *italics* are Zoom's English button names: mark them as English for screen readers. -#}
+{% set em = '<em lang="en">' if es else "<em>" %}
+{#- The Markdown renderer opens outside links (https://…, e.g. Zoom's test meeting) in a new tab: tell screen
+    readers so, like every other new-tab link on the site. Applied after mdInline: | replace(newTab, newTabEnd). -#}
+{% set newTab = r/(<a [^>]*target="_blank"[^>]*>(?:(?!<\/a>)[\s\S])*)<\/a>/g %}
+{% set newTabEnd = '$1<span class="sr-only"> ' + t.a11y.openInNewTab + '</span></a>' %}
+{#- [..](mailto:{email}) links get a subject (| mailSubject). With no address in site.json the token is empty and
+    the link would be a bare "mailto:": keep its words, drop the link (| replace(noMail, "$1")). -#}
+{% set noMail = r/<a href="mailto:">((?:(?!<\/a>)[\s\S])*)<\/a>/g %}
+
+{% set hero = { eyebrow: t.labels.online, title: c.hero.title, lead: c.hero.lead } %}
+{% include "partials/page-hero.njk" %}
+
+{# ============ ZOOM DETAILS: the centrepiece ============ #}
+<section class="section-tight" aria-labelledby="zoom">
+  <div class="container-page">
+    {% include "partials/notice.njk" %}
+    <div class="join-zoom thread-bg on-dark">
+      <div class="join-zoom-main">
+        <div class="join-zoom-head">
+          <span class="join-zoom-mark">{% icon "video", "icon" %}</span>
+          <h2 class="join-zoom-title" id="zoom">{{ c.zoom.heading }}</h2>
+          {#- Date and time: one line with a gold dot on a wide card, two lines (no dot) on a narrow one (join.css).
+              The literal space before the time keeps "2026" and "11:00" apart for screen readers. -#}
+          <p class="join-zoom-when"><time class="join-zoom-date" datetime="{{ when.startISO }}">{{ (when.date.longEs | capitalize) if es else when.date.long }}</time><span class="join-zoom-sep" aria-hidden="true">·</span> <span class="join-zoom-time">{{ when.time.leadEs if es else when.time.lead }}</span></p>
+        </div>
+        <div class="join-zoom-details">
+          {#- Join on Zoom and Copy link come first (zoomActionsFirst), in the DOM so the focus order matches:
+              on a phone, Join is then on the first screen. The link carries the passcode; the tiles are the fallback. -#}
+          {% set zoomActions = true %}{% set zoomActionsFirst = true %}{% set zoomJoinSize = "btn-lg" %}{% include "partials/zoom-details.njk" %}
+        </div>
+        <p class="join-zoom-more"><a href="{{ p }}/program/#time-zones" class="join-zoom-more-link">{% icon "calendar-days", "icon icon-sm" %}{% set moreWords = c.zoom.programLink.split(" ") %}{% set moreLast = moreWords.pop() %}<span>{{ moreWords | join(" ") }} <span class="whitespace-nowrap">{{ moreLast }}&nbsp;{% icon "arrow-right", "icon icon-sm join-zoom-more-arrow" %}</span></span></a></p>
       </div>
-      <div>{% set zoomHeadingLevel = 2 %}{% include "partials/zoom-card.njk" %}</div>
+      <figure class="join-qr">
+        <div class="join-qr-code">{% inlineSvg "brand/qr/qr-zoom.svg", "join-qr-svg", c.zoom.qrLabel %}</div>
+        <figcaption class="join-qr-caption">{% icon "scan-qr-code", "icon icon-sm" %}<span>{{ c.zoom.qrCaption }}</span></figcaption>
+      </figure>
     </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="container-page">
-    {# The changed-Zoom-link notice (t.landing.zoomNotice) is under the How to join heading, in join-steps.njk. #}
-    <div class="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start">
-      <div>
-        {% set joinHeadingLevel = 2 %}{% include "partials/join-steps.njk" %}
-      </div>
-      <aside class="grid gap-6 content-start lg:sticky lg:top-24">
-        {% set qHeadingLevel = 2 %}{% set qSubject = "" %}{% set qId = "questions" %}{% include "partials/questions-card.njk" %}
-        <div class="card">
-          <h2 class="h-card">{% icon "image", "icon" %} {{ t.flyer.heading | tokens }}</h2>
-          {% if t.flyer.lead %}<p class="text-muted mt-1">{{ t.flyer.lead | tokens }}</p>{% endif %}
-          {% if t.flyer.englishOnly %}<p class="text-sm text-muted mt-2">{{ t.flyer.englishOnly | tokens }}</p>{% endif %}
-          <p class="mt-3 flex flex-wrap gap-x-4 gap-y-2">
-            <a href="{{ '/es/flyer/' if lang == 'es' else '/flyer/' }}" class="tap-link">{{ (t.flyer.viewPage or t.flyer.viewFull) | tokens }} {% icon "arrow-right", "icon" %}</a>
-            {% if lang == 'es' %}<a href="/es/poster/" class="tap-link">{% icon "printer", "icon" %}<span>{{ t.flyer.spanishPoster | tokens }}</span></a>{% endif %}
-          </p>
+{# ============ STEP BY STEP ============ #}
+<section class="section" aria-labelledby="steps">
+  <div class="container-page join-split">
+    <div class="join-split-intro">
+      <h2 class="h-section" id="steps">{{ c.steps.heading }}</h2>
+      <p class="lead mt-3">{{ c.steps.lead }}</p>
+      <p class="join-tip">{% icon "lightbulb", "icon" %}<span><strong>{{ c.steps.tipLabel }}:</strong> {{ c.steps.tip | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | safe }}</span></p>
+    </div>
+    <ol class="join-steps" role="list">
+      {% for s in c.steps.items %}
+      <li class="join-step">
+        <span class="join-step-num">{{ loop.index }}</span>
+        <div class="join-step-text">
+          <h3 class="h-card">{{ s.title }}</h3>
+          <p class="join-step-body">{{ s.body | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | mailSubject(t.contact.subject | tokens) | replace(noMail, "$1") | safe }}</p>
         </div>
-        {% if t.join.accessibilityLink %}<p class="panel-muted text-sm"><a href="/accessibility/{{ '#espanol' if lang == 'es' }}" class="tap-link"{% if lang == 'es' %} hreflang="en"{% endif %}>{% icon "accessibility", "icon" %}<span>{{ t.join.accessibilityLink | tokens }}</span></a></p>{% endif %}
-      </aside>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ============ INTERPRETATION & CAPTIONS (#interpretation) ============ #}
+{% set interpIcons = { "es": "languages", "asl": "hand", "captions": "captions" } %}
+{% set interpLegacy = { "es": "recovery", "asl": "unity", "captions": "service" } %}
+<section class="section section-alt" aria-labelledby="interpretation"{% if es %} id="interpretacion"{% endif %}>
+  <div class="container-page">
+    {{ ui.sectionHead(c.interpretation.heading, c.interpretation.lead, "", "interpretation") }}
+    <div class="join-interp">
+      {% for card in c.interpretation.cards %}
+      {% set i = site.event.interpretation | byKey(card.key) %}
+      {% if i or card.key == "captions" %}
+      <article class="card join-interp-card" data-legacy="{{ interpLegacy[card.key] or 'recovery' }}">
+        <div class="join-interp-head">
+          <span class="card-icon">{% icon interpIcons[card.key] or "info", "icon" %}</span>
+          <div class="min-w-0">
+            <h3 class="h-card">{{ card.title }}</h3>
+            {% if card.key == "es" and not es and i.labelEs %}<p class="join-interp-alt" lang="es">{{ i.labelEs }}</p>{% endif %}
+          </div>
+        </div>
+        <p class="join-interp-summary">{{ card.summary }}</p>
+        <dl class="join-how">
+          <div class="join-how-row">
+            <dt>{% icon "monitor", "icon icon-sm" %}<span>{{ c.interpretation.computer }}</span></dt>
+            <dd>{{ card.computer | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | safe }}</dd>
+          </div>
+          <div class="join-how-row">
+            <dt>{% icon "smartphone", "icon icon-sm" %}<span>{{ c.interpretation.phone }}</span></dt>
+            <dd>{{ card.phone | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | safe }}</dd>
+          </div>
+        </dl>
+        {% if card.note %}<p class="join-interp-note">{{ card.note | tokens | mdInline | replace("<em>", em) | replace(newTab, newTabEnd) | safe }}</p>{% endif %}
+      </article>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ============ ZOOM ETIQUETTE & ONLINE ANONYMITY (#etiquette) ============ #}
+{% set ruleIcons = { "camera": "video-off", "recording": "camera-off", "afterwards": "message-circle", "link": "share-2" } %}
+<section class="section" aria-labelledby="etiquette"{% if es %} id="etiqueta"{% endif %}>
+  <div class="container-page join-split">
+    <div class="join-split-intro">
+      <h2 class="h-section" id="etiquette">{{ c.etiquette.heading }}</h2>
+      <p class="lead mt-4">{{ c.etiquette.lead }}</p>
+    </div>
+    {#- Like the step cards: on phones the icon sits beside the bold lead-in and the text runs under both, across
+        the full width (join-rule-text has no semantics: display: contents there). -#}
+    <ul class="join-rules" role="list">
+      {% for r in c.etiquette.items %}
+      <li class="join-rule">
+        <span class="join-rule-icon">{% icon ruleIcons[r.key] or "check", "icon" %}</span>
+        <div class="join-rule-text"><strong class="join-rule-title">{{ r.title }}</strong> <p class="join-rule-body">{{ r.body }}</p></div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ============ WEBSITE ACCESSIBILITY (#accessibility) ============ #}
+{#- The way to ask is an inline link with the accessibility subject, not a button: the footer's questions band
+    with the address follows right after, and two email calls to action back to back would repeat each other. -#}
+<section class="section-tight section-alt" aria-labelledby="accessibility">
+  <div class="container-page">
+    <div class="join-a11y">
+      <span class="card-icon">{% icon "accessibility", "icon" %}</span>
+      <div class="join-a11y-text">
+        <h2 class="join-a11y-title" id="accessibility">{{ c.accessibility.heading }}</h2>
+        <p>{{ c.accessibility.body | tokens | mdInline | mailSubject(t.contact.subjectAccessibility | tokens) | replace(noMail, "$1") | safe }}</p>
+      </div>
     </div>
   </div>
 </section>

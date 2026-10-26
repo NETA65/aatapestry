@@ -1,57 +1,74 @@
+{#- <head>: title, description, canonical, hreflang, social cards, icons, fonts, CSS and JSON-LD.
+    Page front matter: title, description, noindex, translated (has an /es/ twin), ogImage, titleFonts
+    (preload the flyer lettering fonts on pages that show the title lockup), schema ("article" → og:type).
+    A noindex page (the 404) has no canonical and no og:url. Used by both layouts (base and poster). -#}
 {%- set isHome = page.url == "/" or page.url == "/es/" -%}
-{%- set pageTitle = title if (isHome and title) else ((title + " · " + site.name) if title else site.title) -%}
+{%- set pageTitle = (title if (isHome and title) else ((title + " · " + site.name) if title else site.title)) | tokens | plain -%}
 {%- set pageDesc = ((description or (t.landing.metaDescription if lang == "es" else (site.metaDescription or site.description))) | tokens | plain) -%}
-{#- The social card's alt text says what the card prints (scripts/build-brand.mjs → cardText): the date, the
-    time line, the PT/MT/CT line, and "Online on Zoom · Spanish & ASL interpretation · Free". -#}
-{%- set ogWhere = (t.poster.whereLine | tokens) + " · " + (t.poster.interpretationLine | tokens) + " · " + (t.labels.free | tokens) -%}
-{%- set ogAlt = ((site.name + " — " + when.date.longEs + ", " + when.time.leadLongEs + "; " + when.time.startsAlsoEs + " · " + ogWhere) if lang == "es" else (site.name + " — " + when.date.long + ", " + when.time.lead + " (" + when.time.startsAlso + ") · " + ogWhere)) | plain -%}
+{%- set ogAlt = (site.name + " — " + (when.date.longEs if lang == "es" else when.date.long) + ", " + (when.time.leadEs if lang == "es" else when.time.lead) + " · " + t.labels.online + " · " + t.labels.interpretationBadge) | plain -%}
 {%- set canonical = page.url | absUrl -%}
 {%- set ogImageAbs = ogImage | absUrl -%}
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{ pageTitle }}</title>
 <meta name="description" content="{{ pageDesc }}">
-<link rel="canonical" href="{{ canonical }}">
+{% if not noindex %}<link rel="canonical" href="{{ canonical }}">{% endif %}
 {% if noindex %}<meta name="robots" content="noindex, follow">{% else %}<meta name="robots" content="index, follow, max-image-preview:large">{% endif %}
 {% if translated %}
 <link rel="alternate" hreflang="en" href="{{ page.url | langUrl('en') | absUrl }}">
 <link rel="alternate" hreflang="es" href="{{ page.url | langUrl('es') | absUrl }}">
 <link rel="alternate" hreflang="x-default" href="{{ page.url | langUrl('en') | absUrl }}">
 {% endif %}
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="{{ site.themeColor }}">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#14151B">
+<meta name="theme-color" content="{{ site.themeColor }}">
 <meta name="color-scheme" content="light dark">
 <meta name="author" content="{{ site.contact.committee }}">
-<meta name="generator" content="Eleventy">
-<meta name="keywords" content="A.A., Alcoholics Anonymous, workshop, Twelve Steps, Twelve Traditions, Twelve Concepts, Three Legacies, 36 principles, online, Zoom, Spanish interpretation, ASL, {{ when.date.long }}">
+<meta name="format-detection" content="telephone=no">
 
-<meta property="og:type" content="website">
+<meta property="og:type" content="{{ 'article' if schema == 'article' else 'website' }}">
 <meta property="og:site_name" content="{{ site.name }}">
 <meta property="og:locale" content="{{ 'es_US' if lang == 'es' else site.locale }}">
 {% if translated %}<meta property="og:locale:alternate" content="{{ site.locale if lang == 'es' else 'es_US' }}">{% endif %}
 <meta property="og:title" content="{{ pageTitle }}">
 <meta property="og:description" content="{{ pageDesc }}">
-<meta property="og:url" content="{{ canonical }}">
+{% if not noindex %}<meta property="og:url" content="{{ canonical }}">{% endif %}
 <meta property="og:image" content="{{ ogImageAbs }}">
 <meta property="og:image:width" content="{{ ogImageWidth or 1200 }}">
 <meta property="og:image:height" content="{{ ogImageHeight or 630 }}">
 <meta property="og:image:alt" content="{{ ogAlt }}">
-<meta name="twitter:image:alt" content="{{ ogAlt }}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ pageTitle }}">
 <meta name="twitter:description" content="{{ pageDesc }}">
 <meta name="twitter:image" content="{{ ogImageAbs }}">
-{% if site.social.twitter %}<meta name="twitter:site" content="{{ site.social.twitter }}">{% endif %}
+<meta name="twitter:image:alt" content="{{ ogAlt }}">
 
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/brand/favicon/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/brand/favicon/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
+<link rel="alternate" type="text/calendar" title="{{ t.calendar.title | tokens | plain }}" href="{{ calendar.ics[lang] }}">
+{#- The updates feed (eleventy.config.js → /feed.xml, entries in site.json → updates; English). -#}
 <link rel="alternate" type="application/atom+xml" title="{{ site.name }} — updates" href="/feed.xml">
-<link rel="alternate" type="text/calendar" title="{{ site.event.name }}" href="/aatapestry-workshop.ics">
+{% if isHome %}
+{#- Links into the old one-page site (/#join, /es/#unirse …) still circulate in emails and announcements.
+    GitHub Pages cannot redirect a #fragment, so send each old section to its new page before anything paints.
+    The old home's FAQ answers (/#faq-cost …) keep their ids on the FAQ page. Own keys only, so #constructor
+    or #toString never picks up an Object.prototype function. -#}
+<script>(function(){var h=location.hash.slice(1);if(!h)return;var M={{ ({
+  "en": { "join": "/join/", "zoom": "/join/", "accessibility": "/join/#interpretation", "program": "/program/", "schedule": "/program/", "faq": "/faq/", "questions": "/faq/", "contribute": "/faq/#faq-cost", "seventh": "/faq/#faq-cost", "flyer": "/flyer/", "share": "#share-title", "at-a-glance": "#essentials-title", "updates": "#essentials-title", "about": "#about-title", "legacies": "/principles/#legacies", "thirty-six": "/principles/", "meeting": "/principles/" },
+  "es": { "unirse": "/es/join/", "zoom": "/es/join/", "interpretacion": "/es/join/#interpretation", "programa": "/es/program/", "faq": "/es/faq/", "preguntas": "/es/faq/", "septima": "/es/faq/#faq-cost", "volante": "/es/flyer/", "compartir": "#share-title", "datos": "#essentials-title", "legados": "#about-title" }
+})[lang] | dump | safe }};var m=Object.prototype.hasOwnProperty.call(M,h)?M[h]:/^faq-[a-z0-9-]+$/.test(h)?"{{ '/es/faq/#' if lang == 'es' else '/faq/#' }}"+h:"";if(m)location.replace(m.charAt(0)==="#"?location.pathname+m:m)})()</script>
+{% endif %}
 
-<link rel="preload" href="/assets/fonts/fraunces-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/main.css">
-<script>try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preload" href="/assets/fonts/fraunces-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+{% if titleFonts %}
+<link rel="preload" href="/assets/fonts/playfair-display-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/great-vibes-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+{% endif %}
+{#- Before the first paint: the "js" class (copy buttons show only with JavaScript) and the workshop's
+    phase on <html data-phase> (upcoming, live, ended: the Join and Add to calendar buttons hide once it
+    has ended; app.js keeps it current on a page left open). -#}
+<script>(function(d){d.classList.add("js");var n=Date.now(),s=Date.parse("{{ when.startISO }}"),e=Date.parse("{{ when.endISO }}");d.dataset.phase=n>=e?"ended":n>=s?"live":"upcoming"})(document.documentElement)</script>
+{#- ?v=<hash> (the `v` filter, eleventy.config.js): a new stylesheet is never mixed with cached HTML. -#}
+<link rel="stylesheet" href="{{ '/assets/css/main.css' | v }}">
 {% include "partials/jsonld.njk" %}

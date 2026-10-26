@@ -7,9 +7,7 @@
 #
 #  Runs:
 #   · on every push to main (settings, content or code changed);
-#   · every Monday morning (so the countdown fallback and "updated" dates
-#     stay current without a push, and the 36-Principles focus too if
-#     meeting.json is ever published);
+#   · every Monday morning (so build-time dates stay current without a push);
 #   · every day in December, the workshop month (Dec 12, 11 AM – 7 PM ET);
 #   · by hand: Actions → "Build & Deploy" → Run workflow;
 #   · from the other workflows (workflow_call) after they commit new Zoom
@@ -79,12 +77,25 @@ jobs:
           ELEVENTY_RUN_MODE: build
 
       - name: Poster PDF + PNG (the site still deploys if this fails)
+        id: pdf
         run: npm run pdf
         continue-on-error: true
+
+      - name: Warn when the committed poster files were published instead
+        if: steps.pdf.outcome == 'failure'
+        run: |
+          echo "::warning::npm run pdf failed; this deploy ships the committed brand/poster files. Check they still match /poster/ and /es/poster/."
+          echo "- ⚠️ Poster PDF/PNG step failed: the committed brand/poster files were published." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate HTML and internal links
         run: npm test
         continue-on-error: true
+
+      - name: Responsive + accessibility check (axe-core, light and dark)
+        run: npm run test:ui
+        continue-on-error: true
+        env:
+          WIDTHS: "320,768,1440"
 
       - name: Build summary
         run: |

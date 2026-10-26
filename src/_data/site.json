@@ -1,5 +1,5 @@
 {
-  "_readme": "SINGLE SOURCE OF TRUTH for the workshop. Edit here and every page, the poster, the QR codes, the calendar files, the JSON-LD and the social cards update on the next build. Prose in copy.json, i18n.json, faq.json, schedule.json and updates.json never repeats the email, date, times or Zoom numbers: it uses tokens such as {email}, {date}, {time}, {startsAlso}, {zoomId} and {passcode}, which the build fills in from here. The exceptions are description and metaDescription, which spell the time out in plain text; update them by hand if the time ever changes. Field notes are in docs/EDITING.md.",
+  "_readme": "SINGLE SOURCE OF TRUTH for the workshop. Edit here and every page, the poster, the QR codes, the calendar files, the JSON-LD and the social cards update on the next build. Prose in i18n.json, src/_data/pagecopy/*.json, copy.json, faq.json and schedule.json never repeats the email, date, times or Zoom numbers: it uses tokens such as {email}, {date}, {time}, {startsAlso}, {zoomId} and {passcode}, which the build fills in from here. The exceptions are description and metaDescription, which spell the time out in plain text; update them by hand if the time ever changes. Field notes are in docs/EDITING.md.",
   "name": "The Incredible Tapestry",
   "shortName": "AA Tapestry",
   "title": "The Incredible Tapestry: Weaving the Steps, Traditions & Concepts Together",
@@ -11,7 +11,7 @@
   "domain": "aatapestry.org",
   "lang": "en",
   "locale": "en_US",
-  "themeColor": "#2F4FA2",
+  "themeColor": "#0B0F1E",
   "backgroundColor": "#FBF7F0",
   "event": {
     "name": "The Incredible Tapestry Workshop",
@@ -26,9 +26,11 @@
     "format": "online",
     "platform": "Zoom",
     "status": "scheduled",
+    "announced": "2026-10-04",
     "calendarSequence": 3,
     "cost": "Free. There will be some expenses for the Spanish and ASL interpretation, and contributions are welcome to help cover them.",
     "audience": "Open to all A.A. members, anyone who thinks they might have a problem with alcohol, and trusted servants at every level. Newcomers warmly welcome.",
+    "audienceEs": "Abierto a todos los miembros de A.A., a cualquier persona que piense que puede tener un problema con el alcohol y a los servidores de confianza de todos los niveles. Los recién llegados son muy bienvenidos.",
     "registration": {
       "required": false,
       "url": "",
@@ -51,7 +53,7 @@
       }
     ],
     "zoom": {
-      "_readme": "Also editable from GitHub → Actions → 'Update Zoom info' without touching this file.",
+      "_readme": "Also editable from GitHub → Actions → 'Update Zoom info' without touching this file. dialIn: the \"Dial by your location\" phone numbers from the host’s Zoom invitation, only if telephone audio is on for the meeting; leave [] to hide the Dial in row (then /join/ step 1 tells members to email the committee about joining by telephone).",
       "meetingId": "824 7491 1898",
       "passcode": "218564",
       "joinUrl": "https://us02web.zoom.us/j/82474911898?pwd=EwOXRz2NWKHgCirlpAAv1gseGMybGe.1",
@@ -108,8 +110,9 @@
     "fontBody": "Inter"
   },
   "contact": {
-    "_readme": "email is the questions address printed on the official flyer. Each page PRINTS the address at most once: the Questions card (home, /es/, /join/, /es/join/, /schedule/), the flyer text (/flyer/, /es/flyer/), the printed line on the posters, the requests box on /accessibility/. Everywhere else (facts strip, contributions note, FAQ, updates, footer) it is a link labelled 'Email the planning committee' / 'Escribir al comité organizador' (i18n contact.linkText; in Markdown prose [email the planning committee](mailto:{email})); never write a bare {email} in prose, which would print it a second time. The calendar entry (DESCRIPTION), the Add to calendar text and the JSON-LD carry it too. Leave it empty only to hide all of them. icsOrganizer: true would also write it as the .ics ORGANIZER; it is off because Outlook then treats the entry as a meeting request. formUrl: optional link to a contact form (leave empty).",
+    "_readme": "email is the questions address printed on the official flyer. Every page PRINTS it once, in the questions band at the top of the footer (and the printable poster prints it); everywhere else (FAQ answers, the contributions note, the accessibility note) it is a link labelled 'Email the planning committee' / 'Escribir al comité organizador' (i18n contact.linkText; in Markdown prose [email the planning committee](mailto:{email})); never write a bare {email} in prose, which would print it a second time. The calendar entry (DESCRIPTION) and the JSON-LD carry it too. Leave it empty only to hide all of them. icsOrganizer: true would also write it as the .ics ORGANIZER; it is off because Outlook then treats the entry as a meeting request. formUrl: optional link to a contact form (leave empty). committee is the © line in the footer and the feed's author; committeeEs is the same name for the Spanish pages' © line (and the Spanish .ics ORGANIZER).",
     "committee": "The Incredible Tapestry Workshop Planning Committee",
+    "committeeEs": "Comité organizador del taller The Incredible Tapestry",
     "email": "a44p69delegate@gmail.com",
     "formUrl": "",
     "icsOrganizer": false
@@ -145,5 +148,31 @@
   },
   "disclaimer": "This website is maintained by A.A. members as a service for an A.A. workshop. It is not affiliated with, nor endorsed by, Alcoholics Anonymous World Services, Inc., the General Service Office, or any A.A. area or district, unless stated otherwise.",
   "copyrightNotice": "The Twelve Steps, Twelve Traditions and Twelve Concepts for World Service are copyrighted by Alcoholics Anonymous World Services, Inc. (A.A.W.S.) and are reprinted here by A.A. members for A.A. use, with the credit line requested by A.A.W.S. Permission to reprint does not mean that A.A.W.S. has reviewed or approved the contents of this website, or that A.A.W.S. necessarily agrees with the views expressed herein.",
-  "metaDescription": "Free 1-day online A.A. workshop on Zoom, Sat., Dec. 12, 2026, 11 AM–7 PM ET: Steps, Traditions & Concepts. Spanish & ASL interpretation. No pre-registration."
+  "metaDescription": "Free 1-day online A.A. workshop on Zoom, Sat., Dec. 12, 2026, 11 AM–7 PM ET: Steps, Traditions & Concepts. Spanish & ASL interpretation. No pre-registration.",
+  "updates": {
+    "_readme": "News for the updates feed (/feed.xml, in English; built in eleventy.config.js and linked from every page's footer). Feed readers show each new item to their subscribers, so add one only for real news (the full program is posted, the Zoom details change…), newest FIRST. Each item: id (permanent: never change it once published; for a new item use tag:aatapestry.org,<date>:<a-short-slug>), date (YYYY-MM-DD), title (plain text), link (the page the news is about) and body (simple Markdown). Write the email, date, times and Zoom numbers in the body only as tokens ({email}, {date}, {time}, {startsAlso}, {zoomId}, {passcode}…), and link the email as [email the planning committee](mailto:{email}). Site links such as (/join/) are made absolute in the feed.",
+    "items": [
+      {
+        "id": "tag:aatapestry.org,2026-10-26:a-new-look-for-the-workshop-website",
+        "date": "2026-10-26",
+        "title": "A new look for the workshop website",
+        "link": "/join/",
+        "body": "The website has a new look, with one clear place for each thing: [How to join](/join/) has the Zoom details, Spanish and ASL interpretation and tips for the day; the [Program](/program/) shows the hours in your time zone, and the full program will be posted there; and the [flyer](/flyer/) is ready to print or pass along. The workshop runs {time} ({startsAlso}). It is free, and no pre-registration is required."
+      },
+      {
+        "id": "tag:aatapestry.org,2026-10-25:the-official-flyer-is-out-and-the-zoom-details-are-set",
+        "date": "2026-10-25",
+        "title": "The official flyer is out, and the Zoom details are set",
+        "link": "/join/",
+        "body": "The official flyer is here: [see it, print it or pass it along](/flyer/). The Zoom details are set and are on the [How to join](/join/) page; no pre-registration is required. The workshop runs {time} ({startsAlso}). It is free, and contributions to help cover the Spanish and ASL interpretation are welcome. For questions, please [email the planning committee](mailto:{email}).\n\n**Please note:** the Zoom link shown on this site before October 25 has changed. If you saved it, please use the new one. If you added the workshop to your calendar from this site before October 25, please delete that calendar entry and add the workshop to your calendar again."
+      },
+      {
+        "id": "tag:aatapestry.org,2026-10-04:save-the-date-saturday-december-12-2026",
+        "date": "2026-10-04",
+        "title": "Save the date: Saturday, December 12, 2026",
+        "link": "/program/",
+        "body": "The Incredible Tapestry workshop is set: a full day online, {time} ({startsAlso}), with Spanish and ASL interpretation. The program is being planned now; check back for the schedule."
+      }
+    ]
+  }
 }

@@ -1,0 +1,267 @@
+/* The 36 principles — /principles/ (src/pages/principles.njk) and /principles/1/ … /12/
+   (src/pages/principle.njk). Imported by ../main.css. Every class starts with pp- so nothing here
+   touches another page. Legacy colours come from data-legacy (main.css: --legacy, --legacy-text,
+   --legacy-soft), so light and dark mode follow the theme variables. */
+@layer components {
+  /* ---------- Shared pieces ---------- */
+  .pp-dot { display: inline-block; flex: none; width: 0.625rem; height: 0.625rem; border-radius: 999px; background: var(--legacy, var(--muted)); }
+  .pp-dot--all { background: conic-gradient(var(--c-recovery) 0 120deg, var(--c-unity) 120deg 240deg, var(--c-service) 240deg); }
+  /* An external link whose arrow follows the last word when the text wraps; 44 px tall to tap */
+  .pp-link { display: block; align-self: flex-start; min-height: 2.75rem; padding-block: 0.6875rem; font-weight: 600; line-height: 1.4; text-decoration: none; color: var(--legacy-text, var(--link)); }
+  .pp-link:hover { color: var(--legacy-text, var(--link-hover)); text-decoration: underline; }
+  .pp-link .icon { display: inline-block; margin-left: 0.25rem; vertical-align: -0.125em; transition: transform 0.15s; }
+  .pp-link:hover .icon { transform: translate(1px, -1px); }
+  .pp-link-end { white-space: nowrap; }
+
+  /* ======================= /principles/ ======================= */
+
+  /* ---------- The three legacies ---------- */
+  .pp-legacies { display: grid; gap: clamp(1rem, 2.5vw, 1.5rem); grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 56rem) { .pp-legacies { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .pp-legacy {
+    display: flex; flex-direction: column; gap: 0.75rem; min-width: 0;
+    border-top: 4px solid var(--legacy);
+    --tint: var(--legacy-soft); --tint-fg: var(--legacy-text);
+  }
+  .pp-legacy-head { display: flex; align-items: center; gap: 0.75rem; }
+  .pp-legacy-name { font-family: var(--font-title); font-weight: 900; font-size: 1.0625rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--legacy-text); }
+  .pp-legacy-source { font-size: 0.9375rem; line-height: 1.5; color: var(--muted); }
+  .pp-label { display: block; margin-bottom: 0.125rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+  .pp-legacy-link { margin-top: auto; }
+
+  /* ---------- The twelve threads: a compact picker (number + thread; the words are in the table) ---------- */
+  /* The intro text sits under the tiles (same gap as .section-head's margin-bottom; default prose measure) */
+  .pp-intro { margin-top: clamp(1.75rem, 3.5vw, 2.5rem); }
+  .pp-tiles { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.25rem), 1fr)); }
+  @media (min-width: 48rem) { .pp-tiles { gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr)); } }
+  .pp-tiles > li { display: flex; min-width: 0; }
+  .pp-tile {
+    position: relative; display: flex; flex-direction: column; gap: 0.5rem; width: 100%; min-width: 0;
+    padding: 1.25rem 1rem 1rem; border-radius: var(--radius-card); overflow: hidden;
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card);
+    color: var(--fg); text-decoration: none;
+    transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  }
+  /* The three strands of every number, as a woven edge */
+  .pp-tile::before {
+    content: ""; position: absolute; inset: 0 0 auto; height: 5px;
+    background: linear-gradient(90deg, var(--c-recovery) 0 33.34%, var(--c-unity) 33.34% 66.67%, var(--c-service) 66.67%);
+  }
+  .pp-tile:hover { color: var(--fg); transform: translateY(-2px); border-color: var(--line-strong); box-shadow: 0 1px 2px rgb(16 22 43 / 0.06), 0 16px 34px -18px rgb(16 22 43 / 0.4); }
+  .pp-tile-n { display: flex; align-items: baseline; gap: 0.5rem; padding-right: 1.5rem; }
+  .pp-tile-arabic { font-family: var(--font-title); font-weight: 900; font-size: 2.25rem; line-height: 1; font-variant-numeric: lining-nums; }
+  .pp-tile-roman { font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; letter-spacing: 0.08em; color: var(--muted); }
+  .pp-tile-title { font-family: var(--font-display); font-weight: 600; font-size: 1.125rem; line-height: 1.25; text-wrap: balance; }
+  .pp-tile-arrow { position: absolute; top: 1.25rem; right: 1rem; color: var(--muted); transition: transform 0.15s, color 0.15s; }
+  .pp-tile:hover .pp-tile-arrow { color: var(--fg); transform: translateX(2px); }
+  /* Phones: always a two-column picker, down to 320 px (where 9.25rem would drop to one long column) */
+  @media (max-width: 29.99rem) {
+    .pp-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pp-tile { padding: 1.125rem 0.875rem 0.875rem; }
+    .pp-tile-arabic { font-size: 1.875rem; }
+    .pp-tile-title { font-size: 1.0625rem; }
+    .pp-tile-arrow { top: 1.125rem; right: 0.75rem; }
+  }
+
+  /* ---------- Side by side: the table and its filter ---------- */
+  .pp-table-top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.25rem 2rem; margin-bottom: clamp(1.25rem, 3vw, 1.75rem); }
+  .pp-table-top .section-head { margin-bottom: 0; }
+  .pp-filter { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .pp-filter button {
+    display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; padding: 0.5rem 1rem;
+    border-radius: 999px; border: 1.5px solid var(--line-strong); background: var(--surface); color: var(--fg);
+    font-family: var(--font-sans); font-size: 0.9375rem; font-weight: 600; line-height: 1.2; cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .pp-filter button:hover { border-color: var(--fg); }
+  .pp-filter button[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+  .pp-filter button[aria-pressed="true"] .pp-dot { box-shadow: 0 0 0 2px var(--bg); }
+  /* Windows High Contrast flattens every button to ButtonFace, so the pressed one gets the system highlight */
+  @media (forced-colors: active) {
+    .pp-filter button[aria-pressed="true"] { forced-color-adjust: none; background: Highlight; color: HighlightText; border-color: Highlight; }
+    .pp-filter button[aria-pressed="true"] .pp-dot { box-shadow: 0 0 0 2px HighlightText; }
+  }
+  /* Phones: a tidy 2 × 2 block instead of a ragged row */
+  @media (max-width: 29.99rem) {
+    .pp-filter { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+    .pp-filter button { justify-content: center; padding-inline: 0.75rem; }
+  }
+
+  .pp-table-wrap { border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); box-shadow: var(--shadow-card); }
+  .pp-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+  .pp-table th, .pp-table td { padding: 1rem 1.125rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+  .pp-table tbody tr:last-child > * { border-bottom: 0; }
+  /* The column headings stay in view under the sticky site header while the table scrolls past */
+  .pp-table thead th {
+    position: sticky; top: 4rem; z-index: 2; padding-block: 0.875rem;
+    background: var(--surface); border-bottom: 2px solid var(--line-strong);
+    font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  }
+  .pp-table thead th:first-child { border-top-left-radius: var(--radius-card); }
+  .pp-table thead th:last-child { border-top-right-radius: var(--radius-card); }
+  .pp-table thead th[data-legacy] { color: var(--legacy-text); }
+  .pp-table thead th .pp-dot { margin-right: 0.5rem; vertical-align: 0.05em; }
+  .pp-table tbody th { width: 24%; font-weight: inherit; }
+  .pp-table td { width: 25.33%; }
+  .pp-row-link { display: flex; align-items: baseline; gap: 0.75rem; min-height: 2.75rem; color: var(--fg); text-decoration: none; }
+  /* Table layout only (the sticky column headings are visible from 64rem): a row link reached with
+     Shift+Tab scrolls in clear of them. Adds to html's scroll-padding-top, which clears the site header. */
+  @media (min-width: 64rem) { .pp-table .pp-row-link { scroll-margin-top: 3rem; } }
+  .pp-row-n { flex: none; min-width: 2rem; font-family: var(--font-title); font-weight: 900; font-size: 1.75rem; line-height: 1; font-variant-numeric: lining-nums; color: var(--fg); }
+  .pp-row-title { font-family: var(--font-display); font-weight: 600; font-size: 1.0625rem; line-height: 1.3; color: var(--link); text-decoration: underline; text-decoration-thickness: 0.07em; text-underline-offset: 0.18em; text-decoration-color: color-mix(in srgb, var(--link) 40%, transparent); }
+  .pp-row-link:hover .pp-row-title { color: var(--link-hover); text-decoration-color: currentColor; }
+  .pp-cell-label { display: none; }
+  .pp-cell-word { display: block; margin-bottom: 0.25rem; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--legacy-text); }
+  .pp-cell-gist { display: block; font-size: 0.9375rem; line-height: 1.5; }
+  .pp-table tbody tr:hover > * { background: color-mix(in srgb, var(--fg) 3%, transparent); }
+  .pp-table[data-show="recovery"] [data-col]:not([data-col="recovery"]),
+  .pp-table[data-show="unity"] [data-col]:not([data-col="unity"]),
+  .pp-table[data-show="service"] [data-col]:not([data-col="service"]) { display: none; }
+  .pp-table[data-show] td { width: auto; }
+
+  /* Below 64rem every row becomes a card: the number and thread on top, then the Step, the Tradition and
+     the Concept, each with its own label (the column headings stay available to screen readers).
+     Phones stack the three; tablets (48–64rem) set them side by side. */
+  @media (max-width: 63.99rem) {
+    .pp-table-wrap { border: 0; border-radius: 0; background: none; box-shadow: none; }
+    .pp-table, .pp-table tbody, .pp-table tr, .pp-table th, .pp-table td { display: block; width: auto; }
+    .pp-table thead { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .pp-table tbody { display: grid; gap: 0.875rem; }
+    .pp-table tbody tr { border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); box-shadow: var(--shadow-card); overflow: hidden; }
+    .pp-table tbody tr:hover > * { background: none; }
+    .pp-table tbody th { width: auto; padding: 0.875rem 1rem 0.75rem; border-bottom: 1px solid var(--line); background: var(--bg-alt); }
+    .pp-table tbody td { padding: 0.75rem 1rem 0.875rem 1.0625rem; border-bottom: 1px solid var(--line); box-shadow: inset 4px 0 0 var(--legacy); }
+    .pp-table tbody tr > :last-child { border-bottom: 0; }
+    .pp-table[data-show] tbody td { border-bottom: 0; }
+    .pp-cell-label { display: inline; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+    .pp-cell-label::after { content: " · "; }
+    .pp-cell-word { display: inline; }
+    .pp-cell-gist { margin-top: 0.25rem; }
+  }
+  @media (min-width: 48rem) and (max-width: 63.99rem) {
+    .pp-table tbody tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .pp-table tbody th { grid-column: 1 / -1; }
+    .pp-table tbody td { border-bottom: 0; }
+    .pp-table tbody td + td { border-left: 1px solid var(--line); }
+    .pp-table[data-show] tbody td { grid-column: 1 / -1; border-left: 0; }
+    .pp-cell-label { display: block; margin-bottom: 0.125rem; }
+    .pp-cell-label::after { content: none; }
+    .pp-cell-word { display: block; }
+  }
+
+  .pp-fineprint { max-width: 52rem; margin-top: 1.5rem; font-size: 0.875rem; line-height: 1.55; color: var(--muted); }
+
+  /* ---------- About the mark ---------- */
+  .pp-mark { display: grid; gap: clamp(1.75rem, 4vw, 3.5rem); align-items: center; }
+  .pp-mark > * { min-width: 0; }
+  @media (min-width: 48rem) { .pp-mark { grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); } }
+  @media (min-width: 64rem) { .pp-mark { grid-template-columns: minmax(0, 17rem) minmax(0, 46rem); justify-content: center; } }
+  .pp-mark-logo { display: block; justify-self: center; width: min(58vw, 15rem); height: auto; filter: drop-shadow(0 18px 36px rgb(7 10 20 / 0.35)); }
+  @media (min-width: 64rem) { .pp-mark-logo { width: 17rem; } }
+  .pp-mark-story { margin-top: 1rem; }
+  .pp-companion {
+    display: flex; align-items: flex-start; gap: 0.75rem;
+    margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--line-strong);
+    font-size: 0.9375rem; color: var(--muted);
+  }
+  .pp-companion .icon { margin-top: 0.15rem; color: var(--accent); }
+  .pp-companion-link { font-weight: 600; white-space: nowrap; text-decoration: underline; }
+
+  /* ======================= /principles/N/ ======================= */
+
+  /* ---------- Hero: the big number beside the title (wide screens only) ---------- */
+  .pp-hero { position: relative; }
+  .pp-hero-deco { display: none; }
+  @media (min-width: 64rem) {
+    .pp-hero .page-hero .container-page > :not(nav) { max-width: calc(100% - 15rem); }
+    .pp-hero-deco { position: absolute; inset: 0; display: flex; align-items: center; pointer-events: none; }
+    .pp-hero-deco .container-page { display: flex; justify-content: flex-end; }
+    .pp-hero-num {
+      padding-right: 0.06em;
+      font-family: var(--font-title); font-weight: 900; font-size: clamp(9rem, 14vw, 12.5rem); line-height: 0.85; font-variant-numeric: lining-nums;
+      background: linear-gradient(135deg, var(--color-thread-blue) 15%, var(--color-thread-green) 50%, var(--color-thread-orange) 85%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 0.04em 0.12em rgb(0 0 0 / 0.5));
+    }
+  }
+  @media (forced-colors: active) { .pp-hero-num { color: CanvasText; background: none; filter: none; } }
+
+  /* ---------- The Step, the Tradition and the Concept ---------- */
+  .pp-strands { display: grid; gap: clamp(1rem, 2.5vw, 1.5rem); grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 60rem) { .pp-strands { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .pp-strand {
+    display: flex; flex-direction: column; gap: 0.875rem; min-width: 0;
+    padding: clamp(1.25rem, 3vw, 1.75rem); border-radius: var(--radius-card);
+    background: linear-gradient(180deg, var(--legacy-soft), var(--surface) 8rem);
+    border: 1px solid var(--line); border-top: 6px solid var(--legacy); box-shadow: var(--shadow-card);
+  }
+  .pp-strand-head { display: flex; flex-direction: column; gap: 0.875rem; min-width: 0; }
+  .pp-strand-body { flex: 1; display: flex; flex-direction: column; gap: 0.875rem; min-width: 0; }
+  /* Tablets: the word on the left, what it asks of us on the right */
+  @media (min-width: 40rem) and (max-width: 59.99rem) {
+    .pp-strand { display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr); gap: 0.5rem 2rem; background: linear-gradient(90deg, var(--legacy-soft), var(--surface) 15rem); }
+  }
+  .pp-strand-legacy { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--legacy-text); }
+  .pp-strand-title { display: flex; flex-direction: column; gap: 0.25rem; }
+  .pp-strand-kicker { font-family: var(--font-sans); font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.01em; color: var(--muted); }
+  .pp-strand-word { font-size: clamp(1.75rem, 2.6vw, 2.25rem); line-height: 1.1; color: var(--fg); overflow-wrap: break-word; hyphens: auto; }
+  .pp-strand-gist { font-size: 1.0625rem; line-height: 1.55; }
+  .pp-strand-text { font-family: var(--font-display); font-size: 1.125rem; line-height: 1.5; padding-left: 1rem; border-left: 3px solid var(--legacy); }
+  .pp-keywords { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+  .pp-keywords li { padding: 0.25rem 0.625rem; border-radius: 999px; background: var(--legacy-soft); color: var(--legacy-text); font-size: 0.8125rem; font-weight: 600; line-height: 1.3; }
+  .pp-strand-link { margin-top: auto; }
+
+  /* ---------- The thread, how it weaves, questions ---------- */
+  .pp-thread-section { padding-top: clamp(1.5rem, 3.5vw, 2.5rem); }
+  .pp-thread { display: grid; gap: clamp(2.25rem, 5vw, 4rem); }
+  .pp-thread > * { min-width: 0; }
+  @media (min-width: 64rem) {
+    .pp-thread { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); align-items: start; }
+    .pp-questions { position: sticky; top: 5.5rem; }
+  }
+  .pp-summary { margin-top: 1rem; font-size: clamp(1.125rem, 1.7vw, 1.25rem); line-height: 1.65; }
+  .pp-weave-title { margin-top: clamp(2.25rem, 5vw, 3rem); }
+  .pp-weave { margin-top: 1rem; }
+  .pp-questions { border-top: 4px solid var(--accent); }
+  .pp-question-list { counter-reset: pp-q; display: grid; gap: 1rem; margin-top: 1.25rem; }
+  .pp-question-list li { counter-increment: pp-q; display: flex; gap: 0.875rem; align-items: flex-start; line-height: 1.5; }
+  .pp-question-list li::before {
+    content: counter(pp-q); flex: none; display: grid; place-items: center; width: 2rem; height: 2rem; margin-top: -0.125rem;
+    border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 0.875rem; font-weight: 700;
+  }
+  .pp-questions-note { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.875rem; color: var(--muted); }
+
+  /* ---------- Previous · next · all 36 ---------- */
+  .pp-pager { display: grid; gap: 0.75rem; grid-template-columns: minmax(0, 1fr); }
+  .pp-pager-spacer { display: none; }
+  @media (min-width: 40rem) {
+    .pp-pager { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .pp-pager-spacer { display: block; }
+  }
+  .pp-pager-link {
+    display: flex; flex-direction: column; gap: 0.375rem; min-width: 0;
+    padding: 1rem 1.25rem; border-radius: var(--radius-card);
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card);
+    color: var(--fg); text-decoration: none; transition: border-color 0.15s, transform 0.15s;
+  }
+  .pp-pager-link:hover { color: var(--fg); border-color: var(--line-strong); transform: translateY(-1px); }
+  .pp-pager-next { align-items: flex-end; text-align: right; }
+  .pp-pager-dir { display: inline-flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .pp-pager-title { font-family: var(--font-display); font-weight: 600; font-size: 1.125rem; line-height: 1.3; color: var(--link); }
+  .pp-pager-link:hover .pp-pager-title { text-decoration: underline; }
+  .pp-pager-n { font-family: var(--font-title); font-weight: 900; font-variant-numeric: lining-nums; color: var(--fg); margin-right: 0.25rem; }
+  .pp-pager-all { display: flex; justify-content: center; margin-top: 1.25rem; }
+}
+
+@media print {
+  .pp-filter, .pp-hero-deco, .pp-pager-band, .pp-tile-arrow { display: none !important; }
+  .pp-table thead th { position: static; }
+  .pp-tile, .pp-strand, .pp-legacy, .pp-questions, .pp-table tbody tr { box-shadow: none; break-inside: avoid; }
+  .pp-questions { position: static; }
+  /* Study pages: stack the three cards as plain blocks, and drop main.css's print `h2 { break-after: avoid }`
+     on the card titles. Otherwise it passes up through each card's two-column grid to the whole section, and
+     the only break Chrome can still take is before the cards: sheet 1 prints blank under the title. */
+  .pp-strands { display: block; }
+  .pp-strand + .pp-strand { margin-top: 1rem; }
+  .pp-strand-title { break-after: auto; }
+}

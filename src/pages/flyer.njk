@@ -10,74 +10,147 @@ translated: true
 schema: event
 eleventyComputed:
   lang: "{{ plang }}"
-  title: "{{ i18n[plang].flyer.pageTitle | tokens }}"
-  description: "{{ i18n[plang].flyer.pageDescription | tokens }}"
+  title: "{{ pagecopy.flyer[plang].meta.title | tokens }}"
+  description: "{{ pagecopy.flyer[plang].meta.description | tokens }}"
 ---
-{#- The committee's official flyer (English, image-only PDF/JPG from brand/flyer/), its downloads,
-    and its full text rendered from data (t.flyer.text + when.js + site.json), so the text never
-    disagrees with the Zoom card. The current flyer prints "ET" and the site's own Zoom details; check a
-    replacement flyer for both (never "EDT": December is standard time). The address is printed once
-    here, in the flyer text. -#}
-{% import "macros/ui.njk" as ui %}
-{% set ev = site.event %}
-{% set fEs = lang == "es" %}
-{% set ft = t.flyer.text or {} %}
-<section class="section weave-bg">
-  <div class="container-page hero" style="padding-block: clamp(2rem, 5vw, 4rem)">
-    <p class="eyebrow">{{ (when.date.longEs | capitalize) if fEs else when.date.long }} · <span class="normal-case">{{ when.time.leadEs if fEs else when.time.lead }}</span></p>
-    <h1 class="h-display">{{ title }}</h1>
-    {% if t.flyer.lead %}<p class="lead">{{ t.flyer.lead | tokens }}</p>{% endif %}
-    {% if t.flyer.englishOnly %}<p class="panel-muted text-sm mt-6 max-w-3xl">{% icon "info", "icon" %} {{ t.flyer.englishOnly | tokens }}</p>{% endif %}
-  </div>
-</section>
+{#- The official flyer, /flyer/ and /es/flyer/ (the flyer itself is in English): the image, large; beside it
+    (after it on phones) the flyer's downloads, a card that sends people to the printable poster (its files,
+    preview and print tips live only on /poster/) and the share buttons; and the flyer's full text, built from
+    site.json + when.js so it never disagrees with How to join, in a collapsed <details> (under the image on
+    wide screens, last on phones) that a link to #flyer-text opens. Printed (Ctrl+P), the page is just the flyer on one sheet (flyer.css).
+    Files and sizes: site.json → flyer; on /es/flyer/ the sizes get a decimal comma ("1,4 MB"), as the
+    Spanish poster page writes "8,5 × 11 pulgadas".
+    When the Zoom details the flyer prints (flyer.zoomMeetingId / zoomPasscode / zoomJoinUrl) differ from
+    event.zoom, a warning sends people to How to join.
+    The questions address is never printed here (the footer prints it); the flyer's text links to it.
+    Copy: src/_data/pagecopy/flyer.json (c) and i18n (t). Styles: src/assets/css/pages/flyer.css. -#}
+{% set c = pagecopy.flyer[lang] %}
+{% set es = lang == "es" %}
+{% set p = "/es" if es else "" %}
+{% set fl = site.flyer %}
+{% set z = site.event.zoom %}
+{% set stale = (fl.zoomMeetingId and fl.zoomMeetingId != z.meetingId) or (fl.zoomPasscode and fl.zoomPasscode != z.passcode) or (fl.zoomJoinUrl and fl.zoomJoinUrl != z.joinUrl) %}
+{% set webp = [] %}{% set jpg = [] %}
+{% for w in fl.widths or [600, 1000, 1600] %}{% set _ = webp.push(fl.base + "-" + w + ".webp " + w + "w") %}{% set _ = jpg.push(fl.base + "-" + w + ".jpg " + w + "w") %}{% endfor %}
+{% set sizes = "(min-width: 74rem) 38rem, (min-width: 60rem) calc(100vw - 30rem), (min-width: 38rem) 36rem, calc(100vw - 2rem)" %}
+{% set pdfMeta = c.downloads.pdfMeta | tokens %}{% set jpgMeta = c.downloads.jpgMeta | tokens %}
+{% if es %}{% set pdfMeta = pdfMeta | replace(r/(\d)\.(\d)/g, "$1,$2") %}{% set jpgMeta = jpgMeta | replace(r/(\d)\.(\d)/g, "$1,$2") %}{% endif %}
 
-<section class="section-tight">
-  <div class="container-page">
-    <div class="grid gap-10 lg:grid-cols-[1fr_22rem] lg:items-start">
-      <figure class="flyer-full">
-        {% set flyerSizes = "(min-width: 1024px) 30rem, calc(100vw - 2rem)" %}{% set flyerLoading = "eager" %}{% set flyerHref = "" %}{% set flyerDescribedBy = "flyer-text" %}
-        {% include "partials/flyer-picture.njk" %}
-        {% if t.flyer.figcaption %}<figcaption class="text-sm text-muted mt-3">{{ t.flyer.figcaption | tokens }}</figcaption>{% endif %}
+{% set hero = { eyebrow: c.hero.eyebrow, title: c.hero.title, lead: c.hero.lead | tokens, crumbLabel: c.hero.crumb } %}
+{% include "partials/page-hero.njk" %}
+
+<section class="section-tight flyer-section">
+  <div class="container-page flyer-layout">
+    <div class="flyer-top">
+      {% if c.englishNote %}
+      <div class="notice">
+        {% icon "languages", "icon" %}
+        <p>{{ c.englishNote | tokens | mdInline | safe }}</p>
+      </div>
+      {% endif %}
+      {% if stale %}
+      <div class="notice flyer-stale" role="note">
+        {% icon "triangle-alert", "icon" %}
+        <p><strong>{{ c.stale.text | tokens }}</strong> <a href="{{ p }}/join/">{{ c.stale.link }}</a></p>
+      </div>
+      {% endif %}
+
+      <figure class="flyer-figure">
+        <a href="{{ fl.jpg }}" class="flyer-frame">
+          <picture>
+            <source type="image/webp" srcset="{{ webp | join(', ') }}" sizes="{{ sizes }}">
+            <img src="{{ fl.base }}-{{ fl.width }}.jpg" srcset="{{ jpg | join(', ') }}" sizes="{{ sizes }}" width="{{ fl.width }}" height="{{ fl.height }}" alt="{{ c.image.alt | tokens | plain }}" loading="eager" decoding="async" fetchpriority="high">
+          </picture>
+          <span class="flyer-zoom" aria-hidden="true">{% icon "maximize-2", "icon icon-sm" %}</span>
+        </a>
+        <figcaption class="flyer-caption">{{ c.image.caption | tokens }}</figcaption>
       </figure>
-
-      <aside class="grid gap-6 content-start lg:sticky lg:top-24">
-        <div class="card">
-          {% set flyerShowView = false %}{% include "partials/flyer-downloads.njk" %}
-        </div>
-        <div class="card">
-          <h2 class="h-card">{% icon "share-2", "icon" %} {{ t.labels.share | tokens }}</h2>
-          <div class="mt-3">{% set sharePath = "/es/flyer/" if fEs else "/flyer/" %}{% include "partials/share.njk" %}</div>
-        </div>
-        {# No questions card here: the flyer text below prints the address (once per page). #}
-      </aside>
     </div>
-  </div>
-</section>
 
-<section class="section" id="flyer-text">
-  <div class="container-page">
-    <div class="card prose flyer-text max-w-3xl">
-      <h2 class="h-section">{{ t.flyer.textHeading | tokens }}</h2>
-      {% if ft.overline %}<p class="eyebrow mt-4">{{ ft.overline | tokens }}</p>{% endif %}
-      <h3 class="h-section flyer-text-title"{% if fEs %} lang="en"{% endif %}>{{ (ft.title | tokens) or site.name }}</h3>
-      {% if ft.subline %}<p class="font-display text-xl italic text-muted">{{ ft.subline | tokens }}</p>{% endif %}
-      <p class="when-text mt-4">
-        <strong>{{ (when.date.longEs | capitalize) if fEs else when.date.long }}</strong>
-        <span class="when-lead">{{ when.time.leadEs if fEs else when.time.lead }}</span>
-        <span class="when-also">{{ when.time.startsAlsoEs if fEs else when.time.startsAlso }}</span>
-      </p>
-      {% if ft.body %}<div class="mt-4">{{ ft.body | tokens | md | safe }}</div>{% endif %}
-      {% if ft.strands %}<p class="font-semibold mt-4">{{ ft.strands | tokens }}</p>{% endif %}
-      {% if ft.burst %}<p class="font-semibold">{{ ft.burst | tokens }}</p>{% endif %}
-      <ul>
-        {% for key in ["es", "asl"] %}{% set i = ev.interpretation | byKey(key) %}{% if i %}<li>{{ i.labelEs if fEs else i.label }}</li>{% endif %}{% endfor %}
-        {% if ft.costLine %}<li>{{ ft.costLine | tokens }}</li>{% endif %}
-        <li>Zoom&nbsp;· {{ t.labels.meetingId | tokens }}: <span class="mono">{{ ev.zoom.meetingId }}</span>&nbsp;· {{ t.labels.passcode | tokens }}: <span class="mono">{{ ev.zoom.passcode }}</span></li>
-        <li>{{ (ft.linkLabel | tokens) or "Zoom" }}: <a href="{{ ev.zoom.joinUrl }}" class="email-link" target="_blank" rel="noopener">{{ ev.zoom.joinUrl }}<span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a></li>
-      </ul>
-      {% if ft.programLine %}<p><a href="{{ '/es/#programa' if fEs else '/schedule/' }}">{{ ft.programLine | tokens }}</a></p>{% endif %}
-      {% if ft.websiteLine %}<p>{{ ft.websiteLine | tokens }}</p>{% endif %}
-      {% if site.contact.email %}<p>{{ (ft.questionsLine | tokens) or (t.contact.body | tokens) }} <a href="{{ site.contact.email | mailto(t.contact.subject | tokens) }}" class="email-link">{{ site.contact.email }}</a></p>{% endif %}
+    <div class="flyer-aside">
+      <section class="card flyer-card flyer-card--dl" aria-labelledby="flyer-dl-title">
+        <h2 class="h-card" id="flyer-dl-title">{{ c.downloads.heading }}</h2>
+        <ul class="dl-list">
+          <li><a class="dl-item dl-item--primary" href="{{ fl.pdf }}" download type="application/pdf">
+            <span class="dl-icon">{% icon "file-down", "icon" %}</span>
+            <span class="dl-text"><span class="dl-title">{{ c.downloads.pdf }}</span><span class="dl-meta">{{ pdfMeta }}</span></span>
+            {% icon "download", "icon dl-go" %}</a></li>
+          {% if fl.jpg %}<li><a class="dl-item" href="{{ fl.jpg }}" download type="image/jpeg">
+            <span class="dl-icon">{% icon "image", "icon" %}</span>
+            <span class="dl-text"><span class="dl-title">{{ c.downloads.jpg }}</span><span class="dl-meta">{{ jpgMeta }}</span></span>
+            {% icon "download", "icon dl-go" %}</a></li>{% endif %}
+        </ul>
+      </section>
+
+      {#- The poster's files, preview and print tips live on /poster/ only; this card points there. #}
+      <section class="card flyer-card flyer-card--poster" aria-labelledby="flyer-poster-title">
+        <h2 class="h-card" id="flyer-poster-title">{{ c.posters.heading }}</h2>
+        <p class="flyer-card-body">{{ c.posters.body | tokens }}</p>
+        <a href="{{ p }}/poster/" class="btn btn-outline btn-block flyer-card-cta">{% icon "printer", "icon" %}<span>{{ c.posters.view }}</span></a>
+        <ul class="flyer-card-links">
+          <li><a href="{{ '/poster/' if es else '/es/poster/' }}" class="link-arrow" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon icon-sm" %}<span>{{ c.posters.other }}</span></a></li>
+        </ul>
+      </section>
+
+      <section class="card flyer-card flyer-card--share" aria-labelledby="flyer-share-title">
+        <h2 class="h-card" id="flyer-share-title">{{ c.share.heading }}</h2>
+        <div class="mt-4">{% set sharePath = p + "/flyer/" %}{% include "partials/share.njk" %}</div>
+      </section>
     </div>
+
+    {# The flyer's full text, for screen readers, translation tools and search. #}
+    <details class="flyer-text" id="flyer-text">
+      <summary>
+        <span class="flyer-text-icon">{% icon "file-text", "icon" %}</span>
+        <h2 class="flyer-text-heading">{{ c.text.summary }}</h2>
+        <span class="flyer-text-hint">{{ c.text.hint }}</span>
+        {% icon "chevron-down", "icon chev" %}
+      </summary>
+      <div class="flyer-text-body">
+        <p class="eyebrow">{{ c.text.overline | tokens }}</p>
+        <p class="flyer-text-title"{% if es %} lang="en"{% endif %}>{{ c.text.title | tokens }}</p>
+        <p class="flyer-text-subline">{{ c.text.subline | tokens }}</p>
+        <p class="flyer-text-when">
+          <strong><time datetime="{{ when.date.iso }}">{{ (when.date.longEs | capitalize) if es else when.date.long }}</time></strong>
+          <span>{{ when.time.leadEs if es else when.time.lead }}</span>
+          <span class="text-muted">{{ when.time.startsAlsoEs if es else when.time.startsAlso }}</span>
+        </p>
+        <p>{{ c.text.body | tokens | mdInline | safe }}</p>
+        <p class="flyer-text-strands">{{ c.text.strands | tokens }}<br>{{ c.text.burst | tokens }}</p>
+        <p>{{ c.text.cost | tokens }}</p>
+        <dl class="flyer-text-zoom">
+          <div><dt>{{ c.text.zoomId }}</dt><dd class="font-mono">{{ z.meetingId | nbsp }}</dd></div>
+          <div><dt>{{ c.text.passcode }}</dt><dd class="font-mono">{{ z.passcode }}</dd></div>
+          <div><dt>{{ c.text.link }}</dt><dd><a href="{{ z.joinUrl }}" class="flyer-text-url" target="_blank" rel="noopener">{{ z.joinUrl }}<span class="sr-only"> {{ t.a11y.openInNewTab }}</span></a></dd></div>
+        </dl>
+        <p>{{ c.text.program | tokens }} <a href="{{ p }}/program/">{{ c.text.programLink }}</a></p>
+        {% if site.contact.email %}<p>{{ c.text.questions }} <a href="{{ site.contact.email | mailto(t.contact.subject | tokens) }}">{{ t.contact.linkText }}</a></p>{% endif %}
+      </div>
+    </details>
+    {#- Opens the flyer's text when a link points to it (#flyer-text: the Spanish note above, or a shared link),
+        as faq.njk does for its questions. The click handler opens the box before the browser scrolls to it
+        (and covers a repeat click while the hash is already #flyer-text, which fires no hashchange), so the
+        visitor lands on its top with the text below. Arriving with the hash, the browser has already jumped
+        to the box; once app.js has run (it can unhide the Share button above, pushing the box down on a slow
+        connection) the box is put back under the header, instantly, as it is a correction of a few pixels.
+        Without JavaScript the box simply opens when tapped. #}
+    <script>
+    (() => {
+      const d = document.getElementById("flyer-text");
+      if (!d) return;
+      const here = () => location.hash === "#flyer-text";
+      if (here()) {
+        d.open = true;
+        document.addEventListener("DOMContentLoaded", () => requestAnimationFrame(() => {
+          if (!here()) return;
+          try { d.scrollIntoView({ block: "start", behavior: "instant" }); } catch (_) { d.scrollIntoView(true); }
+        }));
+      }
+      addEventListener("hashchange", () => { if (here()) d.open = true; });
+      document.addEventListener("click", (e) => {
+        if (e.target.closest && e.target.closest('a[href="#flyer-text"]')) d.open = true;
+      });
+    })();
+    </script>
   </div>
 </section>

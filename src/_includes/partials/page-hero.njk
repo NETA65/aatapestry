@@ -1,0 +1,19 @@
+{#- The dark, flyer-style band at the top of every inner page.
+    Set `hero` before including: { eyebrow, title, lead, crumbs: [{ label, href }], crumbLabel }.
+    title defaults to the page title; crumbs are the pages between Home and this one (Home and this
+    page are added here); crumbLabel is this page's short name in the breadcrumb (default: the title). -#}
+{%- set h = hero or {} -%}
+<section class="page-hero thread-bg on-dark">
+  <div class="container-page">
+    <nav aria-label="{{ t.nav.breadcrumb }}">
+      <ol class="breadcrumb">
+        <li><a href="{{ '/es/' if lang == 'es' else '/' }}">{{ t.nav.home }}</a></li>
+        {% for c in h.crumbs or [] %}<li><a href="{{ c.href }}">{{ c.label }}</a></li>{% endfor %}
+        <li aria-current="page">{{ h.crumbLabel or h.title or title }}</li>
+      </ol>
+    </nav>
+    {% if h.eyebrow %}<p class="eyebrow">{{ h.eyebrow }}</p>{% endif %}
+    <h1 class="h-display">{{ h.title or title }}</h1>
+    {% if h.lead %}<p class="lead">{{ h.lead }}</p>{% endif %}
+  </div>
+</section>

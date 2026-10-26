@@ -25,8 +25,9 @@ export default class {
         ],
         shortcuts: [
           { name: "How to join", url: "/join/", icons: [{ src: "/brand/favicon/icon-192.png", sizes: "192x192" }] },
+          { name: "Program", url: "/program/" },
           { name: "The official flyer", url: "/flyer/" },
-          { name: "The 36 principles", url: "/principles/" },
+          { name: "Questions & answers", url: "/faq/" },
         ],
       },
       null,

@@ -1,0 +1,35 @@
+---
+pagination:
+  data: redirects
+  size: 1
+  alias: r
+redirects:
+  - { from: "/schedule/", to: "/program/" }
+  - { from: "/accessibility/", to: "/join/#interpretation", hashes: { "espanol": "/es/join/#interpretation", "etiquette": "/join/#etiquette", "other": "/join/#accessibility" } }
+  - { from: "/meeting/", to: "/principles/" }
+permalink: "{{ r.from }}"
+layout: false
+eleventyExcludeFromCollections: true
+---
+{#- Pages that moved in the October 2026 redesign. GitHub Pages has no server-side redirects, so each
+    old address is a tiny page that forwards at once and names the new page as its canonical, so search
+    engines move the old address over (no noindex, which would contradict the canonical; the stubs are
+    already left out of the sitemap). Links into sections of the old one-page home (/#join, /es/#unirse …)
+    can't be redirected by the server either; partials/head.njk sends those on with a small script.
+    `hashes` (optional): where the old page's #sections go (/accessibility/#espanol → the Spanish join
+    page). A small script, run before the meta refresh, forwards them; any other #fragment, or no
+    JavaScript, goes to `to`. -#}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ site.name }}</title>
+<link rel="canonical" href="{{ r.to | absUrl }}">
+{% if r.hashes %}<script>(function(){var m={{ r.hashes | dump | safe }},h=location.hash.slice(1);if(h&&Object.prototype.hasOwnProperty.call(m,h))location.replace(m[h])})()</script>{% endif %}
+<meta http-equiv="refresh" content="0; url={{ r.to }}">
+</head>
+<body>
+<p>This page has moved: <a href="{{ r.to }}">{{ r.to | absUrl }}</a></p>
+</body>
+</html>

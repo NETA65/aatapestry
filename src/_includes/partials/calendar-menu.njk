@@ -1,0 +1,21 @@
+{#- "Add to calendar": a disclosure listing Google, Apple/.ics, Outlook.com, Microsoft 365 and Yahoo
+    (links from src/_data/calendar.js). Works without JavaScript; app.js closes it on Escape, an
+    outside click or when focus leaves it, and keeps the panel on screen: shifted sideways to fit,
+    opened upward when there is no room below the button, or scrolled into view when there is room
+    neither way. Hidden once the workshop has
+    ended (.js-event-cta, main.css). Optional before the include: calClass (the button's classes,
+    default "btn btn-outline").
+    The .ics item (c.file) is a plain same-tab link without `download`: iOS Safari then shows its Add to
+    Calendar sheet, and desktop browsers download the file (it is served as text/calendar). The others
+    open the provider's own form in a new tab. -#}
+<details class="cal-menu js-event-cta">
+  <summary class="{{ calClass or 'btn btn-outline' }}">{% icon "calendar-plus", "icon" %}<span>{{ t.labels.addToCalendar }}</span>{% icon "chevron-down", "icon icon-sm chev" %}</summary>
+  <div class="cal-menu-panel">
+    <ul>
+      {% for c in calendar[lang] %}
+      {% set calIcon = "download" if c.file else "calendar" %}
+      <li><a href="{{ c.href }}"{% if c.file %} type="text/calendar"{% else %} target="_blank" rel="noopener"{% endif %}>{% icon calIcon, "icon" %}<span>{{ c.label }}</span>{% if not c.file %}<span class="sr-only"> {{ t.a11y.openInNewTab }}</span>{% endif %}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</details>

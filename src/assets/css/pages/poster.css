@@ -1,0 +1,193 @@
+/* Printable poster (/poster/ and /es/poster/) — src/pages/poster.njk + src/_includes/layouts/poster.njk.
+   Imported by ../main.css. The download list (.dl-list) comes from ./flyer.css.
+
+   THE POSTER is a Letter sheet (8.5 × 11 in) that scales with its width: every size inside is in cqw
+   (1cqw = 1% of the poster's width), so the screen preview, the PDFs and the 300-dpi PNG are one design.
+   It stays light (paper) in dark mode too, and redefines the colour tokens it uses to their light values.
+   scripts/pdf.mjs: at a 900 px-wide screen #poster is 816 px (8.5 in) wide; :root[data-size="a4"] = A4.
+   On screen the sheet may grow taller (never wider) when a reader's text-spacing styles need room.
+   The sheet is full: Letter leaves only a few cqw to spare in Spanish, so measure after any change. */
+@layer components {
+  /* ---------- The screen page around the poster ---------- */
+  .poster-stage { background: var(--bg-alt); }
+  .poster-layout { display: grid; gap: clamp(1.75rem, 4vw, 2.5rem); }
+  .poster-layout > * { min-width: 0; }
+  /* Below 64rem the panel shares the poster's 8.5in column, so the card, the links and the sheet line up. */
+  .poster-panel { display: grid; gap: 1rem; align-content: start; width: 100%; max-width: 8.5in; margin-inline: auto; }
+  @media (min-width: 64rem) {
+    .poster-layout { grid-template-columns: minmax(17rem, 20rem) minmax(0, 1fr); align-items: start; }
+    .poster-panel { max-width: none; }
+  }
+  /* The panel (548 px tall in EN and ES) stays in view beside the long preview only where all of it fits
+     below the sticky header (top 5.5rem = 88 px), with room for the focus ring. On shorter windows a stuck
+     panel hides its last links, even while they have keyboard focus. Re-measure if the panel's copy changes. */
+  @media (min-width: 64rem) and (min-height: 42rem) {
+    .poster-panel { position: sticky; top: 5.5rem; }
+  }
+  .poster-panel .dl-list { margin-top: 1rem; }
+  .poster-tip { display: flex; gap: 0.5rem; align-items: flex-start; margin-top: 1rem; font-size: 0.875rem; line-height: 1.5; color: var(--muted); }
+  .poster-tip .icon { margin-top: 0.2rem; }
+  .poster-links { display: grid; gap: 0.125rem; padding-inline: 0.25rem; }
+  .poster-links .link-arrow { min-height: 2.75rem; }
+  .poster-preview { display: grid; justify-items: center; gap: 0.75rem; }
+  .poster-preview-label { justify-self: stretch; text-align: center; }
+
+  /* ---------- The poster ---------- */
+  .poster {
+    /* Light, printed colours whatever the visitor's colour scheme. */
+    --fg: #171b30; --muted: #4a5068; --line: #e2d9c8; --bg: #fffdf8; --surface: #fff;
+    --c-recovery: #2f4fa2; --c-unity: #1b8a6b; --c-service: #d9941f;
+    --c-recovery-text: #2f4fa2; --c-unity-text: #156b53; --c-service-text: #8a5a0b;
+    --c-recovery-soft: #e3e9f7; --c-unity-soft: #ddf1ea; --c-service-soft: #fbefd6;
+    --ink: #171b30; --navy: #1b2447; --rule: #e2d9c8;
+    container-type: inline-size; position: relative; overflow: hidden;
+    width: min(100%, 8.5in); aspect-ratio: 8.5 / 11;
+    background: #fffdf8; color: var(--ink); color-scheme: light;
+    font-family: var(--font-sans); line-height: 1.3; text-align: left;
+    box-shadow: 0 1px 2px rgb(16 22 43 / 0.08), 0 28px 60px -28px rgb(16 22 43 / 0.5);
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  :root[data-size="a4"] .poster { width: 210mm; aspect-ratio: 210 / 297; }
+  /* A faint woven texture and a fine gold frame: very little ink. */
+  .poster-weave {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      repeating-linear-gradient(45deg, rgb(27 36 71 / 0.035) 0 0.18cqw, transparent 0.18cqw 2.2cqw),
+      repeating-linear-gradient(-45deg, rgb(27 36 71 / 0.03) 0 0.18cqw, transparent 0.18cqw 2.2cqw);
+  }
+  .poster-weave::after { content: ""; position: absolute; inset: 2.2cqw; border: 0.22cqw solid #d8c79f; border-radius: 1.6cqw; }
+  .poster-inner {
+    position: absolute; inset: 0; z-index: 1;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 1.4cqw;
+    padding: 4.2cqw 6.2cqw 4cqw; font-size: 2cqw;
+  }
+  .poster-inner > * { flex-shrink: 0; }
+  /* On screen the sheet keeps its Letter shape but grows taller when a reader's text-spacing or other user
+     styles need more room (WCAG 1.4.12), instead of clipping the Zoom details. Normally the content fits, so
+     the preview and pdf.mjs's PNG are unchanged (100cqw × 11 / 8.5 = 1056 px at 816 px wide). On paper the
+     print block below fixes the sheet at 8.5 × 11 in (or A4) as before. overflow stays hidden on .poster,
+     so the no-wrap lines can never cause sideways scrolling. */
+  @media screen {
+    .poster, :root[data-size="a4"] .poster { aspect-ratio: auto; }
+    .poster-inner { position: relative; min-height: calc(100cqw * 11 / 8.5); }
+    :root[data-size="a4"] .poster-inner { min-height: calc(100cqw * 297 / 210); }
+  }
+  .poster p, .poster dl, .poster ul, .poster figure { margin: 0; }
+
+  /* Logo + the flyer's title in print colours: gold "THE INCREDIBLE" over a navy script "Tapestry" */
+  .poster-head { display: grid; grid-template-columns: 18cqw minmax(0, 1fr); gap: 3.4cqw; align-items: center; }
+  .poster-logo { display: block; width: 18cqw; height: 18cqw; }
+  .poster-title-wrap { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+  .poster-title { margin: 0; font-size: 7.9cqw; line-height: 1; letter-spacing: 0; text-wrap: nowrap; }
+  .poster-title .lockup-the { letter-spacing: 0.3em; }
+  .poster-title .lockup-tapestry { margin-top: -0.1em; color: var(--navy); text-shadow: none; }
+  .poster-gold {
+    background: linear-gradient(180deg, #e8b850 0%, #cf952f 40%, #a06a18 78%, #b98226 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  /* Forced colours (Windows contrast themes): each line's backplate would paint over the overlapping
+     lockup lines ("THE", the top of "INCREDIBLE"). Keep the lockup out of forced colours, drawn in the
+     theme's text colour on the theme's page colour, so all three lines stay whole and readable. */
+  @media (forced-colors: active) {
+    .poster-title .lockup { forced-color-adjust: none; color: CanvasText; }
+    .poster-title .lockup > span { color: CanvasText; background: none; text-shadow: none; filter: none; }
+  }
+  .poster-braid { display: block; width: 100%; height: auto; margin-top: 1.2cqw; }
+  /* The braid's dark outlines become paper-coloured gaps, so the threads read as woven on a light page. */
+  .poster-braid path[stroke="#070A14"] { stroke: #fffdf8; stroke-opacity: 1; }
+  .poster-gloss { margin-top: 0.5cqw; font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: 2.3cqw; line-height: 1.2; color: var(--muted); }
+
+  .poster-intro { text-align: center; }
+  .poster-overline {
+    font-family: var(--font-title); font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em;
+    font-size: 4.1cqw; line-height: 1.1; color: var(--navy);
+  }
+  .poster--es .poster-overline { font-size: 3.6cqw; }
+  .poster-subline {
+    margin-top: 0.8cqw; padding-inline: 3cqw;
+    font-family: var(--font-display); font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: 1.95cqw; line-height: 1.4; color: #3d4463; text-wrap: balance;
+  }
+
+  /* The date, on the flyer's gold ribbon (.date-ribbon in main.css), sized for the sheet */
+  .poster .poster-date { align-self: center; font-size: 4.3cqw; padding: 1.2cqw 4.4cqw 1.3cqw; white-space: nowrap; text-wrap: nowrap; }
+  .poster--es .poster-date.poster-date { font-size: 3.8cqw; }
+
+  /* The time bar: ET first, then PT · MT · CT */
+  .poster-time { border: 0.35cqw solid var(--navy); border-radius: 2cqw; background: #fff; overflow: hidden; text-align: center; }
+  .poster-time-main { padding: 1cqw 2cqw 0.8cqw; font-family: var(--font-title); font-weight: 900; font-size: 5.2cqw; line-height: 1.15; color: var(--ink); }
+  .poster--es .poster-time-main { font-size: 4.4cqw; }
+  .poster-time-zones { display: flex; border-top: 0.25cqw solid var(--rule); }
+  .poster-time-zones p { flex: 1 1 0; padding: 0.7cqw 1cqw; font-family: var(--font-display); font-weight: 600; font-size: 2.5cqw; line-height: 1.2; color: var(--navy); white-space: nowrap; }
+  .poster-time-zones p + p { border-left: 0.3cqw solid #e2a93b; }
+  .poster-time-zones b { font-family: var(--font-sans); font-weight: 700; font-size: 0.82em; letter-spacing: 0.06em; color: #8a5a0b; }
+
+  /* The three strands, woven together in one row */
+  .poster-strands { display: flex; justify-content: center; align-items: center; }
+  .poster-strand { display: flex; align-items: center; gap: 1.2cqw; }
+  .poster-strand + .poster-strand::before {
+    content: ""; flex: none; width: 3.6cqw; height: 0.55cqw; margin-inline: 1.3cqw; border-radius: 1cqw;
+    background: linear-gradient(90deg, var(--prev-thread), var(--legacy));
+  }
+  .poster-strand[data-legacy="unity"] { --prev-thread: var(--c-recovery); }
+  .poster-strand[data-legacy="service"] { --prev-thread: var(--c-unity); }
+  .poster-strand-icon {
+    display: grid; place-items: center; flex: none; width: 5.6cqw; height: 5.6cqw; border-radius: 50%;
+    background: var(--legacy-soft); color: var(--legacy-text); border: 0.5cqw solid var(--legacy);
+  }
+  .poster-strand-icon .icon { width: 2.8cqw; height: 2.8cqw; }
+  .poster-strand-name { display: block; font-family: var(--font-title); font-weight: 900; text-transform: uppercase; letter-spacing: 0.03em; font-size: 2.7cqw; line-height: 1.05; color: var(--legacy-text); }
+  .poster--es .poster-strand-name { font-size: 2.4cqw; }
+  .poster-strand-legacy { display: block; margin-top: 0.3cqw; font-weight: 700; font-size: 1.45cqw; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+  /* Zoom: the meeting ID and passcode, the QR code to join, and the website's QR code */
+  .poster-zoom {
+    display: grid; grid-template-columns: minmax(0, 1fr) 17.5cqw 17.5cqw; gap: 2.4cqw; align-items: center;
+    background: #fff; border: 0.3cqw solid #d9cdb4; border-radius: 2.4cqw; padding: 2.2cqw 2.6cqw;
+  }
+  .poster-zoom-head { display: flex; align-items: center; gap: 1.4cqw; font-family: var(--font-display); font-weight: 600; font-size: 3.1cqw; line-height: 1.15; color: var(--navy); }
+  .poster-zoom-badge { display: grid; place-items: center; flex: none; width: 5cqw; height: 5cqw; border-radius: 50%; background: var(--c-recovery); color: #fff; }
+  .poster-zoom-badge .icon { width: 2.7cqw; height: 2.7cqw; }
+  .poster-ids { display: grid; gap: 1.2cqw; margin-top: 1.8cqw; padding-left: 0.4cqw; }
+  .poster-ids dt { font-size: 1.5cqw; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.25; color: var(--muted); }
+  .poster-ids dd { margin: 0.2cqw 0 0; font-family: var(--font-mono); font-size: 3.4cqw; font-weight: 700; line-height: 1.15; letter-spacing: 0.02em; white-space: nowrap; color: var(--ink); }
+  .poster-qr { text-align: center; }
+  .poster-qr-code { display: block; width: 13cqw; height: auto; margin-inline: auto; }
+  /* Forced colours (dark contrast themes) turn the white Zoom box into Canvas (black), but the QR stroke
+     (#1F2233) is not forced. Give each code its own white tile with a quiet zone so it stays visible and
+     scannable; content-box keeps the code 13cqw (the tile is 15cqw, inside the 17.5cqw column). */
+  @media (forced-colors: active) {
+    .poster-qr-code { forced-color-adjust: none; background: #fff; box-sizing: content-box; padding: 1cqw; border-radius: 0.6cqw; }
+  }
+  .poster-qr figcaption { margin-top: 0.9cqw; font-size: 1.45cqw; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; color: var(--ink); text-wrap: balance; }
+
+  /* Free · no pre-registration · interpretation */
+  .poster-facts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1fr); gap: 2.2cqw; padding-block: 1.5cqw; border-block: 0.25cqw solid var(--rule); }
+  .poster-fact { display: flex; gap: 1.1cqw; align-items: flex-start; }
+  .poster-fact-icon { display: grid; place-items: center; flex: none; width: 4cqw; height: 4cqw; border-radius: 50%; background: var(--legacy-soft); color: var(--legacy-text); }
+  .poster-fact-icon .icon { width: 2.2cqw; height: 2.2cqw; }
+  .poster-fact b { display: block; font-size: 2cqw; font-weight: 700; line-height: 1.2; color: var(--ink); }
+  .poster-fact b + span { display: block; margin-top: 0.3cqw; font-size: 1.55cqw; line-height: 1.3; color: var(--muted); }
+
+  /* Questions: the flyer's purple band, as a light pill */
+  .poster-ask {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.3cqw 1.2cqw;
+    padding: 1.3cqw 3cqw; border-radius: 99cqw; background: #f1eafa; border: 0.25cqw solid #d9c7f0;
+    font-family: var(--font-display); font-weight: 500; font-size: 2.3cqw; line-height: 1.2; color: #3a1f66;
+  }
+  .poster-ask .icon { width: 2.9cqw; height: 2.9cqw; color: #6a3e9e; }
+  .poster-ask b { font-weight: 700; font-size: 2.6cqw; color: #2b1650; }
+
+  .poster-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 3cqw; }
+  .poster-fine { max-width: 54cqw; font-size: 1.4cqw; line-height: 1.35; color: #5b6076; }
+  .poster-url { font-family: var(--font-display); font-weight: 600; font-size: 3.8cqw; line-height: 1; letter-spacing: -0.01em; color: var(--c-recovery); white-space: nowrap; }
+}
+
+/* ---------- On paper: the poster alone, exactly one page (the @page rule is in layouts/poster.njk) ---------- */
+@media print {
+  html.poster-page, .poster-page body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+  .poster-page body > :not(main), .poster-page main > :not(.poster-stage), .poster-panel, .poster-preview-label { display: none !important; }
+  .poster-page main, .poster-stage, .poster-layout, .poster-preview { display: block !important; margin: 0 !important; padding: 0 !important; max-width: none !important; background: none !important; }
+  .poster { width: 8.5in !important; height: 11in !important; aspect-ratio: auto; box-shadow: none !important; break-inside: avoid; }
+  :root[data-size="a4"] .poster { width: 210mm !important; height: 297mm !important; }
+}

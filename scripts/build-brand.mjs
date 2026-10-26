@@ -183,7 +183,7 @@ const cardText = (lang) => {
     // Spanish spells the zone out ("…, hora del Este (ET)") for readers outside the U.S., like the Spanish poster.
     time: es ? when.time.leadLongEs : when.time.lead, // 11:00 AM – 7:00 PM ET
     also: es ? when.time.startsAlsoEs : when.time.startsAlso, // 8:00 AM PT · 9:00 AM MT · 10:00 AM CT
-    where: [tr(lang, "poster.whereLine", es ? "En línea por Zoom" : "Online on Zoom"), tr(lang, "poster.interpretationLine", es ? "Interpretación en español y ASL" : "Spanish & ASL interpretation"), tr(lang, "labels.free", es ? "Gratis" : "Free")].join(" · "),
+    where: [tr(lang, "labels.online", es ? "En línea por Zoom" : "Online on Zoom"), tr(lang, "labels.interpretationBadge", es ? "Interpretación en español y en ASL" : "Spanish & ASL interpretation"), tr(lang, "labels.free", es ? "Gratuito" : "Free")].join(" · "),
   };
   for (const k of Object.keys(c)) c[k] = plain(c[k]);
   return c;
@@ -214,9 +214,8 @@ write(out("social/og.svg"), ogCard("en"));
 write(out("social/og.png"), png(ogCard("en"), 1200));
 write(out("social/og-es.svg"), ogCard("es"));
 write(out("social/og-es.png"), png(ogCard("es"), 1200));
-fs.mkdirSync(path.join(root, "src/assets/img"), { recursive: true });
-fs.copyFileSync(out("social/og.png"), path.join(root, "src/assets/img/og.png"));
-fs.copyFileSync(out("social/og-es.png"), path.join(root, "src/assets/img/og-es.png"));
+// The website's own link-preview cards (src/assets/img/og*.png) are the flyer-style ones made by
+// scripts/make-og.mjs (npm run brand:og); these light cards stay in brand/social/ for other uses.
 
 // wrap() with even line lengths: the narrowest width that still gives the same number of lines
 // (so a centred two-line sub-line never ends on one orphaned word).
@@ -338,4 +337,4 @@ _Generated from site.json (Zoom details updated ${site.event.zoom.lastUpdated ||
 `;
 write(out("BRAND.md"), md);
 
-console.log(`✔ brand: ${written.length} files written to brand/ (and src/favicon.ico, src/assets/img/og*.png)`);
+console.log(`✔ brand: ${written.length} files written to brand/ (and src/favicon.ico)`);

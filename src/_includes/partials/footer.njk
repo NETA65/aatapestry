@@ -1,44 +1,60 @@
-{#- Site footer: the date and time (ET first), every menu item plus How to join / the printable poster,
-    the .ics file, RSS, the language switch and the questions email (labelled, with a subject). -#}
-{%- set items = nav[lang] or nav.en -%}
-<footer class="site-footer" x-data="theme">
-  <div class="container-page">
-    <div class="footer-grid">
-      <div>
-        <a href="{{ '/es/' if lang == 'es' else '/' }}" class="brand" aria-label="{{ site.name }} — {{ t.nav.home }}">
-          {% inlineSvg "brand/logo/mark-plain-mono.svg", "brand-mark mark-mono" %}
-          <span class="brand-name">{{ site.name }}</span>
-        </a>
-        <p class="mt-3 text-sm text-muted max-w-prose">{{ t.footer.blurb | tokens }}</p>
-        <p class="mt-3 text-sm text-muted max-w-prose">{{ (when.date.longEs | capitalize) if lang == 'es' else when.date.long }}&nbsp;· {{ when.time.leadEs if lang == 'es' else when.time.lead }}&nbsp;· {{ t.labels.online }}<br>{{ when.time.startsAlsoEs if lang == 'es' else when.time.startsAlso }}</p>
-      </div>
-      <nav aria-label="{{ 'Pie de página' if lang == 'es' else 'Footer' }}">
-        <ul class="footer-links">
-          {% for item in items %}<li><a href="{{ item.href }}">{{ t.nav[item.key] }}</a></li>{% endfor %}
-          {% if lang != 'es' %}<li><a href="/join/">{{ t.nav.join }}</a></li><li><a href="/poster/">{{ t.nav.poster }}</a></li>{% endif %}
-          <li><a href="/aatapestry-workshop.ics" download>{% icon "calendar", "icon" %}<span>{{ t.labels.downloadIcs }}</span></a></li>
-          <li><a href="/feed.xml">{% icon "rss", "icon" %}<span>{{ copy.updates.feed if lang != 'es' else 'RSS' }}</span></a></li>
-          <li><a href="{{ page.url | langUrl(otherLang) }}" lang="{{ otherLang }}" hreflang="{{ otherLang }}">{% icon "languages", "icon" %}<span>{{ t.switchLabel }}</span></a></li>
-          {% if site.contact.email %}<li class="footer-email"><a href="{{ site.contact.email | mailto(t.contact.subject | tokens) }}">{% icon "mail", "icon" %}<span>{{ t.contact.heading | tokens }} {{ t.contact.linkText | tokens }}</span></a></li>{% endif %}
-        </ul>
-      </nav>
-      <div class="text-sm text-muted space-y-3">
-        <p>{{ t.footer.disclaimer | tokens }}</p>
-        {# The full A.A.W.S. reprint credit only applies once the official texts are actually shown. #}
-        {% set textsShown = [] %}{% for p in principles.items %}{% if p.step.text or p.tradition.text or p.concept.text %}{% set _ = textsShown.push(p.n) %}{% endif %}{% endfor %}
-        <p>{{ (t.footer.copyright if textsShown.length else t.footer.copyrightShort) | tokens }}</p>
-      </div>
+{#- Footer: the flyer's purple questions band (the ONE place each page prints the questions address,
+    with a copy button), then every page of the site, the resources, the language switch and the
+    legal notes. Labels from i18n (t.footer, t.nav, t.contact). -#}
+{%- set links = nav[lang] -%}
+{%- set email = site.contact.email -%}
+{#- The language switch, as in header.njk: on the English-only pages it goes to the Spanish home page and
+    says so; a link to the page's twin carries data-lang-switch (app.js adds the current #section). -#}
+{%- set switchHref = page.url | langUrl(otherLang) -%}
+{%- set switchToHome = otherLang == "es" and switchHref == "/es/" and page.url != "/" -%}
+<footer>
+  {% if email %}
+  <section class="questions-band" aria-labelledby="questions-band-label">
+    <div class="container-page questions-band-inner">
+      {% icon "mail", "icon icon-lg" %}
+      <h2 class="questions-band-label" id="questions-band-label">{{ t.contact.body }}</h2>
+      <span class="questions-band-address">
+        <a class="email-link" href="{{ email | mailto(t.contact.subject | tokens) }}">{{ email }}</a>
+        <button type="button" class="copy-btn" data-copy="{{ email }}" data-copied="{{ t.labels.copied }}" aria-label="{{ t.contact.copyAddress }}">{% icon "copy", "icon icon-sm" %}<span>{{ t.labels.copy }}</span></button>
+      </span>
     </div>
-    <div class="footer-bottom">
-      <p class="text-xs text-muted">© {% year %} {{ site.contact.committee }}. {{ t.footer.builtWith | tokens }} <a href="https://www.11ty.dev/" rel="noopener">Eleventy</a>, <a href="https://tailwindcss.com/" rel="noopener">Tailwind CSS</a>, <a href="https://alpinejs.dev/" rel="noopener">Alpine.js</a>, <a href="https://lucide.dev/" rel="noopener">Lucide</a>, <a href="https://github.com/soldair/node-qrcode" rel="noopener">node-qrcode</a>, <a href="https://add-to-calendar-button.com/" rel="noopener">Add to Calendar Button</a>, <a href="https://fonts.google.com/specimen/Fraunces" rel="noopener">Fraunces</a> {% if lang == 'es' %}y{% else %}&amp;{% endif %} <a href="https://rsms.me/inter/" rel="noopener">Inter</a>.
-        {% if build.repoUrl %}<a href="{{ build.repoUrl }}" rel="noopener">{{ 'Código fuente' if lang == 'es' else 'Source code' }}</a> · {% elif site.github.owner %}<a href="https://github.com/{{ site.github.owner }}/{{ site.github.repo }}" rel="noopener">{{ 'Código fuente' if lang == 'es' else 'Source code' }}</a> · {% endif %}
-        <span>{{ t.labels.updated }} <time datetime="{{ build.time }}">{{ build.time | date("DDD", lang) }}</time>{% if build.sha %} ({{ build.sha }}){% endif %}</span>
-      </p>
-      <button type="button" class="btn btn-ghost btn-sm" @click="toggle()">
-        <span x-show="!dark">{% icon "moon", "icon" %}</span>
-        <span x-show="dark" x-cloak>{% icon "sun", "icon" %}</span>
-        <span x-text="dark ? '{{ 'Modo claro' if lang == 'es' else 'Light mode' }}' : '{{ 'Modo oscuro' if lang == 'es' else 'Dark mode' }}'">{{ 'Modo oscuro' if lang == 'es' else 'Dark mode' }}</span>
-      </button>
+  </section>
+  {% endif %}
+  <div class="site-footer on-dark">
+    <div class="container-page">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <a href="{{ '/es/' if lang == 'es' else '/' }}" class="brand">
+            {% inlineSvg "src/assets/img/logo-plain.svg", "brand-mark" %}
+            <span class="brand-name">{{ site.name }}</span>
+          </a>
+          <p class="mt-4 max-w-sm">{{ t.footer.blurb }}</p>
+          {#- The line breaks at the "·" (the "·" stays with the date, "Online on Zoom" stays whole). -#}
+          <p class="mt-2 max-w-sm">{{ (when.date.longEs | capitalize) if lang == 'es' else when.date.long }}&nbsp;· <span class="whitespace-nowrap">{{ t.labels.online }}</span></p>
+        </div>
+        {#- id: the header's Menu link jumps here when JavaScript is off. -#}
+        <nav id="site-nav-footer" aria-label="{{ t.nav.footer }}">
+          <h2 class="footer-heading">{{ t.footer.workshop }}</h2>
+          <ul class="footer-links">
+            <li><a href="{{ '/es/' if lang == 'es' else '/' }}">{{ t.nav.home }}</a></li>
+            {% for item in links.main %}<li><a href="{{ item.href }}">{{ t.nav[item.key] }}</a></li>{% endfor %}
+          </ul>
+        </nav>
+        <div>
+          <h2 class="footer-heading">{{ t.footer.resources }}</h2>
+          <ul class="footer-links">
+            {% for item in links.resources %}<li><a href="{{ item.href }}"{% if item.download %} download{% endif %}{% if item.type %} type="{{ item.type }}"{% endif %}{% if item.lang %} hreflang="{{ item.lang }}"{% endif %}>{{ t.nav[item.key] }}{% if item.lang and item.lang != lang %} <span class="opacity-70">({{ t.labels.englishOnly }})</span>{% endif %}</a></li>{% endfor %}
+            <li><a href="{{ switchHref }}" lang="{{ otherLang }}" hreflang="{{ otherLang }}"{% if not switchToHome %} data-lang-switch{% endif %}>{% icon "languages", "icon icon-sm" %}<span>{{ t.switchLabelHome if switchToHome else t.switchLabelLong }}</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-legal">
+        <p>{{ t.footer.disclaimer }}</p>
+        {# The full A.A.W.S. reprint credit applies only once the official texts are actually shown. #}
+        {% set textsShown = [] %}{% for p in principles.items %}{% if p.step.text or p.tradition.text or p.concept.text %}{% set _ = textsShown.push(p.n) %}{% endif %}{% endfor %}
+        <p>{{ t.footer.copyright if textsShown.length else t.footer.copyrightShort }}</p>
+        <p>© {% year %} {{ site.contact.committeeEs if (lang == 'es' and site.contact.committeeEs) else site.contact.committee }}</p>
+      </div>
     </div>
   </div>
 </footer>
