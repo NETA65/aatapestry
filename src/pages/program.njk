@@ -46,7 +46,7 @@ eleventyComputed:
       <div class="program-head">
         <h2 class="h-section" id="day-title">{{ c.timeline.heading }}</h2>
         <p class="program-tz">{% icon "clock", "icon icon-sm" %}<span>{{ c.timeline.allTimes }}</span></p>
-        <p class="program-tz-jump">{{ ui.arrowLink("#time-zones", c.timeline.zonesLink, "", "arrow-down") }}</p>
+        <p class="program-tz-jump no-print">{{ ui.arrowLink("#time-zones", c.timeline.zonesLink, "", "arrow-down") }}</p>
       </div>
 
       <ol class="tl" role="list">
